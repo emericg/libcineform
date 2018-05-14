@@ -1866,18 +1866,12 @@ int SampleFrameCount(SAMPLE *sample);
 // Compute the size of the uncompressed image in bits
 uint32_t ComputeImageSizeBits(IMAGE *image);
 
-// Determine appropriate quantization
-//int QuantDivisor(QUANT *table, int level, int band);
-
 // Quantization of the highpass coefficients
 void QuantizeCoefficients(PIXEL *image, int width, int height, int pitch, int divisor);
 void Quantize16s(PIXEL *image, int width, int height, int pitch, int divisor);
 void Quantize8s(PIXEL8S *image, int width, int height, int pitch, int divisor);
 void Quantize16sTo8s(PIXEL *image, int width, int height, int pitch, int divisor);
 void RestoreCoefficients(PIXEL *image, int width, int height, int pitch, int multiplier);
-
-//void QuantizeHighPassCoefficients(ENCODER *encoder, QUANT *table, IMAGE *wavelet);
-
 
 // Routines for encoding the various headers in the bitstream
 
@@ -1972,9 +1966,6 @@ int32_t PutRowTrailer(BITSTREAM *output);
 
 void DumpEncodedFrame(BITSTREAM *stream, FILE *dump, uint32_t *bitcount);
 void DumpBitstreamFile(BITSTREAM *stream, char *filename, FILE *dump);
-
-//void DecodeFile(DECODER *state, HANDLE file);
-//void DecodeFrame(BITSTREAM *stream, IFRAME *frame, FILE *logfile);
 
 void InitDecoder(DECODER *decoder, FILE *logfile, CODESET *cs);
 void InitDecoderLicense(DECODER *decoder, const unsigned char *license);

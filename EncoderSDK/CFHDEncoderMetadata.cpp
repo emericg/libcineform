@@ -40,10 +40,6 @@
 #include "SampleEncoder.h"
 #include "MetadataWriter.h"
 
-//#define SYSLOG	0
-//#define QLONOPEN 0
-
-
 /*!
 	@function CFHD_MetadataOpen
 

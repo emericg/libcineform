@@ -35,35 +35,17 @@
 
 //TODO: Eliminate references to the codec library
 
-// Common includes
-#if defined(__APPLE__)
-//#include "GPOutputDebugString.h"
-#endif
-
 // Include files from the encoder DLL
 #include "Allocator.h"
 #include "CFHDEncoder.h"
 
-//#include "../DecoderDLL/SampleMetadata.h"
 #include "VideoBuffers.h"
 #include "SampleEncoder.h"
-
-#define SYSLOG	0
-#define QLONOPEN 0
-
-// Forward reference
-//char *GetLookNameAndCRC(char *path, unsigned long *crc);
 
 
 #if SYSLOG
 FILE *logfile = NULL;
 int err = 0;
-#endif
-
-#ifndef _WIN32
-#if QLONOPEN
-#include "QuickLicense.h"
-#endif
 #endif
 
 /*!	@function CFHD_OpenEncoder
@@ -83,10 +65,6 @@ CFHDENCODER_API CFHD_Error
 CFHD_OpenEncoder(CFHD_EncoderRef *encoderRefOut,
                  CFHD_ALLOCATOR *allocator)
 {
-#if QLONOPEN
-    QLResponseParameters		*qlResult;
-    u_int8_t					licenseFeatures[8];
-#endif
 #if (1 && SYSLOG)
     if (logfile == NULL)
     {
@@ -116,33 +94,6 @@ CFHD_OpenEncoder(CFHD_EncoderRef *encoderRefOut,
     {
         return CFHD_ERROR_OUTOFMEMORY;
     }
-#ifdef _WIN32
-#else
-#if QLONOPEN
-    //	Need to call QuickLicense to check the encoder license
-    //  Pass the capabilities to the SetLicense method.
-    //fprintf(stderr, "Open encoder, check license: ");
-    qlResult = QuickLicenseCheck( "CFHDCodec", "", "63597");
-    if ( qlResult )
-    {
-        memcpy(&licenseFeatures[0], &qlResult->qlApplicationFeatures, 8);
-        //fprintf(stderr, "result %d features[0]=%02X\n",qlResult->qlReturnCode, licenseFeatures[0]);
-        if ( qlResult->qlReturnCode > 0)
-        {
-            encoderRef->SetLicense( licenseFeatures );
-        }
-        else
-        {
-            encoderRef->SetLicense( NULL );
-        }
-    }
-    else
-    {
-        //fprintf(stderr, "failed\n");
-        encoderRef->SetLicense( NULL );
-    }
-#endif
-#endif
 
     encoderRef->SetAllocator(allocator);
 

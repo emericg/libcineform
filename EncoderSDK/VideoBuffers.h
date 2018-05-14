@@ -26,9 +26,6 @@
 */
 #pragma once
 
-// Forward reference
-//class IAllocator;
-
 #ifndef FOURCC
 #define FOURCC(x)	(char)((x) & 0xFF), (char)(((x) >> 8) & 0xFF), (char)(((x) >> 16) & 0xFF), (char)(((x) >> 24) & 0xFF)
 #endif

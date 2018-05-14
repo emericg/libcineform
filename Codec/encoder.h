@@ -203,7 +203,6 @@ typedef struct thread_field_data
 */
 typedef struct encoder  	// Encoder state (derived from codec)
 {
-
     /***** The following fields are common between the encoder and decoder *****/
 
     FILE *logfile;				// Used for saving encoder progress messages
@@ -435,9 +434,6 @@ typedef struct encoder  	// Encoder state (derived from codec)
 
 } ENCODER;
 
-//TODO: Need to update this initializer to match the fields in the encoder
-#define ENCODER_INITIALIZER {(CODEC_ERROR)0, 0, 0, 0, FALSE, NULL, NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, 0}
-
 #pragma pack(pop)
 
 
@@ -635,20 +631,6 @@ void EncodeQuantizedCoefficients(ENCODER *encoder, BITSTREAM *stream, PIXEL *inp
 #if _TEST
 // Test quantization and encoding using pixel runs
 //int32_t TestEncodeQuantizedRuns(uint32_t seed, FILE *logfile);
-#endif
-
-#if _AVIFILES
-
-// Utility routines for AVI files
-#include <vfw.h>
-
-static __inline bool IsSampleInRange(PAVISTREAM pavi, int32_t index)
-{
-    return (AVIStreamStart(pavi) <= index && index <= AVIStreamEnd(pavi));
-}
-
-LPBITMAPINFOHEADER ReadSample(PGETFRAME pgf, int32_t this_sample);
-
 #endif
 
 #ifdef __cplusplus

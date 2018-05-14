@@ -21,14 +21,9 @@
 
 #pragma once
 
-
-// Forward reference to the thread message
-//class CThreadMessage;
-
 #ifdef __APPLE__
 #include <dispatch/dispatch.h>
 #endif
-
 
 class CMessageSemaphore
 {

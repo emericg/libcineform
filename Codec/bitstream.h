@@ -41,15 +41,6 @@
 #include "config.h"
 #include "allocator.h"
 
-// Omit support for AVI files by default
-#ifndef _AVIFILES
-#define _AVIFILES 0
-#endif
-
-#if _AVIFILES
-#include <vfw.h>
-#endif
-
 // Control logfile output of bit packing operations
 #define TRACE_PUTBITS	(0 && _DEBUG)
 
@@ -138,15 +129,6 @@ typedef enum
 
 #endif
 
-// Can associate a bitstream with a video stream in an AVI file
-#if _AVIFILES
-#include <vfw.h>
-#define BITSTREAM_AVI_INVALID		0
-#define BITSTREAM_AVI_NONE			0
-#define BITSTREAM_AVI_READ			1
-#define BITSTREAM_AVI_WRITE			2
-#endif
-
 // Bitstream error codes
 enum
 {
@@ -205,12 +187,6 @@ typedef struct bitstream
     DWORD access;
 #endif
 
-#if _AVIFILES
-    // Handle for associating a bitstream with an AVI file
-    PAVISTREAM pavi;
-    int32_t sample;
-#endif
-
     // Alignment of the bitstream within the sample
     int alignment;
 
@@ -219,9 +195,6 @@ typedef struct bitstream
 
 } BITSTREAM;
 
-
-// Forward reference
-//typedef enum codec_tag CODEC_TAG;
 
 // Macros for measuring the encoded size of the bitstream (in bits)
 #if _DEBUG
@@ -389,12 +362,6 @@ void SetBitstreamBuffer(BITSTREAM *stream, uint8_t *buffer, size_t length, uint3
 void ClearBitstream(BITSTREAM *stream);
 size_t BitstreamByteCount(BITSTREAM *stream);
 void CopyBitstream(BITSTREAM *source, BITSTREAM *target);
-
-#if _AVIFILES
-// Routines for associating the bitstream with an AVI file
-void AttachBitstreamAVI(BITSTREAM *stream, PAVISTREAM pavi, DWORD access);
-void DetachBitstreamAVI(BITSTREAM *stream);
-#endif
 
 #if _DEBUG
 

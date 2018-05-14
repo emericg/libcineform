@@ -293,9 +293,6 @@ void SetDecoderFlags(DECODER *decoder, uint32_t flags);
 bool ResizeDecoderBuffer(DECODER *decoder, int width, int height, int format);
 
 IMAGE *DecodeNextFrame(DECODER *decoder, BITSTREAM *input);
-#ifdef _WIN32
-bool DecodeFile(DECODER *decoder, HANDLE file);
-#endif
 bool DecodeSequence(DECODER *decoder, BITSTREAM *input);
 bool DecodeGroup(DECODER *decoder, BITSTREAM *input, int sample_type, ColorParam *colorparams);
 bool DecodeGroupTransform(DECODER *decoder, BITSTREAM *input, int sample_type, ColorParam *colorparams);

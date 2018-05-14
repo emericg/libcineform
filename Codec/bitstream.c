@@ -107,11 +107,6 @@ void InitBitstream(BITSTREAM *stream)
     stream->access = BITSTREAM_ACCESS_NONE;
 #endif
 
-#if _AVIFILES
-    // Indicate that the bitstream is not attached to an AVI file
-    stream->pavi = BITSTREAM_AVI_INVALID;
-#endif
-
     // No error (refer to error codes in vlc.h)
     stream->error = 0;
 
@@ -263,33 +258,6 @@ uint8_t  GetWord(BITSTREAM *stream)
             }
 #endif
         }
-#if _AVIFILES
-        else if (stream->pavi != BITSTREAM_AVI_INVALID &&
-                 stream->access == BITSTREAM_AVI_READ)
-        {
-            int32_t lSampleCount;
-            int32_t lByteCount;
-            int result;
-
-            result = AVIStreamRead(stream->pavi, stream->sample, AVISTREAMREAD_CONVENIENT,
-                                   stream->block, sizeof(stream->block), &lByteCount, &lSampleCount);
-            assert(result == 0);
-            if (result != 0)
-            {
-                // Indicate that a sample could not be read from the AVI stream
-                stream->nWordsUsed = 0;
-                stream->error = BITSTREAM_ERROR_AVISAMPLE;
-            }
-            else
-            {
-                // Record the number of bytes read into the stream buffer
-                stream->nWordsUsed = lByteCount;
-
-                // Update the number of samples that have been read from the AVI stream
-                stream->sample += lSampleCount;
-            }
-        }
-#endif
         // Update bitstream buffer parameters
         stream->lpCurrentWord = stream->block;
         stream->nBitsFree = BITSTREAM_WORD_SIZE;
@@ -768,11 +736,6 @@ void PutWord(BITSTREAM *stream, uint8_t  word)
 {
     assert(stream != NULL);
     if (stream == NULL) return;
-
-#if _AVIFILES
-    // This routine has not been updated to write to an AVI stream
-    assert(stream->pavi == BITSTREAM_AVI_INVALID);
-#endif
 
     // Is the output block of words full?
     if (stream->nWordsUsed == stream->dwBlockLength)
@@ -2040,41 +2003,6 @@ void CopyBitstream(BITSTREAM *source, BITSTREAM *target)
     // Check for bitstream block overflow
     assert(target->nWordsUsed <= target->dwBlockLength);
 }
-
-#if _AVIFILES
-
-// Routines for associating the bitstream with an AVI file
-void AttachBitstreamAVI(BITSTREAM *stream, PAVISTREAM pavi, DWORD access)
-{
-    // Check that the stream is not already attached to an AVI stream
-    assert(stream->pavi == BITSTREAM_AVI_INVALID);
-
-    // Check that the stream is not attached to a file
-    assert(stream->file == BITSTREAM_FILE_INVALID);
-
-    // Check that the requested access is appropriate for an AVI stream
-    assert(access == BITSTREAM_AVI_READ || access == BITSTREAM_AVI_WRITE);
-
-    stream->pavi = pavi;
-    stream->access = access;
-
-    // Start reading the first sample from the AVI stream
-    stream->sample = 0;
-}
-
-void DetachBitstreamAVI(BITSTREAM *stream)
-{
-    // Check that no AVI access uses the same code as no file access
-    assert(BITSTREAM_AVI_NONE == BITSTREAM_ACCESS_NONE);
-
-    stream->pavi = NULL;
-    stream->access = BITSTREAM_ACCESS_NONE;
-
-    // Let the caller close the AVI stream
-}
-
-#endif
-
 
 static const char *tag_string_table[] =
 {
