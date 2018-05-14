@@ -1,6 +1,11 @@
 libcineform
 ===========
 
+[![Build Status](https://travis-ci.org/emericg/libcineform.svg?branch=master)](https://travis-ci.org/emericg/libcineform)
+[![Build status](https://ci.appveyor.com/api/projects/status/ffmf6cnjtb3es6li?svg=true)](https://ci.appveyor.com/project/emericg/libcineform)
+
+# Introduction
+
 CineForm decoding and encoding library, forked from the [CineForm SDK](https://github.com/gopro/cineform-sdk).
 The main goal here is to remove a lot of unsued stuff and keep both the code repository and library sizes contained.
 Also, make it build on all platforms and compilers, while allowing a clean integration into third party project.
