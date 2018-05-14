@@ -64,7 +64,7 @@
 
 #include "decoder.h"				// Decoder data structure and entry points
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 #include <stdlib.h>
 
@@ -131,31 +131,6 @@ CFHD_Error ConvertToOutputBuffer(void *inputBuffer, int inputPitch, int inputFor
             converter.ConvertToBGRA64((unsigned char *)inputBuffer, inputPitch,
                                       (unsigned char *)outputBuffer, outputPitch,
                                       width, height, byte_swap_flag);
-
-#if 0	//_WINDOWS	//For Adobe Aftger Effects CS3
-            if (byte_swap_flag)
-            {
-                char *outputRowPtr = (char *)outputBuffer;
-
-                // Copy the decoded frame to the output buffer
-                for (int row = 0; row < height; row++)
-                {
-                    unsigned short *outputPtr = (unsigned short *)outputRowPtr;
-
-                    // Swap the bytes in each pixel component
-                    for (int column = 0; column < width; column++)
-                    {
-                        // Copy each of the components with byte swapping
-                        *(outputPtr++) = SwapInt16(*outputPtr);
-                        *(outputPtr++) = SwapInt16(*outputPtr);
-                        *(outputPtr++) = SwapInt16(*outputPtr);
-                        *(outputPtr++) = SwapInt16(*outputPtr);
-                    }
-                    // Advance to the next input and output rows
-                    outputRowPtr += outputPitch;
-                }
-            }
-#endif
         }
 #if 0
         else if (outputFormat == k4444YpCbCrA32RPixelFormat)
@@ -207,7 +182,7 @@ CFHD_Error ConvertToOutputBuffer(void *inputBuffer, int inputPitch, int inputFor
                 //DANREMOVED  ConvertRGB32ToQuickTime((unsigned char *)inputBuffer, inputPitch,
                 //									(unsigned char *)outputBuffer, outputPitch,
                 //									width, height, 0
-                //#ifndef _WINDOWS
+                //#ifndef _WIN32
                 //									, 0, NULL
                 //#endif
                 //									);

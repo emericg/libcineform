@@ -416,24 +416,12 @@ public:
             m_format = format;
             m_offset = offset;
 
-#if (0 && _WINDOWS && !defined(_PRODUCTION))
-            char message[256];
-            sprintf_s(message,
-                      "CFrameBuffer::Alloc allocated buffer: 0x%08X, size: %d, width: %d, height: %d, format: %c%c%c%c\n",
-                      m_dataBuffer, m_bufferSize, m_width, m_height, FOURCC(m_format));
-            OutputDebugString(message);
-#endif
             // The frame buffer has been properly allocated
             return true;
         }
         else
         {
-#if (0 && _WINDOWS && !defined(_PRODUCTION))
-            char message[256];
-            sprintf_s(message, "CFrameBuffer::Alloc failed size: %d, width: %d, height: %d, format: %c%c%c%c\n",
-                      size, width, height, FOURCC(format));
-            OutputDebugString(message);
-#endif
+            // "CFrameBuffer::Alloc failed size: %d, width: %d, height: %d, format: %c%c%c%c\n", size, width, height, FOURCC(format));
         }
         return false;
     }

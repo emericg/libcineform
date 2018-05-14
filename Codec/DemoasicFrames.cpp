@@ -28,7 +28,7 @@
 #include <assert.h>
 #include <emmintrin.h>		// SSE2 intrinsics
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include <windows.h>
 //#include <atlbase.h> // Required for VS2005 but not 2003
 #elif __APPLE__
@@ -5040,7 +5040,7 @@ void BayerRippleFilter(	int width,
 }
 
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 static int
 WINAPI
@@ -5169,7 +5169,7 @@ float *LoadCube64_3DLUT(DECODER *decoder, CFHDDATA *cfhddata, int *lutsize)
         if (decoder->LUTsPathStr[0] == 0)
             InitLUTPaths(decoder);
 
-#ifdef _WINDOWS
+#ifdef _WIN32
         sprintf_s(crcname, sizeof(crcname), "%s/%08X.cflook", decoder->LUTsPathStr, (uint32_t)cfhddata->user_look_CRC);
         err = fopen_s(&fp, crcname, "rb");
 #else
@@ -5423,7 +5423,7 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
             size = ptr[4] + (ptr[5] << 8) + (ptr[6] << 16);
             tag = MAKETAG(ptr[0], ptr[1], ptr[2], ptr[3]);
 
-#if _WINDOWS && _DEBUG && 0
+#if _WIN32 && _DEBUG && 0
             if (type == 'f')
             {
                 char t[1000], tt[100];
@@ -5736,7 +5736,7 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
                     break;
 
                 case TAG_TIMECODE:
-#ifdef _WINDOWS
+#ifdef _WIN32
                     strncpy_s(cfhddata->FileTimecodeData.orgtime, sizeof(cfhddata->FileTimecodeData.orgtime), (char *)data, 15);
 #else
                     strncpy(cfhddata->FileTimecodeData.orgtime, (char *)data, 15);
@@ -5797,7 +5797,7 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
                         {
                             int copysize = (int)size;
                             if (copysize > 39) copysize = 39;
-#ifdef _WINDOWS
+#ifdef _WIN32
                             strncpy_s(cfhddata->look_filename, sizeof(cfhddata->look_filename), (char *)data, copysize);
 #else
                             strncpy(cfhddata->look_filename, (char *)data, copysize);
@@ -5810,7 +5810,7 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
                         {
                             if (0 != strncmp(cfhddata->look_export_path, (char *)data, size))
                             {
-#ifdef _WINDOWS
+#ifdef _WIN32
                                 strncpy_s(cfhddata->look_export_path, sizeof(cfhddata->look_export_path), (char *)data, size);
 #else
                                 strncpy(cfhddata->look_export_path, (char *)data, size);
@@ -6508,7 +6508,7 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
                     case TAG_DISPLAY_FREEFORM:
                         copysize = size;
                         if (copysize >= FREEFORM_STR_MAXSIZE) copysize = FREEFORM_STR_MAXSIZE - 1;
-#ifdef _WINDOWS
+#ifdef _WIN32
                         strncpy_s(decoder->MDPdefault.freeform, sizeof(decoder->MDPdefault.freeform), (char *)data, copysize);
 #else
                         strncpy(decoder->MDPdefault.freeform, (char *)data, copysize);
@@ -6520,7 +6520,7 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
                         copysize = size;
                         if (copysize >= FONTNAME_STR_MAXSIZE) copysize = FONTNAME_STR_MAXSIZE - 1;
 
-#ifdef _WINDOWS
+#ifdef _WIN32
                         strncpy_s(decoder->MDPdefault.font, sizeof(decoder->MDPdefault.font), (char *)data, copysize);
 #else
                         strncpy(decoder->MDPdefault.font, (char *)data, copysize);
@@ -6557,7 +6557,7 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
                     case TAG_DISPLAY_FORMAT:
                         copysize = size;
                         if (copysize >= FORMAT_STR_MAXSIZE) copysize = FORMAT_STR_MAXSIZE - 1;
-#ifdef _WINDOWS
+#ifdef _WIN32
                         strncpy_s(decoder->MDPdefault.format_str, sizeof(decoder->MDPdefault.format_str), (char *)data, copysize);
 #else
                         strncpy(decoder->MDPdefault.format_str, (char *)data, copysize);
@@ -6567,7 +6567,7 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
                     case TAG_DISPLAY_PNG_PATH:
                         copysize = size;
                         if (copysize >= PNG_PATH_MAXSIZE) copysize = PNG_PATH_MAXSIZE - 1;
-#ifdef _WINDOWS
+#ifdef _WIN32
                         strncpy_s(decoder->MDPdefault.png_path, sizeof(decoder->MDPdefault.png_path), (char *)data, copysize);
 #else
                         strncpy(decoder->MDPdefault.png_path, (char *)data, copysize);
@@ -6726,7 +6726,7 @@ void GetCurrentID(DECODER *decoder, unsigned char *ptr, unsigned int len, char *
                     break;
                 case TAG_DISPLAY_FREEFORM:
                     if (size > id_size - 1) size = id_size - 1;
-#ifdef _WINDOWS
+#ifdef _WIN32
                     strncpy_s(id, id_size, (char *)data, size);
 #else
                     strncpy(id, (char *)data, size);

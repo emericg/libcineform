@@ -21,7 +21,7 @@
 
 #pragma once
 
-#if _WINDOWS
+#if _WIN32
 #include <windows.h>
 //#include <atlbase.h>
 #include <tchar.h>
@@ -36,22 +36,19 @@
 #include <limits.h>
 #include <stdint.h>
 
-￼
-#include <emmintrin.h>		// SSE2 intrinsics
+#include <emmintrin.h> // SSE2 intrisics
 
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
-#ifdef _WINDOWS
-
-#else
+#ifndef _WIN32
 
 // The standard integer types should be available on most platforms
 #define __STDC_LIMIT_MACROS
 #include <stdint.h>
 
-#if !defined(_WINDOWS) && !defined(__APPLE__)
+#if !defined(_WIN32) && !defined(__APPLE__)
 // Use byte swapping functions on Linux
 #include <byteswap.h>
 #endif

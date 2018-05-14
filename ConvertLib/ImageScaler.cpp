@@ -34,7 +34,7 @@
 
 #define CONVERT_709_TO_601	1
 
-#if _WINDOWS
+#if _WIN32
 
 #if !defined(_OPENMP)
 // Turn off warnings about the Open MP pragmas
@@ -50,7 +50,7 @@
 #define SYSLOG (0)
 
 
-#if _WINDOWS
+#if _WIN32
 
 #include <stdlib.h>
 
@@ -81,7 +81,7 @@
 #endif
 
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 #include "cpuid.h"
 
@@ -2950,7 +2950,7 @@ void CImageScalerConverterB64A::ScaleToB64AThread(int index)
     int outputWidth = mailbox.vars[3];
     int outputHeight = mailbox.vars[4];
     int outputPitch = mailbox.vars[5];
-#if _WINDOWS
+#if _WIN32
     int byte_swap_flag = mailbox.vars[6];
 #endif
     int yy = index;
@@ -3031,7 +3031,7 @@ void CImageScalerConverterB64A::ScaleToB64AThread(int index)
                 if (B < 0) B = 0;
                 else if (B > max_rgb) B = max_rgb;
 
-#ifdef _WINDOWS
+#ifdef _WIN32
                 if (!byte_swap_flag)
                 {
                     *(BGRA++) = A;
@@ -3473,7 +3473,7 @@ void CImageScalerConverterRG48::ScaleToRG48Thread(int index)
                 if (B < 0) B = 0;
                 else if (B > max_rgb) B = max_rgb;
 
-#ifdef _WINDOWS
+#ifdef _WIN32
                 if (!byte_swap_flag)
                 {
                     *(BGRA++) = R;
@@ -5166,7 +5166,7 @@ void ScaleRGB32Column( int row,
             //fprintf(stderr,"%02x %02x %02x %02x\n",A,R,G,B);
         }
     }
-#ifndef _WINDOWS
+#ifndef _WIN32
     // Do some gamma conversion if needed
     if (byte_swap_flag)
     {
@@ -5535,7 +5535,7 @@ void ScaleB64AColumn( int row,
         else if (B > USHRT_MAX) B = USHRT_MAX;
         if (A < 0) A = 0;
         else if (A > USHRT_MAX) A = USHRT_MAX;
-#ifdef _WINDOWS
+#ifdef _WIN32
         if (!byte_swap_flag)
         {
             *(BGRA++) = A;
@@ -5615,7 +5615,7 @@ void ScaleB64AToBGRAColumn( int row,
         *(BGRA++) = A;
     }
     // Have the row scaled, now do the gamma correction if needed
-#ifndef _WINDOWS
+#ifndef _WIN32
     // Do some gamma conversion if needed
     if (byte_swap_flag)
     {

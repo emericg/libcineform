@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 
-#if _WINDOWS
+#if _WIN32
 
 // Export the interface to the decoder
 #define DECODERDLL_EXPORTS	1
@@ -73,7 +73,7 @@ extern "C" {
 #include "SampleMetadata.h"
 
 
-#if _WINDOWS
+#if _WIN32
 #ifdef DYNAMICLIB
 BOOL APIENTRY DllMain(HANDLE hModule,
                       DWORD ulReasonForCall,
@@ -503,7 +503,7 @@ CFHD_ParseSampleHeader(void *samplePtr,
     }
     catch (...)
     {
-#if _WINDOWS
+#if _WIN32
         char message[256];
         sprintf_s(message, sizeof(message), "CSampleDecoder::PrepareDecoder caught internal codec error\n");
         OutputDebugString(message);
@@ -759,7 +759,7 @@ CFHD_DecodeSample(CFHD_DecoderRef decoderRef,
     }
     catch (...)
     {
-#ifdef _WINDOWS
+#ifdef _WIN32
         OutputDebugString("Target memory buffer is an invalid size");
 #endif
         return CFHD_ERROR_DECODE_BUFFER_SIZE;
@@ -842,7 +842,7 @@ CFHD_CloseDecoder(CFHD_DecoderRef decoderRef)
 }
 
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include "CFHDMetadata.h"
 #else
 #include "CFHDMetadata.h"
@@ -1219,7 +1219,7 @@ unsigned int ValidateLookGenCRC(char *path)
             // valid 3D LUT
             crc = calccrc((unsigned char *)LUT, entries * 4);
             char fullpath[260];
-#if	_WINDOWS
+#if	_WIN32
             if (0 == ::GetLongPathName(path, fullpath, 259))
                 strcat(fullpath, path);
 #else
@@ -1399,7 +1399,7 @@ CFHD_SetActiveMetadata(	CFHD_DecoderRef decoderRef,
 
             //DANREMOVE			crc = ValidateLookGenCRC((char *)data);
 
-#ifdef _WINDOWS
+#ifdef _WIN32
             strcpy_s(lastpath, sizeof(lastpath), (char *)data);
             _splitpath_s((char *)data, drive, sizeof(drive), dir, sizeof(dir), fname, sizeof(fname), ext, sizeof(ext));
             _makepath_s(filename, sizeof(filename), NULL, NULL, fname, ext);
@@ -1415,7 +1415,7 @@ CFHD_SetActiveMetadata(	CFHD_DecoderRef decoderRef,
                 typesizebytes = ('c' << 24) | 39;
                 metadata->AddMetaData(TAG_LOOK_FILE, typesizebytes, (void *)&filename[0]);
 
-#ifdef _WINDOWS
+#ifdef _WIN32
                 strcpy_s(lastLUTfilename, sizeof(lastLUTfilename), filename);
 #else
                 strcpy(lastLUTfilename, filename);

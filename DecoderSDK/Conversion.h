@@ -50,7 +50,7 @@ static bool IsPrintableFourCC(char *fourcc)
     // Check that all of the characters are printable
     for (i = 0; i < 4; i++)
     {
-#if _WINDOWS
+#if _WIN32
         if (isspace(fourcc[i]) || !isprint(fourcc[i]))
         {
 #else
@@ -71,7 +71,7 @@ __inline static const char *CStringFromOSType(unsigned int fourcc)
     //Boolean isPrintable = true;
     //int i;
 
-#if _WINDOWS
+#if _WIN32
     sprintf_s(string, sizeof(string), "%c%c%c%c", FOURCC(fourcc));
 #else
     sprintf(string, "%c%c%c%c", FOURCC(fourcc));
@@ -80,7 +80,7 @@ __inline static const char *CStringFromOSType(unsigned int fourcc)
     if (!IsPrintableFourCC(string))
     {
         //sprintf(string, "0x%08X", (unsigned int)fourcc);
-#if _WINDOWS
+#if _WIN32
         sprintf_s(string, sizeof(string), "%d", (int)fourcc);
 #else
         sprintf(string, "%d", (int)fourcc);

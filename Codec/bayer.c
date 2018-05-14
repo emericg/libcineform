@@ -6873,7 +6873,7 @@ void ComputeCube(DECODER *decoder)
 
                 cfhddata->export_look = 0;
 
-#ifdef _WINDOWS
+#ifdef _WIN32
                 err = fopen_s(&fp, cfhddata->look_export_path, "w");
 #else
                 fp = fopen(cfhddata->look_export_path, "w");
@@ -6930,7 +6930,7 @@ void ComputeCube(DECODER *decoder)
                         int err = 0;
 
 
-#ifdef _WINDOWS
+#ifdef _WIN32
                         strcpy_s(cubename, sizeof(cubename), cfhddata->look_export_path);
                         cubename[strlen(cubename) - 4] = 0;
                         strcat_s(cubename, sizeof(cubename), "cube");
@@ -6940,7 +6940,7 @@ void ComputeCube(DECODER *decoder)
                         cubename[strlen(cubename) - 4] = 0;
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
                         err = fopen_s(&fp, cubename, "w");
 #else
                         fp = fopen(cubename, "w");
@@ -6951,7 +6951,7 @@ void ComputeCube(DECODER *decoder)
                             char fname[260] = "CubeExport";
                             //short *pLUT = (short *)RawCube;
 
-#ifdef _WINDOWS
+#ifdef _WIN32
                             //_splitpath(cubename, NULL, NULL, fname, NULL);
                             _splitpath_s(cubename, NULL, 0, NULL, 0, fname, sizeof(fname), NULL, 0);
 #endif
@@ -7604,7 +7604,7 @@ void ComputeCube(DECODER *decoder)
 
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #pragma warning(disable: 4554)
 #endif
 
@@ -13914,7 +13914,7 @@ THREAD_PROC(WorkerThreadProc, lpParam)
     //int initFsm = -1;
     //FSM fsm;
 
-#ifdef _WINDOWS
+#ifdef _WIN32
     if (decoder->thread_cntrl.affinity)
     {
         HANDLE hCurrentThread = GetCurrentThread();

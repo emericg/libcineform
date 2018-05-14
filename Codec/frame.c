@@ -68,7 +68,7 @@ extern COUNTER alloc_frame_count;		// Number of frames allocated
 #define SATURATE_12U(x) _saturate12u(x)
 
 #if 0
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 #include <stdlib.h>
 
@@ -158,7 +158,7 @@ FRAME *CreateFrame(int width, int height, int display_height, int format)
 #endif
     if (frame == NULL)
     {
-#if (DEBUG && _WINDOWS)
+#if (DEBUG && _WIN32)
         OutputDebugString("sizeof(FRAME)");
 #endif
         return NULL;

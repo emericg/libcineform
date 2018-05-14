@@ -20,7 +20,7 @@
 */
 #pragma once
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 // Exclude rarely-used stuff from Windows headers
 //#define WIN32_LEAN_AND_MEAN

@@ -28,7 +28,7 @@
 #define TIMING (1 && _TIMING)
 #define XMMOPT (1 && _XMMOPT)
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #define SYSLOG	0
 #else
 #define SYSLOG	(0 && DEBUG)
@@ -55,7 +55,7 @@
 #include "macdefs.h"
 #endif
 
-#if !defined(_WINDOWS)
+#if !defined(_WIN32)
 #define min(x,y)	(((x) < (y)) ? (x) : (y))
 #define max(x,y)	(((x) > (y)) ? (x) : (y))
 #endif
@@ -246,7 +246,7 @@ IMAGE *CreateImage(int width, int height)
     }
     else
     {
-#if (DEBUG && _WINDOWS)
+#if (DEBUG && _WIN32)
         OutputDebugString("CreateImage sizeof(IMAGE)");
 #endif
     }
@@ -556,7 +556,7 @@ IMAGE *CreateImageFromArray(PIXEL *array, int width, int height, int pitch)
     }
     else
     {
-#if (DEBUG && _WINDOWS)
+#if (DEBUG && _WIN32)
         OutputDebugString("CreateImageFromArray sizeof(IMAGE)");
 #endif
         assert(image != NULL);
@@ -623,7 +623,7 @@ IMAGE *CreateWaveletBandFromArray(PIXEL *array, int width, int height, int pitch
     }
     else
     {
-#if (DEBUG && _WINDOWS)
+#if (DEBUG && _WIN32)
         OutputDebugString("wavelet sizeof(IMAGE)");
 #endif
         assert(wavelet != NULL);
@@ -723,7 +723,7 @@ void ConvertImageToYUV(IMAGE *image, uint8_t *output_buffer, int32_t output_pitc
     }
 }
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 
 int ColorTableLength(LPBITMAPINFOHEADER lpbi)
 {
@@ -1781,13 +1781,13 @@ void OutputRGB(unsigned char *outbuffer, IMAGE *waveletY, IMAGE *waveletV, IMAGE
     if (PPM)
     {
         int err = 0;
-#ifdef _WINDOWS
+#ifdef _WIN32
         sprintf_s(name, sizeof(name), "C:\\Cedoc\\Preview%dx%d.ppm", output_width, output_height);
 #else
         sprintf(name, "C:\\Cedoc\\Preview%dx%d.ppm", output_width, output_height);
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
         err = fopen_s(&file, name, "wb");
 #else
         file = fopen(name, "wb");
@@ -2006,13 +2006,13 @@ void DumpPGM(char *label, IMAGE *image, SUBIMAGE *subimage)
         lumashift2 = (float)totalshifted / (float)count;
     }
 
-#ifdef _WINDOWS
+#ifdef _WIN32
     sprintf_s(name, sizeof(name), "C:\\Cedoc\\%s%dx%d.pgm", label, last_column - first_column + 1, last_row - first_row + 1);
 #else
     sprintf(name, "C:\\Cedoc\\%s%dx%d.pgm", label, last_column - first_column + 1, last_row - first_row + 1);
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
     err = fopen_s(&file, name, "w");
 #else
     file = fopen(name, "w");
@@ -2174,13 +2174,13 @@ void DumpBandPGM(char *label, IMAGE *wavelet, int band, SUBIMAGE *subimage)
     }
 
     //sprintf(name, "C:\\Cedoc\\%s%dx%d-l%d.pgm", label, output_width, output_height, levelshift);
-#ifdef _WINDOWS
+#ifdef _WIN32
     sprintf_s(name, sizeof(name), "C:\\Cedoc\\%s%dx%d.pgm", label, output_width, output_height);
 #else
     sprintf(name, "C:\\Cedoc\\%s%dx%d.pgm", label, output_width, output_height);
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
     err = fopen_s(&file, name, "w");
 #else
     file = fopen(name, "w");
@@ -2280,13 +2280,13 @@ void DumpBandSignPGM(char *label, IMAGE *wavelet, int band, SUBIMAGE *subimage)
     output_width = last_column - first_column + 1;
     output_height = last_row - first_row + 1;
 
-#ifdef _WINDOWS
+#ifdef _WIN32
     sprintf_s(name, sizeof(name), "C:\\Cedoc\\%s%dx%d.pgm", label, output_width, output_height);
 #else
     sprintf(name, "C:\\Cedoc\\%s%dx%d.pgm", label, output_width, output_height);
 #endif
 
-#ifdef _WINDOWS
+#ifdef _WIN32
     err = fopen_s(&file, name, "w");
 #else
     file = fopen(name, "w");
@@ -3277,7 +3277,7 @@ void DumpWaveletBandsPGM(IMAGE *wavelet, int frame_index, int num_channels)
             if (count < 20)
             {
                 char label[_MAX_PATH];
-#ifdef _WINDOWS
+#ifdef _WIN32
                 sprintf_s(label, sizeof(label), "Frame%dc%db%d-decode-%d-", frame_index, channel, band, count);
 #else
                 sprintf(label, "Frame%dc%db%d-decode-%d-", frame_index, channel, band, count);

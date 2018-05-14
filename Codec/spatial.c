@@ -6599,7 +6599,7 @@ void FilterLowpassHorizontal(PIXEL *input, int input_pitch, PIXEL *output, int o
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (0 && DEBUG && _WINDOWS)
+#if (0 && DEBUG && _WIN32)
     _CrtCheckMemory();
 #endif
 }
@@ -6889,7 +6889,7 @@ void FilterHighpassHorizontal(PIXEL *input, int input_pitch,
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (0 && DEBUG && _WINDOWS)
+#if (0 && DEBUG && _WIN32)
     _CrtCheckMemory();
 #endif
 }
@@ -7105,7 +7105,7 @@ void FilterHighpassHorizontal(PIXEL *input, int input_pitch,
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (0 && DEBUG && _WINDOWS)
+#if (0 && DEBUG && _WIN32)
     _CrtCheckMemory();
 #endif
 }
