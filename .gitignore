@@ -1,0 +1,5 @@
+# Build folder
+build/
+
+# CMake temporary files
+CMakeLists.txt.user
