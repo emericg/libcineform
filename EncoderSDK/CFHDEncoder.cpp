@@ -60,27 +60,6 @@ FILE *logfile = NULL;
 int err = 0;
 #endif
 
-#if _WINDOWS
-#ifdef DYNAMICLIB
-#ifndef CODECCOMBINED
-BOOL APIENTRY DllMain(HANDLE hModule,
-                      DWORD ulReasonForCall,
-                      LPVOID lpReserved)
-{
-    switch (ulReasonForCall)
-    {
-        case DLL_PROCESS_ATTACH:
-        case DLL_THREAD_ATTACH:
-        case DLL_THREAD_DETACH:
-        case DLL_PROCESS_DETACH:
-            break;
-    }
-    return TRUE;
-}
-#endif
-#endif
-#endif
-
 #ifndef _WINDOWS
 #if QLONOPEN
 #include "QuickLicense.h"
