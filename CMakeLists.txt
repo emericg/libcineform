@@ -9,8 +9,13 @@ option(BUILD_SHARED_LIBS "Build shared library" ON)
 
 if (WIN32)
     set(COMPILER_FLAGS "")
-    set(COMPILER_FLAGS_W_OMP "/openmp")
-    set(ADDITIONAL_LIBS "")
+
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+        set(COMPILER_FLAGS_W_OMP "/openmp")
+    else ()
+        set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--allow-multiple-definition")
+    endif ()
+    SET(ADDITIONAL_LIBS "")
 endif (WIN32)
 
 if (UNIX)

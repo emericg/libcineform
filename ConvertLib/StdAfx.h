@@ -34,34 +34,16 @@
 #include <math.h>
 #include <memory.h>
 #include <limits.h>
+#include <stdint.h>
 
+￼
 #include <emmintrin.h>		// SSE2 intrinsics
-
-//#include <string.h>
-//#include <assert.h>
-//#include <vfw.h>
-//#include <time.h>
 
 #ifdef __APPLE__
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
 #ifdef _WINDOWS
-
-#if 0
-// Windows does not have the standard integer types
-typedef signed char int8_t;
-typedef unsigned char   uint8_t;
-typedef short  int16_t;
-typedef unsigned short  uint16_t;
-typedef int  int32_t;
-typedef unsigned   uint32_t;
-typedef __int64  int64_t;
-typedef unsigned __int64   uint64_t;
-#else
-#define __STDC_LIMIT_MACROS
-#include <stdint.h>
-#endif
 
 #else
 

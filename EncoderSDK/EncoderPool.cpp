@@ -22,11 +22,6 @@
 
 #include "StdAfx.h"
 
-
-#ifndef _WINDOWS
-#include <uuid/uuid.h>
-#endif
-
 // Include files from the codec library
 #include "encoder.h"
 #include "metadata.h"

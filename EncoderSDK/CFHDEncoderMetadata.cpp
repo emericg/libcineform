@@ -24,7 +24,6 @@
 
 // Include files from the codec library
 #include "encoder.h"
-//#include "thread.h"
 #include "metadata.h"
 #include "AVIExtendedHeader.h"
 
@@ -40,7 +39,6 @@
 #include "VideoBuffers.h"
 #include "SampleEncoder.h"
 #include "MetadataWriter.h"
-//#include "Watermark.h"
 
 //#define SYSLOG	0
 //#define QLONOPEN 0

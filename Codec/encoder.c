@@ -8010,8 +8010,6 @@ void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_tran
         SizeTagPop(output);
     }
 
-
-
     STOP(tk_encoding);
 }
 
@@ -9012,7 +9010,7 @@ void OverrideEncoderSettings(ENCODER *encoder)
                     if (len <= MAX_ENCODE_DATADASE_LENGTH)
                     {
                         fseek (fp, 0, SEEK_SET);
-#ifdef _WINDOWS
+#ifdef _MSVC_VER
                         len = (int)fread_s(buffer, MAX_ENCODE_DATADASE_LENGTH, 1, len, fp);
 #else
                         len = (int)fread(buffer, 1, len, fp);

@@ -30,9 +30,6 @@
 */
 #define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
 
-#if 0
-#include "StdAfx.h"
-#else
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -41,11 +38,8 @@
 #include <memory.h>
 #define __STDC_LIMIT_MACROS
 #include <stdint.h>
-#endif
 
-#if __APPLE_CC__
-//#include <QuickTime/QuickTime.h>
-#elif __GNUC__
+#if __linux__
 // Use byte swapping functions on Linux
 #include <byteswap.h>
 #else

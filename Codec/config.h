@@ -38,7 +38,9 @@
 #define FORCEINLINE __forceinline
 #endif
 #else
+#ifndef FORCEINLINE
 #define FORCEINLINE __inline__
+#endif
 #endif
 
 // Enable or disable use of the new state machine decoder

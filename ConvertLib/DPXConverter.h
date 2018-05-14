@@ -21,10 +21,7 @@
 
 #pragma once
 
-// Define the maximum unsigned integer (should use stdint.h)
-#ifndef UINT16_MAX
-#define UINT16_MAX 0xFFFF
-#endif
+#include <stdint.h>
 
 class DPX_PixelFormat
 {

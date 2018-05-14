@@ -24,10 +24,7 @@
 // The image converter uses packing and byte swapping from the DPX converter
 #include "DPXConverter.h"
 
-// Define the maximum value of a 16-bit unsigned integer
-#ifndef UINT16_MAX
-#define UINT16_MAX 0xFFFF
-#endif
+#include <stdint.h>
 
 // Templated class for YUV to RGB conversion
 template<typename CoefficientType>
