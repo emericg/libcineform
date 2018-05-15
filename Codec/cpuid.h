@@ -41,4 +41,4 @@ int GetProcessorCount();
 }
 #endif
 
-#endif
+#endif // _CPUID_H

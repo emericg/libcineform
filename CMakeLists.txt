@@ -2,6 +2,7 @@ cmake_minimum_required (VERSION 3.5.1)
 project (libcineform C CXX)
 
 # Build settings
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 add_definitions(-D_ALLOCATOR=1)
 option(BUILD_STATIC_LIBS "Build static library" ON)

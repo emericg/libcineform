@@ -84,40 +84,41 @@ void ColorDifference2Bayer(int width,
                            int bayer_pitch,
                            int bayer_format);
 
-void BayerRippleFilter(	int width,
-                        unsigned short *srcptr,
-                        int bayer_pitch,
-                        int bayer_formatm,
-                        unsigned short *srcbase);
+void BayerRippleFilter(int width,
+                       unsigned short *srcptr,
+                       int bayer_pitch,
+                       int bayer_formatm,
+                       unsigned short *srcbase);
 
-void FastVignetteInplaceWP13(DECODER *decoder, int displayWidth, int width, int height, int y, float r1, float r2, float gain,
+void FastVignetteInplaceWP13(DECODER *decoder, int displayWidth, int width, int height,
+                             int y, float r1, float r2, float gain,
                              int16_t *sptr, int resolution, int pixelsize);
 void FastSharpeningBlurHinplaceWP13(int width, int16_t *sptr, float sharpness, int resolution, int pixelsize);
 
-void FastSharpeningBlurVWP13( short *Aptr,
-                              short *Bptr,
-                              short *Cptr,
-                              short *Dptr,
-                              short *Eptr,
-                              int pitch,
-                              int edgenear,
-                              short *output,
-                              int pixels,
-                              float sharpness,
-                              int resolution,
-                              int channel_blend_type);
-void FastSharpeningBlurVW13A( short *Aptr,
-                              short *Bptr,
-                              short *Cptr,
-                              short *Dptr,
-                              short *Eptr,
-                              int pitch,
-                              int edgenear,
-                              short *output,
-                              int pixels,
-                              float sharpness,
-                              int resolution,
-                              int channel_blend_type);
+void FastSharpeningBlurVWP13(short *Aptr,
+                             short *Bptr,
+                             short *Cptr,
+                             short *Dptr,
+                             short *Eptr,
+                             int pitch,
+                             int edgenear,
+                             short *output,
+                             int pixels,
+                             float sharpness,
+                             int resolution,
+                             int channel_blend_type);
+void FastSharpeningBlurVW13A(short *Aptr,
+                             short *Bptr,
+                             short *Cptr,
+                             short *Dptr,
+                             short *Eptr,
+                             int pitch,
+                             int edgenear,
+                             short *output,
+                             int pixels,
+                             float sharpness,
+                             int resolution,
+                             int channel_blend_type);
 
 #ifdef __cplusplus
 }
