@@ -52,10 +52,7 @@
 #include "error.h"
 #include "decoder.h"
 #include "bandfile.h"
-
-#ifndef FOUR_CHAR_CODE
-#define FOUR_CHAR_CODE(a,b,c,d)		(((d&0xff)<<0)|((c&0xff)<<8)|((b&0xff)<<16)|((a&0xff)<<24))
-#endif
+#include "CFHDTypes.h"
 
 /*!
 	@brief Four character codes for the band file headers
@@ -63,27 +60,15 @@
 	@todo Byte swap the four character codes so that the letters
 	appear in the correct order on little endian machines.
 */
-#ifdef __APPLE__
 typedef enum
 {
-    BAND_HEADER_FILE = 'file',
-    BAND_HEADER_FRAME = 'fram',
-    BAND_HEADER_CHANNEL = 'chan',
-    BAND_HEADER_WAVELET = 'wave',
-    BAND_HEADER_DATA = 'band',
+    BAND_HEADER_FILE =		CFHD_FCC('f', 'i', 'l', 'e'),
+    BAND_HEADER_FRAME =		CFHD_FCC('f', 'r', 'a', 'm'),
+    BAND_HEADER_CHANNEL =	CFHD_FCC('c', 'h', 'a', 'n'),
+    BAND_HEADER_WAVELET =	CFHD_FCC('w', 'a', 'v', 'e'),
+    BAND_HEADER_DATA =		CFHD_FCC('b', 'a', 'n', 'd'),
 
 } BAND_HEADER_TYPE;
-#else
-typedef enum
-{
-    BAND_HEADER_FILE =		FOUR_CHAR_CODE('f', 'i', 'l', 'e'),
-    BAND_HEADER_FRAME =		FOUR_CHAR_CODE('f', 'r', 'a', 'm'),
-    BAND_HEADER_CHANNEL =	FOUR_CHAR_CODE('c', 'h', 'a', 'n'),
-    BAND_HEADER_WAVELET =	FOUR_CHAR_CODE('w', 'a', 'v', 'e'),
-    BAND_HEADER_DATA =		FOUR_CHAR_CODE('b', 'a', 'n', 'd'),
-
-} BAND_HEADER_TYPE;
-#endif
 
 struct header
 {
