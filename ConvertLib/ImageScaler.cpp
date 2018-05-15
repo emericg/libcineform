@@ -26,6 +26,7 @@
 #define ASSERT(x)	assert(x)
 #endif
 
+#include <cmath>
 #include "ColorFlags.h"
 #include "MemAlloc.h"
 #include "ImageConverter.h"

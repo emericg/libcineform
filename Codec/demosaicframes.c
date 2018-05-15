@@ -136,7 +136,7 @@ void FastSharpeningBlurVW13A( short *Aptr,
 #define DEBAYER5x5		1
 #define CF_ENHANCE		1	//CineForm Enhancement Debayer
 
-inline void REDCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
+void REDCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
 {
     int r, g, b;
     {
@@ -183,7 +183,7 @@ inline void REDCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
     *rgbptr++ = SATURATE16(b);
 }
 
-inline void GRNREDCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
+void GRNREDCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
 {
     int r, g, b;
     {
@@ -229,9 +229,7 @@ inline void GRNREDCELL(unsigned short *rgbptr, unsigned short *bayerptr, int wid
     *rgbptr++ = SATURATE16(b);
 }
 
-
-
-inline void GRNBLUCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
+void GRNBLUCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
 {
     int r, g, b;
     {
@@ -279,8 +277,7 @@ inline void GRNBLUCELL(unsigned short *rgbptr, unsigned short *bayerptr, int wid
     *rgbptr++ = SATURATE16(b);
 }
 
-
-inline void BLUCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
+void BLUCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
 {
     int r, g, b;
     {
