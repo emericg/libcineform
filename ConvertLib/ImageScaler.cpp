@@ -19,6 +19,10 @@
 *
 */
 
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include <cstdint>
+
 #include "StdAfx.h"
 
 // Define an assert macro that can be controlled in this file
@@ -26,12 +30,12 @@
 #define ASSERT(x)	assert(x)
 #endif
 
-#include <cmath>
 #include "ColorFlags.h"
 #include "MemAlloc.h"
 #include "ImageConverter.h"
 #include "ImageScaler.h"
-//#include "cpuid.h"
+#include "swap.h"
+#include "cpuid.h"
 
 #define CONVERT_709_TO_601	1
 
@@ -46,77 +50,6 @@
 #pragma warning(disable: 4244 4305)
 
 #endif
-
-
-
-#if _WIN32
-
-#include <stdlib.h>
-
-// Use the byte swapping routines defined in the standard library
-#if _DEBUG
-#define SwapInt16(x) ((((x)&0xff00)>>8)|(((x)&0xff)<<8))
-#define SwapInt32(x) ((((x)&0xff000000)>>24)|(((x)&0xff0000)>>8)|(((x)&0xff00)<<8)|(((x)&0xff)<<24))
-#else
-#define SwapInt16(x)	_byteswap_ushort(x)
-#define SwapInt32(x)	_byteswap_ulong(x)
-#endif
-
-#elif __APPLE__
-
-#include "CoreFoundation/CoreFoundation.h"
-
-// Use the byte swapping routines from the Core Foundation framework
-#define SwapInt16(x)	CFSwapInt16(x)
-#define SwapInt32(x)	CFSwapInt32(x)
-
-#else
-
-#include <byteswap.h>
-
-#define SwapInt16(x)	bswap_16(x)
-#define SwapInt32(x)	bswap_32(x)
-
-#endif
-
-
-#ifdef _WIN32
-
-#include "cpuid.h"
-
-static int GetProcessorCount()
-{
-    SYSTEM_INFO cSystem_info;
-    GetSystemInfo(&cSystem_info);
-    return cSystem_info.dwNumberOfProcessors;
-}
-
-#elif __APPLE__
-
-#include <sys/types.h>
-#include <sys/sysctl.h>
-
-static int GetProcessorCount()
-{
-    int maxProcs = 0;
-    size_t length = sizeof(maxProcs);
-    sysctlbyname("hw.physicalcpu", &maxProcs, &length, NULL, 0);
-
-    return maxProcs;
-}
-
-#else
-
-#include <stdint.h>
-#include <unistd.h>
-
-int GetProcessorCount()
-{
-    return sysconf(_SC_NPROCESSORS_ONLN);
-}
-
-#endif
-
 
 void CLanczosScaler::ComputeRowScaleFactors(short *scaleFactors, int inputWidth, int outputWidth, int lobes = 3)
 {

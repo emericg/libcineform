@@ -67,7 +67,6 @@ extern "C" {
 #endif
 
 // Forward references
-void NewControlPoint(DECODER *decoder, unsigned char *ptr, int len, int delta, int priority);
 uint32_t gencrc(unsigned char *buf, int len);
 void GetCurrentID(DECODER *decoder, unsigned char *ptr, unsigned int len, char *id, unsigned int id_size);
 
@@ -6561,10 +6560,6 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
                         break;
                     case TAG_DISPLAY_PARALLAX:
                         decoder->MDPdefault.parallax = *((int32_t *)data);
-                        break;
-
-                    case TAG_CONTROL_POINT:
-                        NewControlPoint(decoder, &ptr[8], (int)size, delta, priority);
                         break;
 
                     case TAG_EYE_DELTA_2:
