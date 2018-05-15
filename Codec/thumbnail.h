@@ -46,15 +46,6 @@ typedef enum thumbnail_flags
 
 } THUMBNAIL_FLAGS;
 
-// Watermark flags within the thumbnail flags
-typedef enum thumbnail_watermark
-{
-    THUMBNAIL_WATERMARK_NONE = 0,
-
-    //TODO: Finish the definitions of the watermark flags
-
-} THUMBNAIL_WATERMARK;
-
 // Table of channels offsets in a stereo sample
 typedef struct channel_offsets
 {

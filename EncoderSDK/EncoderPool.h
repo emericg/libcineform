@@ -105,9 +105,6 @@ public:
                                CFHD_EncodingFlags encodingFlags,
                                CFHD_EncodingQuality encodingQuality);
 
-    //! Set the license for all of the encoders in the pool
-    uint32_t SetLicense(unsigned char *license);
-
     //! Bind a collection of metadata to the encoder pool
     CFHD_Error AttachMetadata(CSampleEncodeMetadata *encoderMetadata);
 

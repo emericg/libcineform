@@ -365,9 +365,7 @@ __inline static size_t Align16(size_t x)
     return ((x + 0x0F) & ~0x0F);
 }
 
-CSampleDecoder::CSampleDecoder(CFHD_ALLOCATOR *allocator,
-                               CFHD_LicenseKey license,
-                               FILE *logfile) :
+CSampleDecoder::CSampleDecoder(CFHD_ALLOCATOR *allocator, FILE *logfile) :
     m_logfile(logfile),
     m_decoder(NULL),
     m_allocator(allocator),
@@ -389,16 +387,7 @@ CSampleDecoder::CSampleDecoder(CFHD_ALLOCATOR *allocator,
     m_channelsActive(1),
     m_channelMix(0)
 {
-    if (license)
-    {
-        // Copy the license provided as an argument
-        memcpy(m_license, license, sizeof(m_license));
-    }
-    else
-    {
-        // Clear the license key
-        memset(m_license, 0, sizeof(m_license));
-    }
+    //
 }
 
 /*!
@@ -612,29 +601,6 @@ bool IsSameFormat(DECODED_FORMAT decodedFormat, CFHD_PixelFormat outputFormat)
     }
 
     return false;
-}
-
-/*!
-	@brief Now obselete, this was used to license the commerical version.
-*/
-CFHD_Error
-CSampleDecoder::SetLicense(const unsigned char *licenseKey)
-{
-    CFHD_Error errorCode = CFHD_ERROR_OKAY;
-
-    if (m_decoder != NULL)
-    {
-        InitDecoderLicense(m_decoder, licenseKey);
-    }
-    else
-    {
-        errorCode = CFHD_ERROR_LICENSING;
-#ifdef _WIN32
-        OutputDebugString("m_decoder is NULL, can't set the license");
-#endif
-    }
-
-    return errorCode;
 }
 
 /*!
@@ -1095,10 +1061,6 @@ CSampleDecoder::PrepareDecoder(int outputWidth,
                 errorCode = CFHD_ERROR_CODEC_ERROR;
                 goto finish;
             }
-
-            // Apply the license key to this sample decoder
-            //SetLicense(m_license);
-            InitDecoderLicense(m_decoder, m_license);
 
             // Assume video systems 709 color space
             SetDecoderColorFlags(m_decoder, COLOR_SPACE_CG_709);
@@ -1886,12 +1848,12 @@ CFHD_FieldType CSampleDecoder::FieldType(SAMPLE_HEADER *header)
 /*!
 	@brief Class factory method for allocating a sample decoder
 */
-ISampleDecoder *CSampleDecoder::CreateSampleDecoder(IAllocator *allocator, CFHD_LicenseKey license, FILE *logfile)
+ISampleDecoder *CSampleDecoder::CreateSampleDecoder(IAllocator *allocator, FILE *logfile)
 {
     CSampleDecoder *pSampleDecoder = NULL;
 
     // Allocate the sample decoder using the default allocator
-    pSampleDecoder = new CSampleDecoder((CFHD_ALLOCATOR *)allocator, license, logfile);
+    pSampleDecoder = new CSampleDecoder((CFHD_ALLOCATOR *)allocator, logfile);
 
     return dynamic_cast<ISampleDecoder *>(pSampleDecoder);
 }

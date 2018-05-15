@@ -72,8 +72,6 @@ public:
         int *actualHeightOut,
         CFHD_PixelFormat *actualFormatOut) = 0;
 
-    virtual CFHD_Error SetLicense(const unsigned char *license) = 0;
-
     virtual CFHD_Error ParseSampleHeader(
         void *samplePtr,
         size_t sampleSize,
@@ -202,7 +200,7 @@ extern "C" {
 #endif
 
 // Expose the factory function used to instantiate an instance of an ISampleDecoder
-CFHDDECODER_API ISampleDecoder *CFHD_CreateSampleDecoder(IAllocator *allocator, CFHD_LicenseKey license, FILE *logfile = NULL);
+CFHDDECODER_API ISampleDecoder *CFHD_CreateSampleDecoder(IAllocator *allocator, FILE *logfile = NULL);
 
 // Convenience methods for computing frame dimensions and formats
 size_t GetFrameSize(int width, int height, CFHD_PixelFormat format);

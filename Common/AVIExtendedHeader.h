@@ -511,10 +511,6 @@ typedef struct tagCFHDDATA_NEW
     // Bayer pixel foramt (see BayerFormat enumeration above)
     uint8_t bayer_format;	// 0 - Red-Green,  1 - Green-Red, 2 - Green-Blue, 3 - Blue-Green, 4 - Red-Green (set, whereas 0 is just a default)
 
-
-    // automatically extracted from the encoder license
-    uint32_t capture_fingerprint;  //Hardware figureprint
-
     // version 4 or greater
     PIXEL_ASPECT_RATIO pixel_aspect_ratio;
 

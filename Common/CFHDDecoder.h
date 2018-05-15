@@ -131,11 +131,6 @@ CFHD_DecodeSampleStub(CFHD_DecoderRef decoderRef,
                       void *outputBuffer,
                       int outputPitch);
 
-// Set the license for the decoder, controlling time trials and decode resolutions, else watermarked
-CFHD_Error
-CFHD_SetLicenseStub(CFHD_DecoderRef decoderRef,
-                    const unsigned char *licenseKey);
-
 // Set the metadata rules for the decoder
 CFHD_Error
 CFHD_SetActiveMetadataStub(CFHD_DecoderRef decoderRef,
@@ -184,7 +179,6 @@ CFHD_CreateImageDeveloperStub(CFHD_DecoderRef decoderRef,
 #define CFHD_GetImagePitch			CFHD_GetImagePitchStub
 #define CFHD_GetImageSize			CFHD_GetImageSizeStub
 #define CFHD_DecodeSample			CFHD_DecodeSampleStub
-#define CFHD_SetLicense				CFHD_SetLicenseStub
 #define CFHD_SetActiveMetadata		CFHD_SetActiveMetadataStub
 #define CFHD_GetThumbnail			CFHD_GetThumbnailStub
 #define CFHD_ClearActiveMetadata	CFHD_ClearActiveMetadataStub
@@ -260,11 +254,6 @@ CFHD_DecodeSample(CFHD_DecoderRef decoderRef,
                   size_t sampleSize,
                   void *outputBuffer,
                   int32_t outputPitch);
-
-// Set the license for the decoder, controlling time trials and decode resolutions, else watermarked
-CFHDDECODER_API CFHD_Error
-CFHD_SetLicense(CFHD_DecoderRef decoderRef,
-                const unsigned char *licenseKey);
 
 // Set the metadata rules for the decoder
 CFHDDECODER_API CFHD_Error

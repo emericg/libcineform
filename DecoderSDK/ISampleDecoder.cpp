@@ -67,8 +67,8 @@
 #include "SampleDecoder.h"
 #include "ISampleDecoder.h"
 
-CFHDDECODER_API ISampleDecoder *CFHD_CreateSampleDecoder(IAllocator *allocator, CFHD_LicenseKey license, FILE *logfile)
+CFHDDECODER_API ISampleDecoder *CFHD_CreateSampleDecoder(IAllocator *allocator, FILE *logfile)
 {
     // No longer supporting this type of codec interface, it was only used by the old Premiere importers.
-    return CSampleDecoder::CreateSampleDecoder(allocator, license, logfile);
+    return CSampleDecoder::CreateSampleDecoder(allocator, logfile);
 }

@@ -1949,10 +1949,6 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
     ENCODER encoder_copy; // 3D work
     int encoded_format = encoder->encoded_format;
 
-    //int unc_size = 0;
-    int watermark = 0;
-    int end_user_license = 0;
-
     CODEC_STATE *codec = &encoder->codec;
 
 #if _ALLOCATOR
@@ -2138,51 +2134,6 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
             break;
     }
 
-
-
-    if (encoded_format != ENCODED_FORMAT_YUV_422 && !rgb444_support)
-    {
-        if (end_user_license)
-        {
-            watermark |= 2;// no 444 support
-        }
-        else
-        {
-            encoder->error = CODEC_ERROR_INVALID_FORMAT;
-#ifdef _WIN32
-            if (encoder->reported_license_issue == 0)
-            {
-                encoder->reported_license_issue = 1;
-
-                MessageBox(GetFocus(), "You are attempting to encode a format for which this system is not licensed. Please contact support@CineForm.com.", "Licensing Error", MB_OK | MB_SYSTEMMODAL);
-            }
-#endif
-            return false;
-        }
-    }
-
-
-    if (encoded_format == ENCODED_FORMAT_BAYER && !bayer_support)
-    {
-        if (end_user_license)
-        {
-            watermark |= 4;// no bayer support
-        }
-        else
-        {
-            encoder->error = CODEC_ERROR_INVALID_FORMAT;
-#ifdef _WIN32
-            if (encoder->reported_license_issue == 0)
-            {
-                encoder->reported_license_issue = 1;
-
-                MessageBox(GetFocus(), "You are attempting to encode a format for which this system is not licensed. Please contact support@CineForm.com.", "Licensing Error", MB_OK | MB_SYSTEMMODAL);
-            }
-#endif
-            return false;
-        }
-    }
-
     // Was the number of video channels set?
     if (video_channels == 0)
     {
@@ -2192,49 +2143,6 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
 
     // Check that the number of video channels was set
     assert(video_channels > 0);
-
-    if (width > w_res_limit || height > h_res_limit * video_channels)
-    {
-        if (end_user_license)
-        {
-            watermark |= 8;// no >1080p support
-        }
-        else
-        {
-            encoder->error = CODEC_ERROR_INVALID_SIZE;
-#ifdef _WIN32
-            if (encoder->reported_license_issue == 0)
-            {
-                encoder->reported_license_issue = 1;
-
-                MessageBox(GetFocus(), "You are attempting to encode an image size for which this system is not licensed. Please contact support@CineForm.com.", "Licensing Error", MB_OK | MB_SYSTEMMODAL);
-            }
-#endif
-            return false;
-        }
-    }
-
-    if (video_channels > 1 && !stereo3D_support)
-    {
-        if (end_user_license)
-        {
-            watermark |= 16;// no >3D support
-        }
-        else
-        {
-            encoder->error = CODEC_ERROR_INVALID_FORMAT;
-#ifdef _WIN32
-            if (encoder->reported_license_issue == 0)
-            {
-                encoder->reported_license_issue = 1;
-
-                MessageBox(GetFocus(), "You are attempting to encode a stereo/3D format for which this system is not licensed. Please contact support@CineForm.com.", "Licensing Error", MB_OK | MB_SYSTEMMODAL);
-            }
-#endif
-            return false;
-        }
-    }
-
 
     //Round the height up to the near multiple of 8.
     //Need for 1080 bayer encodes (as 540 per band is not divisible by 8)
@@ -2857,13 +2765,6 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
             default:
                 // Cannot handle this color format
                 encoder->error = CODEC_ERROR_INVALID_FORMAT;
-#ifdef _WIN32
-                if (encoder->reported_error == 0)
-                {
-                    encoder->reported_error = 1;
-                    MessageBox(GetFocus(), "CODEC_ERROR_INVALID_FORMAT. Please contact support@CineForm.com.", "Licensing Error", MB_OK | MB_SYSTEMMODAL);
-                }
-#endif
                 return false;
         }
         STOP(tk_convert);
@@ -3457,11 +3358,11 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
         }
     } while (video_channels > 0);
 
-    if ((encoder->thumbnail_generate >= 1 && encoder->thumbnail_generate <= 3) || watermark)
+    if ((encoder->thumbnail_generate >= 1 && encoder->thumbnail_generate <= 3))
     {
         GenerateThumbnail((void *)output->lpCurrentBuffer, (size_t)output->nWordsUsed,
                           (void *)output->lpCurrentWord, (size_t)(output->dwBlockLength - output->nWordsUsed),
-                          encoder->thumbnail_generate | (watermark << 8), NULL, NULL, NULL);
+                          encoder->thumbnail_generate, NULL, NULL, NULL);
     }
 
     STOP(tk_compress);

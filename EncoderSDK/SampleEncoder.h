@@ -23,20 +23,9 @@
 // Forward reference to the encoder in the code library
 typedef struct encoder ENCODER;
 
-
-typedef enum watermark_state
-{
-    WATERMARK_UNCHECKED = -1,				// Encoder license not yet checked
-    WATERMARK_DISABLED = 0,					// No watermark on the video
-    WATERMARK_ENABLED = 1,					// Apply the default watermark - stays on since license invalid
-    WATERMARK_ENABLED_RESOLUTION = 2,		// Apply the watermark - resolution limit exceeded, but license valid
-} watermark_state;
-
-
 class CSampleEncoder
 {
 public:
-
     CSampleEncoder() :
         m_allocator(NULL),
         //m_privateAllocatorFlag(true),
@@ -67,12 +56,10 @@ public:
         //m_metadataLocalSize(0),
         m_last_unique_frame(-1),
         m_last_timecode_base(0),
-        m_last_timecode_frame(-1),
-        m_watermark(WATERMARK_UNCHECKED)
+        m_last_timecode_frame(-1)
     {
         // Clear the array of wavelet transforms
         memset(m_transformArray, 0, sizeof(m_transformArray));
-        memset(m_licenseFeatures, 0, sizeof(m_licenseFeatures));
 #if 0
         // Create a default allocator
         m_allocator = new CMemAlloc;
@@ -114,14 +101,10 @@ public:
         //m_metadataLocalSize(0),
         m_last_unique_frame(-1),
         m_last_timecode_base(0),
-        m_last_timecode_frame(-1),
-        m_watermark(WATERMARK_UNCHECKED)
+        m_last_timecode_frame(-1)
     {
         // Clear the array of wavelet transforms
         memset(m_transformArray, 0, sizeof(m_transformArray));
-
-        // Clear the array of licensed features
-        memset(m_licenseFeatures, 0, sizeof(m_licenseFeatures));
 
         // Initialize the global metadata
         memset(&local, 0, sizeof(METADATA));
@@ -191,8 +174,6 @@ public:
     CFHD_Error EncodeSample(void *frameBuffer,
                             int framePitch,
                             CFHD_EncodingQuality frameQuality = CFHD_ENCODING_QUALITY_FIXED);
-
-    uint32_t SetLicense(unsigned char *license);
 
     CFHD_Error GetThumbnail(void *samplePtr,
                             size_t sampleSize,
@@ -372,13 +353,6 @@ protected:
     // Convert the four character code to the color format used by the encoder
     COLOR_FORMAT EncoderColorFormat(CFHD_PixelFormat pixelFormat);
 
-    // Draw a watermark on the image before encoding
-    static void ApplyWatermark(void *frameBuffer,
-                               int frameWidth,
-                               int frameHeight,
-                               int framePitch,
-                               CFHD_PixelFormat pixelFormat);
-
 private:
 
     //IMemAlloc *m_allocator;
@@ -446,8 +420,4 @@ private:
     int32_t m_last_unique_frame;
     int32_t m_last_timecode_base;
     int32_t m_last_timecode_frame;
-
-    int	m_watermark;
-
-    uint8_t	m_licenseFeatures[8];
 };

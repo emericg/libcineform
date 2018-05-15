@@ -1747,13 +1747,6 @@ typedef struct decoder		// Decoder state (derived from codec)
 
     Keyframing Keyframes;
 
-
-    //**** High level decoding data *****/
-
-    // The 16 byte license key controls what decoder features are enabled
-    //NOTE: The license key must be decrypted into a LICENSE structure
-    uint8_t licensekey[16];
-
 } DECODER;
 
 #define FLAG3D_SWAPPED				1
@@ -1772,39 +1765,6 @@ typedef struct decoder		// Decoder state (derived from codec)
 #define FEATURE_DECODING_FLAG		2
 #define FEATURE_ENDUSER_LICENSE		4
 #define FEATURE_DECODING_FULL_FLAG	8
-
-typedef struct license		// Decrypted 16 byte license key
-{
-    uint8_t expire_year;		// value + 2008, 0xf = unlimited, top nibble random for security.
-    uint8_t expire_month;		// 1 to 12, 0xf = unlimited, top nibble is random.
-    uint8_t expire_day;			// 1 to 31,
-    uint8_t format_mask;		// 0 = YUV, 1 = 10-12 bit, 2 = RGB/RGBA, 4 = Bayer, 0xf = all, etc.
-    // top nibble is random.
-
-    uint8_t width16;			// value*16 = license width,
-    // 128 = 2048, 255 = unlimited, 120 = 1920, 1440 = 90;
-
-    uint8_t height16;			// value*16 = license height,
-    // 128 = 2048, 255 = unlimited, 68 = 1088;
-
-    uint16_t max_usage;			// unused, could be the number of encodes, and number frames total,
-    // number of frames per encoder, etc.  Likely controlled by Feature flags.
-
-    uint16_t customer_number;	// Unique for corporate customer
-
-    uint16_t feature_flags;		// FEATURE_ENCODING_FLAG or FEATURE_DECODING_FLAG plus future use.
-
-    uint32_t CRC;
-
-} LICENSE;
-
-
-
-#define CUSTOMER_NEW			0x0
-#define CUSTOMER_CINEFORM		0x0009
-//Unlimited encoding license  {0xC1,0xE8,0x57,0xDF,0xB2,0x72,0xCE,0x6C,0xE2,0xCF,0xCB,0x1C,0xBC,0x14,0x6C,0xE8}
-//End-user keyed license  {0xBF,0xB6,0x92,0xB3,0x64,0xA8,0xAE,0xF0,0x08,0x9E,0xFB,0xF8,0x14,0x2F,0x26,0x0E}
-
 
 #define ISBAYER(format)(((format) == COLOR_FORMAT_BYR1) || \
 						((format) == COLOR_FORMAT_BYR2) || \
@@ -1960,7 +1920,6 @@ void DumpEncodedFrame(BITSTREAM *stream, FILE *dump, uint32_t *bitcount);
 void DumpBitstreamFile(BITSTREAM *stream, char *filename, FILE *dump);
 
 void InitDecoder(DECODER *decoder, FILE *logfile, CODESET *cs);
-void InitDecoderLicense(DECODER *decoder, const unsigned char *license);
 void ExitDecoder(DECODER *decoder);
 
 // Bitstream parsing routines

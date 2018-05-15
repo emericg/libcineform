@@ -81,16 +81,6 @@ CFHD_Error CFHD_PrepareToEncodeStub(CFHD_EncoderRef encoderRef,
                                     CFHD_EncodingFlags encodingFlags,
                                     CFHD_EncodingQuality encodingQuality);
 
-// Set the license for the encoder, controlling time trials and encode resolutions, else watermarked
-CFHD_Error CFHD_SetEncodeLicenseStub(CFHD_EncoderRef encoderRef,
-                                     unsigned char *licenseKey);
-// Set the license for the encoder, controlling time trials and encode resolutions, else watermarked
-CFHD_Error CFHD_SetEncodeLicense2Stub(CFHD_EncoderRef encoderRef,
-                                      unsigned char *licenseKey, uint32_t *level);
-// Set the license for the encoder, controlling time trials and encode resolutions, else watermarked
-CFHD_Error CFHD_SetEncodeLicenseCompat(CFHD_EncoderRef encoderRef,
-                                       unsigned char *licenseKey, uint32_t *level);
-
 // Encode one sample of CineForm HD
 CFHD_Error CFHD_EncodeSampleStub(CFHD_EncoderRef encoderRef,
                                  void *frameBuffer,
@@ -127,12 +117,6 @@ CFHD_Error CFHD_MetadataAttachStub(CFHD_EncoderRef encoderRef, CFHD_MetadataRef 
 
 CFHD_Error CFHD_MetadataCloseStub(CFHD_MetadataRef metadataRef);
 
-void CFHD_ApplyWatermarkStub(void *frameBuffer,
-                             int frameWidth,
-                             int frameHeight,
-                             int framePitch,
-                             CFHD_PixelFormat pixelFormat);
-
 // Create an encoder pool for asynchronous encoding
 CFHD_Error CFHD_CreateEncoderPoolStub(CFHD_EncoderPoolRef *encoderPoolRefOut,
                                       int encoderThreadCount,
@@ -153,16 +137,6 @@ CFHD_Error CFHD_PrepareEncoderPoolStub(CFHD_EncoderPoolRef encoderPoolRef,
                                        CFHD_EncodedFormat encodedFormat,
                                        CFHD_EncodingFlags encodingFlags,
                                        CFHD_EncodingQuality encodingQuality);
-
-// Set the license for all of the encoders in the pool (otherwise use watermark)
-CFHD_Error CFHD_SetEncoderPoolLicenseStub(CFHD_EncoderPoolRef encoderPoolRef,
-        unsigned char *licenseKey);
-// Set the license for all of the encoders in the pool (otherwise use watermark)
-CFHD_Error CFHD_SetEncoderPoolLicense2Stub(CFHD_EncoderPoolRef encoderPoolRef,
-        unsigned char *licenseKey, uint32_t *level);
-// Set the license for all of the encoders in the pool (otherwise use watermark)
-CFHD_Error CFHD_SetEncoderPoolLicenseCompat(CFHD_EncoderPoolRef encoderPoolRef,
-        unsigned char *licenseKey, uint32_t *level);
 
 // Attach metadata to all of the encoders in the pool
 CFHD_Error CFHD_AttachEncoderPoolMetadataStub(CFHD_EncoderPoolRef encoderPoolRef,
@@ -217,7 +191,6 @@ CFHD_Error CFHD_ReleaseEncoderPoolStub(CFHD_EncoderPoolRef encoderPoolRef);
 #define CFHD_OpenEncoder                  CFHD_OpenEncoderStub
 #define CFHD_GetInputFormats			  CFHD_GetInputFormatsStub
 #define CFHD_PrepareToEncode			  CFHD_PrepareToEncodeStub
-#define CFHD_SetEncodeLicense			  CFHD_SetEncodeLicenseStub
 #define CFHD_EncodeSample				  CFHD_EncodeSampleStub
 #define CFHD_GetSampleData				  CFHD_GetSampleDataStub
 #define CFHD_CloseEncoder				  CFHD_CloseEncoderStub
@@ -226,7 +199,6 @@ CFHD_Error CFHD_ReleaseEncoderPoolStub(CFHD_EncoderPoolRef encoderPoolRef);
 #define CFHD_MetadataAdd				  CFHD_MetadataAddStub
 #define CFHD_MetadataAttach				  CFHD_MetadataAttachStub
 #define CFHD_MetadataClose				  CFHD_MetadataCloseStub
-#define CFHD_ApplyWatermark				  CFHD_ApplyWatermarkStub
 #define CFHD_CreateEncoderPool			  CFHD_CreateEncoderPoolStub
 #define CFHD_GetAsyncInputFormats		  CFHD_GetAsyncInputFormatsStub
 #define CFHD_PrepareEncoderPool			  CFHD_PrepareEncoderPoolStub
@@ -269,15 +241,6 @@ CFHD_PrepareToEncode(CFHD_EncoderRef encoderRef,
                      CFHD_EncodedFormat encodedFormat,
                      CFHD_EncodingFlags encodingFlags,
                      CFHD_EncodingQuality encodingQuality);
-
-// Set the license for the encoder, controlling time trials and encode resolutions, else watermarked
-CFHDENCODER_API CFHD_Error
-CFHD_SetEncodeLicense(CFHD_EncoderRef encoderRef,
-                      unsigned char *licenseKey);
-// Set the license for the encoder, controlling time trials and encode resolutions, else watermarked
-CFHDENCODER_API CFHD_Error
-CFHD_SetEncodeLicense2(CFHD_EncoderRef encoderRef,
-                       unsigned char *licenseKey, uint32_t *level);
 
 // Encode one sample of CineForm HD
 CFHDENCODER_API CFHD_Error
@@ -324,13 +287,6 @@ CFHD_MetadataAttach(CFHD_EncoderRef encoderRef, CFHD_MetadataRef metadataRef);
 CFHDENCODER_API CFHD_Error
 CFHD_MetadataClose(CFHD_MetadataRef metadataRef);
 
-CFHDENCODER_API void
-CFHD_ApplyWatermark(void *frameBuffer,
-                    int frameWidth,
-                    int frameHeight,
-                    int framePitch,
-                    CFHD_PixelFormat pixelFormat);
-
 // Create an encoder pool for asynchronous encoding
 CFHDENCODER_API CFHD_Error
 CFHD_CreateEncoderPool(CFHD_EncoderPoolRef *encoderPoolRefOut,
@@ -354,15 +310,6 @@ CFHD_PrepareEncoderPool(CFHD_EncoderPoolRef encoderPoolRef,
                         CFHD_EncodedFormat encodedFormat,
                         CFHD_EncodingFlags encodingFlags,
                         CFHD_EncodingQuality encodingQuality);
-
-// Set the license for all of the encoders in the pool (otherwise use watermark)
-CFHDENCODER_API CFHD_Error
-CFHD_SetEncoderPoolLicense(CFHD_EncoderPoolRef encoderPoolRef,
-                           unsigned char *licenseKey);
-// Set the license for all of the encoders in the pool (otherwise use watermark)
-CFHDENCODER_API CFHD_Error
-CFHD_SetEncoderPoolLicense2(CFHD_EncoderPoolRef encoderPoolRef,
-                            unsigned char *licenseKey, uint32_t *level);
 
 // Attach metadata to all of the encoders in the pool
 CFHDENCODER_API CFHD_Error

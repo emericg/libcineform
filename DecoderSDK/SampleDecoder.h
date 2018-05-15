@@ -45,17 +45,13 @@ class CSampleDecoder : public ISampleDecoder
 public:
 
     // Class factory method for allocating sample decoders
-    static ISampleDecoder *CreateSampleDecoder(IAllocator *allocator,
-            CFHD_LicenseKey license,
-            FILE *logfile = NULL);
+    static ISampleDecoder *CreateSampleDecoder(IAllocator *allocator, FILE *logfile = NULL);
 
     // Initialize the block of data as a sample decoder instance
     CFHDDECODER_API static CFHD_Error InitializeSampleDecoder(void *data, size_t size);
 
     // Default constructor
-    CSampleDecoder(CFHD_ALLOCATOR *allocator = NULL,
-                   CFHD_LicenseKey license = NULL,
-                   FILE *logfile = NULL);
+    CSampleDecoder(CFHD_ALLOCATOR *allocator = NULL, FILE *logfile = NULL);
 
     // Virtual destructor for the sample decoder interface
     virtual ~CSampleDecoder();
@@ -84,8 +80,6 @@ public:
                               int *actualWidthOut,
                               int *actualHeightOut,
                               CFHD_PixelFormat *actualFormatOut);
-
-    CFHD_Error SetLicense(const unsigned char *license);
 
     CFHD_Error GetThumbnail(void *samplePtr,
                             size_t sampleSize,

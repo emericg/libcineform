@@ -776,44 +776,6 @@ CFHD_DecodeSample(CFHD_DecoderRef decoderRef,
 }
 
 /*!
-	@function CFHD_SetLicense
-
-	@brief Now obsolete, this was used to license the commercial version, but it is no longer required.
-	The interface is maintained for backward compatibility.
-
-	@description The license key is used to control trial periods and decode resolution limits.
-
-	@param decoderRef An opaque reference to a decoder created by a
-	call to @ref CFHD_OpenDecoder.
-
-	@param licenseKey Pointer to an array of 16 bytes contain the license key.
-
-	@return Returns a CFHD error code.
-*/
-CFHDDECODER_API CFHD_Error
-CFHD_SetLicense(CFHD_DecoderRef decoderRef,
-                const unsigned char *licenseKey)
-{
-    CFHD_Error errorCode = CFHD_ERROR_OKAY;
-
-    // Check the input arguments
-    if (decoderRef == NULL)
-    {
-        return CFHD_ERROR_INVALID_ARGUMENT;
-    }
-    if (licenseKey == NULL)
-    {
-        return CFHD_ERROR_INVALID_ARGUMENT;
-    }
-
-    CSampleDecoder *decoder = (CSampleDecoder *)decoderRef;
-
-    errorCode = decoder->SetLicense(licenseKey);
-
-    return errorCode;
-}
-
-/*!
 	@function CFHD_CloseDecoder
 
 	@brief Release all resources held by the decoder.

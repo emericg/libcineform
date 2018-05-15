@@ -37,8 +37,6 @@
 #define XMMOPT (1 && _XMMOPT)
 #endif
 
-#define GEN_LICENSE 0
-
 #ifdef _WIN32
 #include <windows.h>
 #elif __APPLE__
@@ -63,7 +61,6 @@
 #include "filter.h"
 #include "spatial.h"
 #include "temporal.h"
-//#include "logo40x5.h"
 #include "convert.h"
 #include "wavelet.h"
 #include "bitstream.h"
@@ -632,22 +629,6 @@ void InitDecoder(DECODER *decoder, FILE *logfile, CODESET *cs)
 #endif
 
     decoder->initialized = 1; //DAN20060912
-}
-
-void InitDecoderLicense(DECODER *decoder, const unsigned char *licensekey)
-{
-    if (decoder && licensekey)
-    {
-        const unsigned char unlicensed[16] = {0};
-        //memset(unlicensed, 0, sizeof(unlicensed));
-
-        // Has the license been set?
-        if (memcmp(decoder->licensekey, unlicensed, sizeof(decoder->licensekey)) == 0)
-        {
-            // Copy the license into the decoder
-            memcpy(decoder->licensekey, licensekey, sizeof(decoder->licensekey));
-        }
-    }
 }
 
 // Free data allocated within the decoder
@@ -10194,7 +10175,6 @@ bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch
     {
         // Initialize the parallel decoder with parameters from the regular decoder
         memcpy(&decoder->parallelDecoder->cfhddata, &decoder->cfhddata, sizeof(CFHDDATA));
-        memcpy(decoder->parallelDecoder->licensekey, decoder->licensekey, 16);
 
         DecodeEntropyInit(decoder->parallelDecoder);
 

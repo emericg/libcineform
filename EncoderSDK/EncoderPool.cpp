@@ -150,28 +150,6 @@ CFHD_Error CEncoderPool::PrepareToEncode(uint_least16_t frameWidth,
     return error;
 }
 
-//! Set the license for all of the encoders in the pool
-uint32_t CEncoderPool::SetLicense(unsigned char *license)
-{
-    uint32_t ret = 0;
-    //CFHD_Error error = CFHD_ERROR_OKAY;
-
-    if (m_encodingStarted)
-    {
-        return 0; // no license, as we should be testing for a license during an encoding
-    }
-
-    // Set the license in each of the encoders
-    for (AsyncEncoderList::iterator p = m_encoderList.begin();
-            p != m_encoderList.end();
-            p++)
-    {
-        ret = (*p)->SetLicense(license);
-    }
-
-    return ret;
-}
-
 //! Bind a collection of metadata to the encoder pool
 CFHD_Error CEncoderPool::AttachMetadata(CSampleEncodeMetadata *encoderMetadata)
 {

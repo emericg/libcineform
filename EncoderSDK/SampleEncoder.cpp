@@ -152,28 +152,6 @@ CSampleEncoder::PrepareToEncode(int inputWidth,
             goto bail;
         }
 
-#ifndef _WIN32
-        // Check the features against the image size
-        if ( (m_watermark == WATERMARK_DISABLED) || (m_watermark == WATERMARK_ENABLED_RESOLUTION))
-        {
-            if (m_licenseFeatures[0] == 0xFF)
-            {
-                if ((inputWidth > 1920) || (inputHeight > 1080))
-                {
-                    m_watermark = WATERMARK_ENABLED_RESOLUTION;
-                }
-                else
-                {
-                    m_watermark = WATERMARK_DISABLED;
-                }
-            }
-            else
-            {
-                m_watermark = WATERMARK_DISABLED;
-            }
-        }
-#endif
-
         // Allocate the transform data structure
         for (int channel = 0; channel < FRAME_MAX_CHANNELS; channel++)
         {
@@ -698,16 +676,6 @@ COLOR_FORMAT CSampleEncoder::EncoderColorFormat(CFHD_PixelFormat pixelFormat)
     }
 
     return colorFormat;
-}
-
-
-
-uint32_t
-CSampleEncoder::SetLicense(unsigned char *licensekey)
-{
-    uint32_t level = 31;
-
-    return level;
 }
 
 

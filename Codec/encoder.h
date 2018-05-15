@@ -392,14 +392,7 @@ typedef struct encoder  	// Encoder state (derived from codec)
 
     /***** Parameters for higher-level encoding operations *****/
 
-    // The 16 byte license key controls what encoder features are enabled
-    //NOTE: The license key must be decrypted into a LICENSE structure
-    uint8_t licensekey[16];
-
     uint32_t ignore_database;
-
-    int reported_license_issue;
-    int reported_error;
 
     struct
     {

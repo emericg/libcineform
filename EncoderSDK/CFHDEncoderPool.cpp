@@ -189,91 +189,6 @@ CFHD_PrepareEncoderPool(CFHD_EncoderPoolRef encoderPoolRef,
 }
 
 /*!
-	@brief Set the license for all of the encoders in the pool
-
-	This routine sets applies the license to each of the encoders in the pool.
-	Without a license, the encoded frames will be watermarked.  This routine
-	cannot be called after the encoders have been started.
-
-	@description The license key is used to control trial periods, format and resolution
-	limits.
-
-	@param encoderPoolRef
-	An opaque reference to a decoder created by a call to @ref CFHD_OpenEncoder.
-
-	@param licenseKey
-	Pointer to an array of 16 bytes contain the license key.
-
-	@return Returns a CFHD error code.
-*/
-CFHDENCODER_API CFHD_Error
-CFHD_SetEncoderPoolLicense(CFHD_EncoderPoolRef encoderPoolRef,
-                           unsigned char *licenseKey)
-{
-    try
-    {
-        CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
-        uint32_t level = encoderPool->SetLicense(licenseKey);
-        if (level == 0)
-            return CFHD_ERROR_LICENSING;
-        else
-            return CFHD_ERROR_OKAY;
-    }
-    catch (...)
-    {
-        return CFHD_ERROR_UNEXPECTED;
-    }
-}
-
-
-/*!
-	@brief Set the license for all of the encoders in the pool
-
-	This routine sets applies the license to each of the encoders in the pool.
-	Without a license, the encoded frames will be watermarked.  This routine
-	cannot be called after the encoders have been started.
-
-	@description The license key is used to control trial periods, format and resolution
-	limits.
-
-	@param encoderPoolRef
-	An opaque reference to a decoder created by a call to @ref CFHD_OpenEncoder.
-
-	@param licenseKey
-	Pointer to an array of 16 bytes contain the license key.
-
-	@param level
-	Pointer to an 32-bit long to return the license level mask.
-	level 0 for no license,
-	1 for 422,
-	2 for 444,
-	4 for 4444,
-	8 for RAW,
-	16 for 3D
-
-	@return Returns a CFHD error code.
-*/
-CFHDENCODER_API CFHD_Error
-CFHD_SetEncoderPoolLicense2(CFHD_EncoderPoolRef encoderPoolRef,
-                            unsigned char *licenseKey,
-                            uint32_t *level)
-{
-    try
-    {
-        CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
-        *level = encoderPool->SetLicense(licenseKey);
-        if (*level == 0)
-            return CFHD_ERROR_LICENSING;
-        else
-            return CFHD_ERROR_OKAY;
-    }
-    catch (...)
-    {
-        return CFHD_ERROR_UNEXPECTED;
-    }
-}
-
-/*!
 	@brief Attach metadata to the encoders in the pool.
 
 	Every encoding job in the queue has a copy of the metadata that was
@@ -327,9 +242,9 @@ CFHD_AttachEncoderPoolMetadata(CFHD_EncoderPoolRef encoderPoolRef,
 
 	Each encoder runs in its own thread so that all of the encoders can work concurrently.
 	This routine starts the worker thread for each of the encoders in the pool.  Once the
-	encoders have been started, the encoders can not be reinitialized and the license cannot
-	be changed.  It is necessary to stop all of the encoders before calling any initialization
-	routine such as @ref CFHD_PrepareEncoderPool or @ref CFHD_SetEncoderPoolLicense.
+    encoders have been started, the encoders can not be reinitialized.
+    It is necessary to stop all of the encoders before calling any initialization
+    routine such as @ref CFHD_PrepareEncoderPool.
 */
 CFHDENCODER_API CFHD_Error
 CFHD_StartEncoderPool(CFHD_EncoderPoolRef encoderPoolRef)
