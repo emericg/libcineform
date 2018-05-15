@@ -28,28 +28,20 @@
 #define TIMING (1 && _TIMING)
 #define XMMOPT (1 && _XMMOPT)
 
-#ifdef _WIN32
-#define SYSLOG	0
-#else
-#define SYSLOG	(0 && DEBUG)
-#endif
-
 #include <stdlib.h>
-#include <string.h>		// Use memcpy to copy runs of image pixels
+#include <string.h>
 #include <memory.h>
 #include <assert.h>
 #include <limits.h>
 #include <emmintrin.h>
 
 #include "image.h"
-//#include "ipp.h"		// Use Intel Performance Primitives
 #include "codec.h"
 #include "filter.h"
 #include "debug.h"
 #include "wavelet.h"
 #include "color.h"
 #include "allocator.h"
-
 
 #if __APPLE__
 #include "macdefs.h"
@@ -169,16 +161,6 @@ void AllocImage(IMAGE *image, int width, int height)
         image->memory = (PIXEL *)AllocAligned(allocator, image_size, alignment);
 #else
         image->memory = (PIXEL *)MEMORY_ALIGNED_ALLOC(image_size, alignment);
-#endif
-#if (1 && SYSLOG)
-        fprintf(stderr, "AllocImage address: 0x%p, size: %d\n", (int)image->memory, image_size);
-#endif
-
-#if DEBUG
-        if (image->memory == NULL)
-        {
-            fprintf(stderr, "[%s, line#%d] malloc(%d bytes, align=%d) FAILED !!\n", __FILE__, __LINE__, (int)image_size, alignment);
-        }
 #endif
 
         // Check that a memory block was allocated

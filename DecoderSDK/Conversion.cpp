@@ -100,21 +100,12 @@ unsigned short _byteswap_ushort(unsigned short x)
 
 #endif
 
-//TODO: Replace system log output with logfile output
-#define SYSLOG (0)
-
 // Convert the input image format to the output format
 CFHD_Error ConvertToOutputBuffer(void *inputBuffer, int inputPitch, int inputFormat,
                                  void *outputBuffer, int outputPitch, CFHD_PixelFormat outputFormat,
                                  int width, int height, int byte_swap_flag)
 {
     CFHD_Error error = CFHD_ERROR_OKAY;
-
-#if (0 && SYSLOG)
-    fprintf(stderr,
-            "ConvertToOutputBuffer width: %d, height: %d, format: %d, output format: %s\n",
-            width, height, inputFormat, CStringFromOSType(outputFormat));
-#endif
 
     // Was the frame decoded to the YU64 pixel format?
     if (inputFormat == DECODED_FORMAT_YU64)
@@ -431,13 +422,6 @@ CFHD_Error ScaleToOutputBuffer(void *inputBuffer, int inputWidth, int inputHeigh
 
     // Use the memory allocator provided by ConvertLib
     CMemAlloc allocator;
-
-#if (0 && SYSLOG)
-    fprintf(stderr,
-            "ScaleToOutputBuffer input width: %d, height: %d, pitch: %d, format: %d, output width: %d, height: %d, pitch: %d, format: %s\n",
-            inputWidth, inputHeight, inputPitch, inputFormat,
-            outputWidth, outputHeight, outputPitch, CStringFromOSType(outputFormat));
-#endif
 
     if (inputFormat == DECODED_FORMAT_YU64)
     {

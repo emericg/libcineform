@@ -38,8 +38,6 @@
 
 #endif
 
-#define SYSLOG (0)
-
 #ifndef NEG
 #define NEG(x)	(-(x))
 #endif

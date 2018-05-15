@@ -47,8 +47,6 @@
 #endif
 
 
-#define SYSLOG (0)
-
 
 #if _WIN32
 
@@ -2438,19 +2436,6 @@ void CImageScalerConverterRGB32ToQuickTime::ScaleToQuickTimeBGRA(unsigned char *
         int outputHeight,
         int outputPitch)
 {
-    //const int alpha = UCHAR_MAX;
-
-    //unsigned char *base = inputBuffer;
-    //int renderFieldType = 0;
-    //unsigned char *ptr = outputBuffer;
-    //unsigned char *fieldbase = base;
-
-#if (1 && SYSLOG)
-    fprintf(stderr,
-            "Normal scaling input width: %d, height: %d, output width: %d, height: %d\n",
-            inputWidth, inputHeight, outputWidth, outputHeight);
-#endif
-
     // Allocate scratch memory for use by the interpolator
     if (!AllocScratchMemory(outputWidth, inputHeight))
     {
@@ -2493,11 +2478,9 @@ void CImageScalerConverterRGB32ToQuickTime::ScaleToQuickTimeBGRA(unsigned char *
     ThreadPoolWaitAllDone(&mailbox.pool);
 
 
-
     // Free the scratch buffers used for interpolation
     FreeScratchMemory();
 
-    //return imNoErr;
 }
 
 
@@ -2592,17 +2575,11 @@ void CImageScalerConverterRGB32ToQuickTime::ScaleToQuickTimeARGBThread(int index
                 else if (G > 255) G = 255;
                 if (B < 0) B = 0;
                 else if (B > 255) B = 255;
-#if 0
-                *BGRA++ = B;
-                *BGRA++ = G;
-                *BGRA++ = R;
-                *BGRA++ = 255;
-#else
+
                 *BGRA++ = 255;
                 *BGRA++ = R;
                 *BGRA++ = G;
                 *BGRA++ = B;
-#endif
             }
         }
     }
@@ -2618,13 +2595,6 @@ void CImageScalerConverterRGB32ToQuickTime::ScaleToQuickTimeARGB(unsigned char *
         int outputHeight,
         int outputPitch)
 {
-    //const int alpha = UCHAR_MAX;
-
-    //unsigned char *base = inputBuffer;
-    //int renderFieldType = 0;
-    //unsigned char *ptr = outputBuffer;
-    //unsigned char *fieldbase = base;
-
     // Allocate scratch memory for use by the interpolator
     if (!AllocScratchMemory(outputWidth, inputHeight))
     {
@@ -2669,8 +2639,6 @@ void CImageScalerConverterRGB32ToQuickTime::ScaleToQuickTimeARGB(unsigned char *
 
     // Free the scratch buffers used for interpolation
     FreeScratchMemory();
-
-    //return imNoErr;
 }
 
 

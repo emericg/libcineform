@@ -77,11 +77,6 @@ CFHD_MetadataOpen(CFHD_MetadataRef *metadataRefOut)
     // Return the encoder data structure
     *metadataRefOut = (CFHD_MetadataRef)metadataRef;
 
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_MetadataOpen mref:%04x thread:%d", (0xffff) & (int)metadataRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     return errorCode;
 }
 
@@ -102,13 +97,6 @@ CFHD_MetadataOpen(CFHD_MetadataRef *metadataRefOut)
 CFHDENCODER_API CFHD_Error
 CFHD_MetadataClose(CFHD_MetadataRef metadataRef)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_MetadataClose mref:%04x thread:%d", (0xffff) & (int)metadataRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
-    //CFHD_Error errorCode = CFHD_ERROR_OKAY;
-
     // Check the input arguments
     if (metadataRef == NULL)
     {
@@ -174,11 +162,6 @@ CFHD_MetadataAdd(CFHD_MetadataRef metadataRef,
                  uint32_t *data,
                  bool local)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_MetadataAdd mref:%04x thread:%d", (0xffff) & (int)metadataRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     CFHD_Error error = CFHD_ERROR_OKAY;
 
     // Check the input arguments
@@ -339,11 +322,6 @@ CFHD_MetadataAdd(CFHD_MetadataRef metadataRef,
 CFHDENCODER_API CFHD_Error
 CFHD_MetadataAttach(CFHD_EncoderRef encoderRef, CFHD_MetadataRef metadataRef)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_MetadataAttach ref:%04x mref:%04x thread:%d", (0xffff) & (int)encoderRef, (0xffff) & (int)metadataRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     // Check the input arguments
     if (metadataRef == NULL || encoderRef == NULL)
     {

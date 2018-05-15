@@ -76,13 +76,6 @@
 extern FILE *logfile;
 #endif
 
-// Enable console output for debugging only on the Macintosh
-#ifdef _WIN32
-#define SYSLOG	0
-#else
-#define SYSLOG	(0 && DEBUG)
-#endif
-
 // Local functions
 int FindUnusedBand(bool *band_in_use);
 
@@ -482,10 +475,6 @@ void AllocWaveletStack(IMAGE *wavelet, int width, int height, int level, int typ
     AllocImage(wavelet, image_width, image_height);
 #endif
     assert(wavelet->band[0] != NULL);
-
-#if (1 && SYSLOG)
-    fprintf(stderr, "AllocWaveletStack wavelet: 0x%p, image address: 0x%p\n", wavelet, wavelet->band[0]);
-#endif
 
     // Initialize the wavelet image descriptor
     InitWaveletStack(wavelet, width, height, pitch, level, type);

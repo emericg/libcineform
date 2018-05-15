@@ -120,11 +120,6 @@ CFHD_CreateEncoderPool(CFHD_EncoderPoolRef *encoderPoolRefOut,
 
         *encoderPoolRefOut = reinterpret_cast<CFHD_EncoderPoolRef>(encoderPool);
 
-#ifdef CALL_LOG
-        char tt[100];
-        sprintf(tt, "CFHD_CreateEncoderPool ref:%04x thread:%d", (0xffff) & (int)*encoderPoolRefOut, GetCurrentThreadId());
-        OutputDebugString(tt);
-#endif
         return CFHD_ERROR_OKAY;
     }
     catch (...)
@@ -151,11 +146,6 @@ CFHD_GetAsyncInputFormats(CFHD_EncoderPoolRef encoderPoolRef,
                           int inputFormatArrayLength,
                           int *actualInputFormatCountOut)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_GetAsyncInputFormats ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
@@ -186,11 +176,6 @@ CFHD_PrepareEncoderPool(CFHD_EncoderPoolRef encoderPoolRef,
                         CFHD_EncodingFlags encodingFlags,
                         CFHD_EncodingQuality encodingQuality)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_PrepareEncoderPool ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
@@ -225,11 +210,6 @@ CFHDENCODER_API CFHD_Error
 CFHD_SetEncoderPoolLicense(CFHD_EncoderPoolRef encoderPoolRef,
                            unsigned char *licenseKey)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_SetEncoderPoolLicense ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
@@ -278,11 +258,6 @@ CFHD_SetEncoderPoolLicense2(CFHD_EncoderPoolRef encoderPoolRef,
                             unsigned char *licenseKey,
                             uint32_t *level)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_SetEncoderPoolLicense2 ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
@@ -325,11 +300,6 @@ CFHDENCODER_API CFHD_Error
 CFHD_AttachEncoderPoolMetadata(CFHD_EncoderPoolRef encoderPoolRef,
                                CFHD_MetadataRef metadataRef)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_AttachEncoderPoolMetadata ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
@@ -364,11 +334,6 @@ CFHD_AttachEncoderPoolMetadata(CFHD_EncoderPoolRef encoderPoolRef,
 CFHDENCODER_API CFHD_Error
 CFHD_StartEncoderPool(CFHD_EncoderPoolRef encoderPoolRef)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_StartEncoderPool ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
@@ -396,11 +361,6 @@ CFHD_StartEncoderPool(CFHD_EncoderPoolRef encoderPoolRef)
 CFHDENCODER_API CFHD_Error
 CFHD_StopEncoderPool(CFHD_EncoderPoolRef encoderPoolRef)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_StopEncoderPool ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
@@ -444,11 +404,6 @@ CFHD_EncodeAsyncSample(CFHD_EncoderPoolRef encoderPoolRef,
                        ptrdiff_t framePitch,
                        CFHD_MetadataRef metadataRef)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_EncodeAsyncSample ref:%04x mref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, (0xffff) & (int)metadataRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
@@ -481,11 +436,6 @@ CFHD_WaitForSample(CFHD_EncoderPoolRef encoderPoolRef,
                    uint32_t *frameNumberOut,
                    CFHD_SampleBufferRef *sampleBufferRefOut)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_WaitForSample ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CFHD_Error error = CFHD_ERROR_OKAY;
@@ -527,11 +477,6 @@ CFHD_TestForSample(CFHD_EncoderPoolRef encoderPoolRef,
                    uint32_t *frameNumberOut,
                    CFHD_SampleBufferRef *sampleBufferRefOut)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_TestForSample ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CFHD_Error error = CFHD_ERROR_OKAY;
@@ -565,11 +510,6 @@ CFHD_GetEncodedSample(CFHD_SampleBufferRef sampleBufferRef,
                       void **sampleDataOut,
                       size_t *sampleSizeOut)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_GetEncodedSample thread:%d", GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     if (sampleDataOut == NULL || sampleSizeOut == NULL)
     {
         return CFHD_ERROR_INVALID_ARGUMENT;
@@ -634,11 +574,6 @@ CFHD_GetSampleThumbnail(CFHD_SampleBufferRef sampleBufferRef,
                         CFHD_PixelFormat *pixelFormatOut,
                         size_t *actualSizeOut)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_GetSampleThumbnail thread:%d", GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CSampleBuffer *sampleBuffer = GetSampleBuffer(sampleBufferRef);
@@ -744,11 +679,6 @@ CFHDENCODER_API CFHD_Error
 CFHD_ReleaseSampleBuffer(CFHD_EncoderPoolRef encoderPoolRef,
                          CFHD_SampleBufferRef sampleBufferRef)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_ReleaseSampleBuffer ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);
@@ -776,11 +706,6 @@ CFHD_ReleaseSampleBuffer(CFHD_EncoderPoolRef encoderPoolRef,
 CFHDENCODER_API CFHD_Error
 CFHD_ReleaseEncoderPool(CFHD_EncoderPoolRef encoderPoolRef)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_ReleaseEncoderPool ref:%04x thread:%d", (0xffff) & (int)encoderPoolRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     try
     {
         CEncoderPool *encoderPool = GetEncoderPool(encoderPoolRef);

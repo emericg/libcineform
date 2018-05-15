@@ -42,12 +42,6 @@
 #include "VideoBuffers.h"
 #include "SampleEncoder.h"
 
-
-#if SYSLOG
-FILE *logfile = NULL;
-int err = 0;
-#endif
-
 /*!	@function CFHD_OpenEncoder
 
 	@brief Open an instance of the CineForm HD encoder and return a reference
@@ -65,23 +59,6 @@ CFHDENCODER_API CFHD_Error
 CFHD_OpenEncoder(CFHD_EncoderRef *encoderRefOut,
                  CFHD_ALLOCATOR *allocator)
 {
-#if (1 && SYSLOG)
-    if (logfile == NULL)
-    {
-#ifdef _WIN32
-        int err = fopen_s(&logfile, "EncoderDLL.log", "w");
-#else
-        logfile = fopen("EncoderDLL.log", "w");
-#endif
-    }
-#endif
-#if (1 && SYSLOG)
-    if (logfile)
-    {
-        fprintf(logfile, "CFHD_OpenEncoder\n");
-    }
-#endif
-
     // Check the input arguments
     if (encoderRefOut == NULL)
     {
@@ -99,12 +76,6 @@ CFHD_OpenEncoder(CFHD_EncoderRef *encoderRefOut,
 
     // Return the encoder data structure
     *encoderRefOut = (CFHD_EncoderRef)encoderRef;
-
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_OpenEncoder ref:%04x thread:%d", (0xffff) & (int)encoderRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
 
     return CFHD_ERROR_OKAY;
 }
@@ -135,19 +106,7 @@ CFHD_GetInputFormats(CFHD_EncoderRef encoderRef,
                      int inputFormatArrayLength,
                      int *actualInputFormatCountOut)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_GetInputFormats ref:%04x thread:%d", (0xffff) & (int)encoderRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     CFHD_Error errorCode = CFHD_ERROR_OKAY;
-
-#if (1 && SYSLOG)
-    if (logfile)
-    {
-        fprintf(logfile, "CFHD_GetInputFormats\n");
-    }
-#endif
 
     // Check the input arguments
     if (encoderRef == NULL)
@@ -205,19 +164,7 @@ CFHD_PrepareToEncode(CFHD_EncoderRef encoderRef,
                      CFHD_EncodingFlags encodingFlags,
                      CFHD_EncodingQuality encodingQuality)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_PrepareToEncode ref:%04x thread:%d", (0xffff) & (int)encoderRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     CFHD_Error error = CFHD_ERROR_OKAY;
-
-#if (1 && SYSLOG)
-    if (logfile)
-    {
-        fprintf(logfile, "CFHD_PrepareToEncode\n");
-    }
-#endif
 
     // Check the input arguments
     if (encoderRef == NULL)
@@ -261,20 +208,8 @@ CFHD_EncodeSample(CFHD_EncoderRef encoderRef,
                   void *frameBuffer,
                   int framePitch)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_EncodeSample ref:%04x thread:%d", (0xffff) & (int)encoderRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     CFHD_Error error = CFHD_ERROR_OKAY;
     CFHD_Error errorFree = CFHD_ERROR_OKAY;		// 20090610 CMD - so we can remember the encode error.
-
-#if (1 && SYSLOG)
-    if (logfile)
-    {
-        fprintf(logfile, "CFHD_EncodeSample\n");
-    }
-#endif
 
     // Check the input arguments
     if (encoderRef == NULL)
@@ -327,19 +262,7 @@ CFHD_GetSampleData(CFHD_EncoderRef encoderRef,
                    void **sampleDataOut,
                    size_t *sampleSizeOut)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_GetSampleData ref:%04x thread:%d", (0xffff) & (int)encoderRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     CFHD_Error error = CFHD_ERROR_OKAY;
-
-#if (1 && SYSLOG)
-    if (logfile)
-    {
-        fprintf(logfile, "CFHD_GetSampleData\n");
-    }
-#endif
 
     // Check the input arguments
     if (encoderRef == NULL)
@@ -378,11 +301,6 @@ CFHDENCODER_API CFHD_Error
 CFHD_SetEncodeLicense(CFHD_EncoderRef encoderRef,
                       unsigned char *licenseKey)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_SetEncodeLicense ref:%04x thread:%d", (0xffff) & (int)encoderRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     uint32_t level = 0;
 
     // Check the input arguments
@@ -436,11 +354,6 @@ CFHD_SetEncodeLicense2(CFHD_EncoderRef encoderRef,
                        unsigned char *licenseKey,
                        uint32_t *level)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_SetEncodeLicense2 ref:%04x thread:%d", (0xffff) & (int)encoderRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     // Check the input arguments
     if (encoderRef == NULL)
     {
@@ -477,20 +390,6 @@ CFHD_SetEncodeLicense2(CFHD_EncoderRef encoderRef,
 CFHDENCODER_API CFHD_Error
 CFHD_CloseEncoder(CFHD_EncoderRef encoderRef)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_CloseEncoder ref:%04x thread:%d", (0xffff) & (int)encoderRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
-    //CFHD_Error errorCode = CFHD_ERROR_OKAY;
-
-#if (1 && SYSLOG)
-    if (logfile)
-    {
-        fprintf(logfile, "CFHD_CloseEncoder\n");
-    }
-#endif
-
     // Check the input arguments
     if (encoderRef == NULL)
     {
@@ -553,11 +452,6 @@ CFHD_GetEncodeThumbnail(CFHD_EncoderRef encoderRef,
                         size_t *retHeight,
                         size_t *retSize)
 {
-#ifdef CALL_LOG
-    char tt[100];
-    sprintf(tt, "CFHD_GetEncodeThumbnail ref:%04x thread:%d", (0xffff) & (int)encoderRef, GetCurrentThreadId());
-    OutputDebugString(tt);
-#endif
     CFHD_Error errorCode = CFHD_ERROR_OKAY;
 
     // Check the input arguments

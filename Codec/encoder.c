@@ -89,12 +89,6 @@
 #define DUMP   (0 && _DUMP)
 #endif
 
-#ifdef _WIN32
-#define SYSLOG	0
-#else
-#define SYSLOG	(0 && DEBUG)
-#endif
-
 #define PREFETCH (1 && _PREFETCH)
 
 #ifndef ALIGNED_N_PTR
@@ -1057,10 +1051,6 @@ void SetEncoderFormat(ENCODER *encoder, int width, int height, int display_heigh
 #endif
         encoder->encoded_format = ENCODED_FORMAT_YUV_422; //DAN20120228
     }
-
-#if (1 && SYSLOG)
-    fprintf(stderr, "SetEncoderFormat allocated frame: 0x%p\n", (int)encoder->frame);
-#endif
 }
 
 // The recursive encoder does not allocate a frame for unpacking the input image
@@ -1977,10 +1967,6 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
     ALLOCATOR *allocator = encoder->allocator;
 #endif
 
-#if (1 && SYSLOG)
-    fprintf(stderr, "EncodeSample buffer address: 0x%p, size: %d\n", buffer, buffer_size);
-#endif
-
     // Get the frame for storing the unpacked data
     frame = encoder->frame;
     assert(frame != NULL);
@@ -1991,14 +1977,6 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
         data += (display_height - 1) * pitch;
         pitch = -pitch;
     }
-
-#if DEBUG && 0
-    {
-        char t[100];
-        sprintf(t, "encode format %d", format);
-        OutputDebugString(t);
-    }
-#endif
 
     encoder->uncompressed = 0;
     if (	origformat == COLOR_FORMAT_V210 ||
@@ -2483,9 +2461,8 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
                     size_t frame_size = display_size + extended_size;
                     char *tmp;
 
-#if (1 && SYSLOG)
-                    fprintf(stderr, "Frame size: %d, buffer size: %d\n", frame_size, buffer_size);
-#endif
+                    //fprintf(stderr, "Frame size: %d, buffer size: %d\n", frame_size, buffer_size);
+
                     // Check that the temporary frame will fit in the scratch buffer
                     assert(frame_size <= buffer_size);
 
@@ -2507,9 +2484,8 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
                     buffer_size -= frame_size;
 
                     assert(buffer_size > 0);
-#if (1 && SYSLOG)
-                    fprintf(stderr, "EncodeSample new buffer address: 0x%p, size: %d\n", buffer, buffer_size);
-#endif
+
+                    //fprintf(stderr, "EncodeSample new buffer address: 0x%p, size: %d\n", buffer, buffer_size);
                 }
 
                 //10-bit for everyone

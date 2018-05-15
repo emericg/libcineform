@@ -55,23 +55,12 @@
 //typedef struct encoder ENCODER;
 struct encoder;
 
-#if DEBUG
-// Make the logfile available for debugging
-#include <stdio.h>
-extern FILE *logfile;
-#endif
-
 #ifndef _QUANTIZE_SPATIAL_LOWPASS
 #define _QUANTIZE_SPATIAL_LOWPASS	0
 #endif
 
-//#ifndef _UNALIGNED
-//#define _UNALIGNED	0
-//#endif
 #ifndef _UNALIGNED
 #define _UNALIGNED	0
-//#elif (_UNALIGNED == 1)    // Hack for VS2012 and beyond as default behavior for VS sets _UNALIGNED == __unaligned keyword)
-//do nothing
 #else
 #undef _UNALIGNED
 #define _UNALIGNED	0
