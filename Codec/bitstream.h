@@ -255,7 +255,6 @@ TAGVALUE GetSegment(BITSTREAM *stream);
 // Read the specified tag from the bitstream and return the value
 //TAGWORD GetValue(BITSTREAM *stream, enum codec_tag tag);
 TAGWORD GetValue(BITSTREAM *stream, int tag);
-//TAGWORD GetValue(BITSTREAM *stream, CODEC_TAG tag);
 
 // Skip to the end of the encoded subband
 void SkipSubband(BITSTREAM *stream);
@@ -269,7 +268,6 @@ bool IsValidSegment(BITSTREAM *stream, TAGVALUE segment, TAGWORD tag);
 // Does the tag value pair have the specified tag code and value?
 //BOOL IsTagValue(TAGVALUE segment, enum codec_tag tag, TAGWORD value);
 bool IsTagValue(TAGVALUE segment, int tag, TAGWORD value);
-//BOOL IsTagValue(TAGVALUE segment, CODEC_TAG tag, TAGWORD value);
 
 // Insert the specified number of bits into a field
 uint32_t  AddBits(BITSTREAM *stream, uint32_t  word, int nBitCount);

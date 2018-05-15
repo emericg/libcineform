@@ -38,11 +38,8 @@
 #endif
 
 #include "codec.h"
-//#include "ipp.h"		// Use Intel Performance Primitives
 #include "image.h"
 #include "bitstream.h"
-//#include "zerotree.h"
-#include "debug.h"
 #include "color.h"
 #include "filter.h"
 
@@ -52,8 +49,6 @@
 
 #include "codebooks.h"
 
-// Must declare byte swap even though it is an intrinsic
-//int _bswap(int);
 #include "swap.h"
 
 #ifndef _LOWPASS_BYTES

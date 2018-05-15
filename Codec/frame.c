@@ -19,8 +19,7 @@
 *
 */
 
-//#include <stdint.h>
-#include "stdint.h"			// Use a local copy until this file is available on Windows
+#include <stdint.h>
 #include <string.h>
 #include <assert.h>
 #include <math.h>

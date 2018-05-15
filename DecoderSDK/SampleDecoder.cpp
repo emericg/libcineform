@@ -60,33 +60,11 @@
 #include "metadata.h"
 
 // Include files for the encoder DLL
-#ifdef _WIN32
 #include "CFHDDecoder.h"
-#else
-#include "CFHDDecoder.h"
-#endif
 #include "IAllocator.h"
 #include "ISampleDecoder.h"
 #include "SampleDecoder.h"
 #include "Conversion.h"
-
-//TODO: Need to add logfile capability
-#define LOGFILE 0
-
-//TODO: Support arbitrary scaling
-#define _SCALING 0
-
-// Clear previous settings of the flag for debug output
-#ifdef TRACE
-#undef TRACE
-#endif
-
-// Set the flag for debug output
-#ifndef _PRODUCTION
-#define TRACE	1
-#else
-#define TRACE	0
-#endif
 
 typedef struct decodedFormatKey
 {
@@ -503,12 +481,8 @@ CSampleDecoder::GetOutputFormats(void *samplePtr,
     // Best output formats for raw Bayer pixel data
     static CFHD_PixelFormat outputFormatBayer[] =
     {
-#if 0 // Hack for Resolve
-        // no bayer formats
-#else
         CFHD_PIXEL_FORMAT_BYR2,			// Raw Bayer pixel data
         CFHD_PIXEL_FORMAT_BYR4,			// Raw Bayer pixel data
-#endif
         CFHD_PIXEL_FORMAT_B64A,			// ARGB with 16-bits per component
         CFHD_PIXEL_FORMAT_R210,			// RGB with 10-bits per component
         CFHD_PIXEL_FORMAT_DPX0,			// RGB with 10-bits per component
@@ -741,17 +715,6 @@ bool CSampleDecoder::IsDecoderObsolete(int outputWidth,
 
         // The decoded resolution variable is reused to hold the codec internal resolution
 
-#if _SCALING
-        // Compute the decoded resolution for arbitrary frame scaling
-        decodedResolution = DecodedScale(encodedWidth, encodedHeight, outputWidth, outputHeight);
-        if (decodedResolution == DECODED_RESOLUTION_UNSUPPORTED)
-        {
-            // Cannot decode and scale this combination of encoded and output dimensions
-            assert(0);
-            errorCode = CFHD_ERROR_BADSCALING;
-            goto finish;
-        }
-#else
         // Compute the decoded resolution without arbitrary frame scaling
         decodedResolution = DecodedResolution(m_encodedWidth, m_encodedHeight, outputWidth, outputHeight);
         if (decodedResolution == DECODED_RESOLUTION_UNSUPPORTED)
@@ -761,7 +724,7 @@ bool CSampleDecoder::IsDecoderObsolete(int outputWidth,
             outputHeight = m_encodedHeight;
             decodedResolution = DECODED_RESOLUTION_FULL;
         }
-#endif
+
         // Return true if the decoding parameters have changed
         return (decodedFormat != m_decodedFormat ||
                 decodedResolution != m_decodedResolution);
@@ -996,23 +959,18 @@ CSampleDecoder::PrepareDecoder(int outputWidth,
         }
 
 
-#if (0 && LOGFILE)
-        if (m_logfile)
-        {
-            fprintf(m_logfile, "CFHD_DecompressorBeginBand, glob: 0x%08X, encoded width: %d, height: %d, output width: %d, height: %d\n",
-                    (unsigned int)glob, encodedWidth, encodedHeight, outputWidth, outputHeight);
-        }
-#endif
+        //fprintf(m_logfile, "CFHD_DecompressorBeginBand, glob: 0x%08X, encoded width: %d, height: %d, output width: %d, height: %d\n",
+        //        (unsigned int)glob, encodedWidth, encodedHeight, outputWidth, outputHeight);
+
 
         // Translate the encoded and output pixel formats into the decoded format
         GetDecodedFormat(encodedFormat, outputFormat, &decodedFormat, &decodedPixelSize);
 
-#if (0 && TRACE)
-        char message[256];
-        sprintf(message, "Encoded format: %d, output format: %c%c%c%c, decoded format: %d, pixel size: %d\n",
-                encodedFormat, FOURCC(outputFormat), decodedFormat, decodedPixelSize);
-        OutputDebugString(message);
-#endif
+
+        //char message[256];
+        //sprintf(message, "Encoded format: %d, output format: %c%c%c%c, decoded format: %d, pixel size: %d\n",
+        //        encodedFormat, FOURCC(outputFormat), decodedFormat, decodedPixelSize);
+        //OutputDebugString(message);
 
         // Save the encoded format that was used to compute the decoded format
         m_encodedFormat = encodedFormat;
@@ -1066,17 +1024,6 @@ CSampleDecoder::PrepareDecoder(int outputWidth,
 
         // The decoded resolution variable is reused to hold the codec internal resolution
 
-#if _SCALING
-        // Compute the decoded resolution for arbitrary frame scaling
-        decodedResolution = DecodedScale(encodedWidth, encodedHeight, outputWidth, outputHeight);
-        if (decodedResolution == DECODED_RESOLUTION_UNSUPPORTED)
-        {
-            // Cannot decode and scale this combination of encoded and output dimensions
-            assert(0);
-            errorCode = CFHD_ERROR_BADSCALING;
-            goto finish;
-        }
-#else
         // Compute the decoded resolution without arbitrary frame scaling
         decodedResolution = DecodedResolution(encodedWidth, encodedHeight, outputWidth, outputHeight);
         if (decodedResolution == DECODED_RESOLUTION_UNSUPPORTED)
@@ -1088,7 +1035,6 @@ CSampleDecoder::PrepareDecoder(int outputWidth,
 
             //TODO: Use the decoded resolution argument to adjust the output dimensions
         }
-#endif
 
         if (decodedFormat == DECODED_FORMAT_UNSUPPORTED)
         {
@@ -1096,15 +1042,10 @@ CSampleDecoder::PrepareDecoder(int outputWidth,
             goto finish;
         }
 
-#if LOGFILE
-        if (m_logfile)
-        {
-            char formatString[FOURCC_STRING_LENGTH];
-            ConvertFourccToString(pixelFormat, formatString);
-            fprintf(m_logfile, "CFHD_DecompressorBeginBand, glob: 0x%08X, pixel format: %s, decoded format: %d, decoded resolution: %d\n",
-                    (unsigned int)glob, formatString, decodedFormat, decodedResolution);
-        }
-#endif
+        //char formatString[FOURCC_STRING_LENGTH];
+        //ConvertFourccToString(pixelFormat, formatString);
+        //fprintf(m_logfile, "CFHD_DecompressorBeginBand, glob: 0x%08X, pixel format: %s, decoded format: %d, decoded resolution: %d\n",
+        //        (unsigned int)glob, formatString, decodedFormat, decodedResolution);
 
         // Has the decoder been allocated and initialized?
         if (m_decoder != NULL)
@@ -1127,11 +1068,6 @@ CSampleDecoder::PrepareDecoder(int outputWidth,
         {
             bool result;
 
-#if (0 && TRACE)
-            char message[256];
-            sprintf_s(message, "CSampleDecoder::PrepareDecoder allocating decoder size: %d\n", sizeof(DECODER));
-            OutputDebugString(message);
-#endif
             m_decoder = (DECODER *)Alloc(DecoderSize());
             assert(m_decoder != NULL);
             if (! (m_decoder != NULL))
@@ -1178,16 +1114,9 @@ CSampleDecoder::PrepareDecoder(int outputWidth,
             // Assume that the frame will be rendered
             //m_willRender = true;
 
-#if _SCALING
-            // Compute the dimensions of the decoded frame
-            ComputeDecodedDimensions(encodedWidth, encodedHeight, decodedResolution,
-                                     &decodedWidth, &decodedHeight);
-#else
             // Assume that the decoded dimensions are the same as the output dimensions
             decodedWidth = outputWidth;
             decodedHeight = outputHeight;
-#endif
-            //Note: The decoded dimensions are not the same as the output dimensions if the decoded frame is scaled
 
             // Remember the decoded dimensions
             m_decodedWidth = decodedWidth;
@@ -1305,11 +1234,7 @@ finish:
                     break;
 
                 case ENCODED_FORMAT_BAYER:
-#if 0 // Hack for Resolve
-                    *actualFormatOut = CFHD_PIXEL_FORMAT_RG48;
-#else
                     *actualFormatOut = CFHD_PIXEL_FORMAT_BYR4;
-#endif
                     break;
 
                 default:
@@ -1540,13 +1465,7 @@ CSampleDecoder::DecodeSample(void *samplePtr,
         bool conversionIsRequired;
 
         // Can the sample be decoded directly to the output buffer?
-        if (
-#if _SCALING
-            m_decodedWidth != m_outputWidth ||
-            m_decodedHeight != m_outputHeight ||
-#endif
-            IsSameFormat(m_decodedFormat, m_outputFormat)
-        )
+        if (IsSameFormat(m_decodedFormat, m_outputFormat))
         {
             // Decode the sample into the output buffer
             decodedFrameBuffer = (uint8_t *)outputBuffer;

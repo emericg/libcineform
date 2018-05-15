@@ -24,11 +24,6 @@
 
 #include <stdlib.h>
 
-// Enable overlay text and graphics using Cairo
-#ifndef _GRAPHICS
-#define _GRAPHICS	0
-#endif
-
 #ifdef _WIN32
 #ifndef DEBUG_ALLOCS
 #define DEBUG_ALLOCS	1

@@ -35,11 +35,7 @@
 
 #include "temporal.h"
 #include "filter.h"			// Declarations of filter routines
-//#include "image.h"		// Image processing data types
-//#include "ipp.h"			// Use Intel Performance Primitives
-//#include "debug.h"
 #include "codec.h"
-//#include "buffer.h"
 #include "quantize.h"
 #include "convert.h"
 #include "decoder.h"

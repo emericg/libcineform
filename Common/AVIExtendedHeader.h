@@ -32,7 +32,6 @@
 #define	CFHDDATA_VERSION		7
 
 #define MAX_PIXEL_DEFECTS		8
-//#define MAX_METADATA_HEADER		3072		// 256 byte more prevents mediaplayer/windows from working (can't find the codec.)
 
 typedef struct PixelDefect
 {
@@ -488,16 +487,6 @@ typedef struct channel_data
 
 } ChannelData;
 
-typedef enum BayerFormat
-{
-    BAYER_FORMAT_DEFAULT = 0,		// Defaults to red-green
-    BAYER_FORMAT_GREEN_RED = 1,
-    BAYER_FORMAT_GREEN_BLUE = 2,
-    BAYER_FORMAT_BLUE_GREEN = 3,
-    BAYER_FORMAT_RED_GREEN = BAYER_FORMAT_DEFAULT,
-
-} BayerFormat;
-
 typedef struct tagCFHDDATA_NEW
 {
     uint32_t MagicNumber;
@@ -672,7 +661,4 @@ typedef struct tagCFHDDATA_NEW
 
 } CFHDDATA;
 
-
 #endif //AVIEH
-
-

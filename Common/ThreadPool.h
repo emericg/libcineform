@@ -256,11 +256,6 @@ public:
 
         if (threadLimit > 0)
         {
-#if (1 && TRACE)
-            char message[256];
-            sprintf_s(message, "CThreadLimiter thread limit: %d\n", threadLimit);
-            OutputDebugMesage(message);
-#endif
             m_handle = CreateSemaphore(NULL, threadLimit, threadLimit, NULL);
             ASSERT(m_handle != 0);
         }

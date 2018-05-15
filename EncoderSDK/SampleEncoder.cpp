@@ -39,12 +39,6 @@
 
 #include "metadata.h"
 
-//TODO: Need to add logfile capability
-#define LOGFILE 0
-
-//TODO: Support arbitrary scaling
-//#define _SCALING 0
-
 
 // Embed an error from the codec library in an SDK error code
 static inline CFHD_Error CFHD_CODEC_ERROR(CODEC_ERROR error)

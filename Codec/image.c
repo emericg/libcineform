@@ -38,7 +38,6 @@
 #include "image.h"
 #include "codec.h"
 #include "filter.h"
-#include "debug.h"
 #include "wavelet.h"
 #include "color.h"
 #include "allocator.h"

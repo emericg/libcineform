@@ -1,4 +1,4 @@
-/*! @file DemoasicFrames.cpp
+/*! @file demosaicframes.c
 
 *  @brief CFA Bayer tools
 *
@@ -41,31 +41,19 @@
 #include <xmmintrin.h>
 #endif
 
-#include "../Common/AVIExtendedHeader.h"
 #define MAX_PATH	260
 
 #include "codec.h"
-//#include "swap.h"
+#include "swap.h"
 
-#define SwapInt32(x)	((((x)&0xff000000)>>24)|(((x)&0xff0000)>>8)|(((x)&0xff00)<<8)|(((x)&0xff)<<24))
-
-#if 0
-#include "DemoasicFrames.h"
-#else
 #include "config.h"
 #include "encoder.h"
 #include "color.h"
 #include "metadata.h"
 #include "convert.h"
-#include "draw.h"
 #include "lutpath.h"
 
-#include "DemoasicFrames.h"
-
-#ifdef SPI_LOADER
-#include "spi.h"
-#include "keyframes.h"
-#endif
+#include "demosaicframes.h"
 
 typedef int DEBAYER_ORDERING;
 
@@ -132,13 +120,10 @@ void FastSharpeningBlurVW13A( short *Aptr,
                               int resolution,
                               int channel_blend_type);
 
-//float *LoadCube64_3DLUT(DECODER *decoder, CFHDDATA *cfhddata, int *lutsize);
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif
 
 #define MAKEID(a,b,c,d) ((a<<24)|(b<<16)|(c<<8)|(d))
 #define MAKEID_SWAP(d,c,b,a) ((a<<24)|(b<<16)|(c<<8)|(d))

@@ -1,4 +1,4 @@
-/*! @file DemoasicFrames.h
+/*! @file demosaicframes.h
 
 *  @brief
 *
@@ -22,7 +22,6 @@
 #ifndef _DEMOSAICFRAMESLIB_H
 #define _DEMOSAICFRAMESLIB_H
 
-#include "../Common/AVIExtendedHeader.h"
 #include "codec.h"
 
 typedef int DEBAYER_ORDERING;

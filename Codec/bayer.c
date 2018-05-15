@@ -30,14 +30,9 @@
 #include "thread.h"
 #include "decoder.h"
 #include "convert.h"
-#include "DemoasicFrames.h"		//TODO: Change filename to lower case
+#include "demosaicframes.h"
 #include "swap.h"
-#include "draw.h"
 #include "RGB2YUV.h"			//TODO: Change filename to lower case?
-#include "exception.h"
-#if WARPSTUFF
-#include "WarpLib.h"
-#endif
 
 #ifndef countof
 #define countof(a)	((int)(sizeof(a)/sizeof(a[0])))
@@ -11070,103 +11065,6 @@ void Do3DWork(DECODER *decoder, FRAME_INFO *info, int thread_index, uint8_t *out
     }
 }
 
-#if WARPSTUFF
-void DoWarp(DECODER *decoder, void *mesh, uint8_t *output, int *lens_correct_buffer,
-            int thread_index, int line_max, int chunk_size)
-{
-    THREAD_ERROR error;
-
-    for (;;)
-    {
-        int work_index;
-
-        // Wait for one row from each channel to process
-        error = PoolThreadWaitForWork(&decoder->worker_thread.pool, &work_index, thread_index);
-
-        // Is there another row to process?
-        if (error == THREAD_ERROR_OKAY)
-        {
-            int y, y2;
-
-            // job level 0
-            y = work_index * chunk_size;
-            y2 = y + chunk_size;
-            if (y2 > line_max) y2 = line_max;
-
-            geomesh_apply_bilinear(mesh, (unsigned char *)output, (unsigned char *)lens_correct_buffer, y, y2);
-        }
-        else
-        {
-            // No more work to do
-            return;
-        }
-    }
-}
-
-
-void DoWarpCache(DECODER *decoder, void *mesh, int thread_index, int line_max, int chunk_size, int flags)
-{
-    THREAD_ERROR error;
-
-    for (;;)
-    {
-        int work_index;
-
-        // Wait for one row from each channel to process
-        error = PoolThreadWaitForWork(&decoder->worker_thread.pool, &work_index, thread_index);
-
-        // Is there another row to process?
-        if (error == THREAD_ERROR_OKAY)
-        {
-            int y, y2;
-
-            // job level 0
-            y = work_index * chunk_size;
-            y2 = y + chunk_size;
-            if (y2 > line_max) y2 = line_max;
-
-            geomesh_cache_init_bilinear_range(mesh, y, y2);
-        }
-        else
-        {
-            // No more work to do
-            return;
-        }
-    }
-}
-void DoWarpBlurV(DECODER *decoder, void *mesh, int thread_index, int line_max, int chunk_size, uint8_t *output, int pitch)
-{
-    THREAD_ERROR error;
-
-    for (;;)
-    {
-        int work_index;
-
-        // Wait for one row from each channel to process
-        error = PoolThreadWaitForWork(&decoder->worker_thread.pool, &work_index, thread_index);
-
-        // Is there another row to process?
-        if (error == THREAD_ERROR_OKAY)
-        {
-            int x, x2;
-
-            // job level 0
-            x = work_index * chunk_size;
-            x2 = x + chunk_size;
-            if (x2 > line_max) x2 = line_max;
-
-            geomesh_blur_vertical_range(mesh, x, x2, output, pitch);
-        }
-        else
-        {
-            // No more work to do
-            return;
-        }
-    }
-}
-#endif //#if WARPSTUFF
-
-
 void DoVertSharpen(DECODER *decoder, FRAME_INFO *info, int thread_index, uint8_t *output, int pitch,
                    uint8_t *scratch, int scratchsize, uint8_t *local_output, int local_pitch, int channel_offset,
                    int chunk_size, int line_max)
@@ -11581,41 +11479,6 @@ void DoHistogramWork(DECODER *decoder, FRAME_INFO *info, int thread_index, uint8
         }
     }
 }
-
-
-#if 0
-void DoBurninWork(DECODER *decoder, FRAME_INFO *info, int thread_index, uint8_t *output, int pitch,
-                  uint8_t *scratch, int scratchsize, uint8_t *local_output, int local_pitch, int channel_offset,
-                  int chunk_size, int line_max)
-{
-    THREAD_ERROR error;
-    uint8_t *scratchptr = scratch;
-    int scratchremain = scratchsize;
-    int width = decoder->frame.width;
-    int height = decoder->frame.height;
-    int targetW = width / 4;
-    int targetH = height / 8;
-
-    for (;;)
-    {
-        int work_index;
-
-        // Wait for one row from each channel to process
-        error = PoolThreadWaitForWork(&decoder->worker_thread.pool, &work_index, thread_index);
-
-        // Is there another row to process?
-        if (error == THREAD_ERROR_OKAY)
-        {
-            HistogramRender(decoder, output, pitch, decoder->frame.output_format, work_index, targetW, targetH);
-        }
-        else
-        {
-            // No more work to do
-            return;
-        }
-    }
-}
-#endif
 
 void QuarterRAW(DECODER *decoder, FRAME_INFO *info, int thread_index, uint8_t *output, int pitch, uint8_t *scratch, int scratchsize)
 {
@@ -13922,9 +13785,6 @@ THREAD_PROC(WorkerThreadProc, lpParam)
     }
 #endif
 
-    // Set the handler for system exceptions
-    SetDefaultExceptionHandler();
-
     // Determine the index of this worker thread
     error = PoolThreadGetIndex(&decoder->worker_thread.pool, &thread_index);
     assert(error == THREAD_ERROR_OKAY);
@@ -14026,7 +13886,6 @@ THREAD_PROC(WorkerThreadProc, lpParam)
             // Unlock access to the transform data
             Unlock(&decoder->worker_thread.lock);
 
-
             if (jobType == JOB_TYPE_HORIZONAL_3D)
             {
                 Do3DWork(decoder, &info, thread_index, output, pitch, scratch, (int)scratchsize, local_output, local_pitch, channel_offset, chunk_size, line_max);
@@ -14063,28 +13922,6 @@ THREAD_PROC(WorkerThreadProc, lpParam)
                 line_max = decoder->worker_thread.pool.work_start_count;
                 DoBuildCube(decoder, thread_index, line_max);
             }
-#if WARPSTUFF
-            else if (jobType == JOB_TYPE_WARP)
-            {
-                DoWarp(decoder, mesh, output, lens_correct_buffer, thread_index, line_max, chunk_size);
-            }
-            else if (jobType == JOB_TYPE_WARP_CACHE)
-            {
-                DoWarpCache(decoder, mesh, thread_index, line_max, chunk_size, flags);
-            }
-            else if (jobType == JOB_TYPE_WARP_BLURV)
-            {
-                DoWarpBlurV(decoder, mesh, thread_index, line_max, chunk_size, (uint8_t *)lens_correct_buffer, pitch);
-            }
-#endif
-
-#if 0
-            else if (jobType == JOB_TYPE_BURNINS)
-            {
-                DoBurninWork(decoder, &info, thread_index, output, pitch, scratch, scratchsize, local_output, local_pitch, channel_offset, chunk_size, line_max);
-
-            }
-#endif
             else if (jobType == JOB_TYPE_WAVELET)
             {
                 // Apply the inverse transform to the section of wavelet assigned to this thread

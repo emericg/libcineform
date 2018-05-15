@@ -22,15 +22,10 @@
 
 #include "config.h"
 #include "timing.h"
-#if WARPSTUFF
-#include "WarpLib.h"
-#endif
-//#include <stdlib.h>
 #include <stddef.h>
 #include <math.h>
 #include <memory.h>
 #include <time.h>
-//#include <stdint.h>
 
 #ifndef DEBUG
 #define DEBUG  (1 && _DEBUG)
@@ -43,10 +38,6 @@
 #endif
 
 #define GEN_LICENSE 0
-
-#ifndef PI
-#define PI 3.14159265359f
-#endif
 
 #ifdef _WIN32
 #include <windows.h>
@@ -67,7 +58,6 @@
 #include "codec.h"
 #include "vlc.h"
 #include "codebooks.h"			// References to the codebooks
-#include "debug.h"
 #include "color.h"				// Color formats supported by image processing routines
 #include "image.h"
 #include "filter.h"
@@ -81,12 +71,10 @@
 #include "cpuid.h"
 #include "bayer.h"
 #include "metadata.h"
-#include "DemoasicFrames.h"		//TODO: Change filename to lower case
+#include "demosaicframes.h"
 #include "swap.h"
-#include "draw.h"
 #include "RGB2YUV.h"
 #include "lutpath.h"
-#include "exception.h"
 
 extern void FastVignetteInplaceWP13(DECODER *decoder, int displayWidth, int width, int height, int y, float r1, float r2, float gain,
                                     int16_t *sptr, int resolution, int pixelsize);
@@ -115,11 +103,6 @@ extern void FastSharpeningBlurVW13A(short *Aptr,
                                     float sharpness,
                                     int resolution,
                                     int channel_blend_type);
-
-#ifdef SPI_LOADER
-#include "spi.h"
-#include "keyframes.h"
-#endif
 
 #ifndef DUMP
 #define DUMP (0 && _DUMP)
@@ -682,11 +665,7 @@ void ClearDecoder(DECODER *decoder)
     int i;
 
     if (decoder->initialized == 0)
-        return;  // nothing to free //DAN20060912
-
-#if _GRAPHICS
-    DrawClose(decoder);
-#endif
+        return;
 
     for (i = 0; i <= METADATA_PRIORITY_MAX; i++)
     {
@@ -748,19 +727,6 @@ void ClearDecoder(DECODER *decoder)
     // Free the buffer allocated for decoding
     if (decoder->buffer != NULL)
     {
-
-#if DEBUG_BUFFER_USAGE
-        int i;
-        char *ptr = (char *)decoder->buffer;
-        FILE *fp = fopen("C:/free.txt", "a");
-        fprintf(fp, "decoder->buffer = %08x buffer_size = %d\n", decoder->buffer, decoder->buffer_size);
-
-        i = decoder->buffer_size - 1;
-        while (ptr[i] == 1) i--;
-
-        fprintf(fp, "used %2.3f percent\n", 100.0 * (float)i / (float)decoder->buffer_size);
-        fclose(fp);
-#endif
 #if _ALLOCATOR
         FreeAligned(allocator, decoder->buffer);
 #else
@@ -885,7 +851,6 @@ void ClearDecoder(DECODER *decoder)
 #endif
 
 
-    //MEMORY_ALIGNED_FREE(RawBayer16);
 #if _ALLOCATOR
     if (decoder->RGBFilterBuffer16)
     {
@@ -959,36 +924,6 @@ void ClearDecoder(DECODER *decoder)
         decoder->LUTcacheCRC = 0;
     }
 
-#if WARPSTUFF
-    {
-        if (decoder->lens_correct_buffer)
-#if _ALLOCATOR
-            Free(decoder->allocator, decoder->lens_correct_buffer);
-#else
-            MEMORY_ALIGNED_FREE(decoder->lens_correct_buffer);
-#endif
-
-        if (decoder->mesh)
-            geomesh_destroy(decoder->mesh);
-
-
-        decoder->lastLensOffsetX = 0;
-        decoder->lastLensOffsetY = 0;
-        decoder->lastLensOffsetZ = 0;
-        decoder->lastLensOffsetR = 0;
-        decoder->lastLensZoom = 0;
-        decoder->lastLensFishFOV = 0;
-        decoder->lastLensGoPro = 0;
-        decoder->lastLensSphere = 0;
-        decoder->lastLensFill = 0;
-        decoder->lastLensStyleSel = 0;
-        memset(decoder->lastLensCustomSRC, 0, sizeof(decoder->lastLensCustomSRC));
-        memset(decoder->lastLensCustomDST, 0, sizeof(decoder->lastLensCustomDST));
-        decoder->mesh = NULL;
-        decoder->lens_correct_buffer = NULL;
-    }
-#endif
-
     if (decoder->overrideData)
     {
         Free(decoder->allocator, decoder->overrideData);
@@ -1003,8 +938,7 @@ void ClearDecoder(DECODER *decoder)
         decoder->mdc[i] = NULL;
         decoder->mdc_size[i] = 0;
     }
-
-#else
+#else // _ALLOCATOR
     if (decoder->RGBFilterBuffer16)
     {
         MEMORY_ALIGNED_FREE(decoder->RGBFilterBuffer16);
@@ -1075,36 +1009,6 @@ void ClearDecoder(DECODER *decoder)
         decoder->LUTcacheCRC = 0;
     }
 
-#if WARPSTUFF
-    {
-        if (decoder->lens_correct_buffer)
-#if _ALLOCATOR
-            Free(decoder->allocator, decoder->lens_correct_buffer);
-#else
-            MEMORY_ALIGNED_FREE(decoder->lens_correct_buffer);
-#endif
-
-        if (decoder->mesh)
-            geomesh_destroy(mesh);
-
-
-        decoder->mesh = NULL;
-        decoder->lens_correct_buffer = NULL;
-        decoder->lastLensOffsetX = 0;
-        decoder->lastLensOffsetY = 0;
-        decoder->lastLensOffsetZ = 0;
-        decoder->lastLensOffsetR = 0;
-        decoder->lastLensZoom = 0;
-        decoder->lastLensFishFOV = 0;
-        decoder->lastLlensGoPro = 0;
-        decoder->lastLlensSphere = 0;
-        decoder->lastLlensFill = 0;
-        decoder->lastLlensStyleSel = 0;
-        memset(decoder->lastLensCustomSRC, 0, sizeof(decoder->lastLensCustomSRC));
-        memset(decoder->lastLensCustomDST, 0, sizeof(decoder->lastLensCustomDST));
-    }
-#endif
-
     if (decoder->overrideData)
     {
         MEMORY_FREE(decoder->overrideData);
@@ -1119,12 +1023,7 @@ void ClearDecoder(DECODER *decoder)
         decoder->mdc[i] = NULL;
         decoder->mdc_size[i] = 0;
     }
-#endif
-
-#ifdef SPI_LOADER
-    SPIReleaseAll(decoder);
-    //KeyframesReleaseAll(decoder);
-#endif
+#endif // _ALLOCATOR
 
     decoder->initialized = 0;// cleared
 }
@@ -1305,10 +1204,6 @@ bool AllocDecoderBuffer(DECODER *decoder, int width, int height, int format)
             return false;
         }
     }
-
-#if DEBUG_BUFFER_USAGE
-    memset(buffer, 1, size);
-#endif
 
     // Save the buffer and its size in the decoder
     decoder->buffer = buffer;
@@ -1521,13 +1416,6 @@ bool DecodeInit(DECODER *decoder, int width, int height, int format, int resolut
 #else
     memcpy(&codesets[0], &CURRENT_CODESET, sizeof(CODESET));
 #endif
-
-#ifdef _WIN32
-    // Set the handler for system exceptions
-    SetDefaultExceptionHandler();
-#endif
-
-    //TestException(x);
 
     // Clear all decoder fields except the logfile and set the codebooks for decoding
     InitDecoder(decoder, logfile, &codesets[0]);
@@ -8949,245 +8837,6 @@ void SharpenLine(DECODER *decoder, uint8_t *buffer, int bufferremain, uint8_t *o
     }
 }
 
-
-#if _GRAPHICS
-
-void PaintFrame(DECODER *decoder, uint8_t *output, int pitch, int output_format)
-{
-    int x, y, v, width, height;
-    int maxR = 0, maxG = 0, maxB = 0;
-
-    width = decoder->frame.width;
-    height = decoder->frame.height;
-
-    if (decoder->cfhddata.BurninFlags == 0)
-        return;
-
-    if (decoder->cfhddata.BurninFlags & 2 && decoder->cfhddata.ComputeFlags & ~1) // tools
-    {
-        if (decoder->tools == NULL)
-        {
-#if _ALLOCATOR
-            decoder->tools = (ToolsHandle *)Alloc(decoder->allocator, sizeof(ToolsHandle));
-#else
-            decoder->tools = (ToolsHandle *)MEMORY_ALLOC(sizeof(ToolsHandle));
-#endif
-
-            if (decoder->tools)
-            {
-                memset(decoder->tools, 0, sizeof(ToolsHandle));
-            }
-            else
-            {
-                return;
-            }
-        }
-    }
-
-
-    decoder->frame.output_format = output_format;
-
-#if _THREADED && 1
-    if (decoder->cfhddata.BurninFlags & 2 && decoder->cfhddata.ComputeFlags & ~1 && decoder->tools) // histogram/scopes/waveform
-    {
-        WORKER_THREAD_DATA *mailbox = &decoder->worker_thread.data;
-        int workunits;
-
-#if _DELAY_THREAD_START
-        if (decoder->tools->histogram == 0 && decoder->worker_thread.pool.thread_count == 0)
-        {
-            CreateLock(&decoder->worker_thread.lock);
-            // Initialize the pool of transform worker threads
-            ThreadPoolCreate(&decoder->worker_thread.pool,
-                             decoder->thread_cntrl.capabilities >> 16/*cpus*/,
-                             WorkerThreadProc,
-                             decoder);
-        }
-#endif
-        {
-            int avgR = 0, avgG = 0, avgB = 0;
-            // Post a message to the mailbox
-            mailbox->output = output;
-
-            if (height >= 1080)
-            {
-                mailbox->pitch = pitch * 4; // only read every 4th scan line
-                workunits = height / 4; // only read every 4th scan line
-            }
-            else if (height >= 540)
-            {
-                mailbox->pitch = pitch * 2; // only read every 2th scan line
-                workunits = height / 2; // only read every 2th scan line
-            }
-            else
-            {
-                mailbox->pitch = pitch; // read every scan line
-                workunits = height; // read every scan line
-            }
-
-            if (decoder->tools->histogram == 0)
-            {
-                mailbox->jobType = JOB_TYPE_HISTOGRAM; // histogram
-
-                // Set the work count to the number of rows to process
-                ThreadPoolSetWorkCount(&decoder->worker_thread.pool, workunits);
-
-                // Start the transform worker threads
-                ThreadPoolSendMessage(&decoder->worker_thread.pool, THREAD_MESSAGE_START);
-
-                // Wait for all of the worker threads to finish
-                ThreadPoolWaitAllDone(&decoder->worker_thread.pool);
-            }
-
-
-            for (x = 0; x < 256; x++)
-            {
-                avgR += decoder->tools->histR[x];
-                avgG += decoder->tools->histG[x];
-                avgB += decoder->tools->histB[x];
-                //if(maxR < decoder->histR[x]) maxR = decoder->histR[x];
-                //if(maxG < decoder->histG[x]) maxG = decoder->histG[x];
-                //if(maxB < decoder->histB[x]) maxB = decoder->histB[x];
-            }
-            avgR /= 256;
-            avgG /= 256;
-            avgB /= 256;
-            //maxR++;
-            //maxG++;
-            //maxB++;
-
-            decoder->tools->maxR = avgR * 3; //maxR;
-            decoder->tools->maxG = avgG * 3; //maxG;
-            decoder->tools->maxB = avgB * 3; //maxB;
-        }
-    }
-#endif
-
-    if (decoder->cfhddata.BurninFlags && DrawOpen(decoder))
-    {
-
-        if (decoder->cfhddata.BurninFlags & 3) // overlays / tools
-        {
-#if _THREADED
-            //DrawInit(decoder);
-            //DrawStartThreaded(decoder);
-
-            if (decoder->draw_thread.pool.thread_count > 0)
-            {
-                DrawWaitThreaded(decoder);
-            }
-            else
-#endif
-            {
-                DrawInit(decoder);
-                DrawMetadataObjects(decoder);
-            }
-        }
-        else
-        {
-            DrawInit(decoder);
-        }
-        if (decoder->drawSafeMarkers)
-            DrawSafeMarkers(decoder);
-
-        if (decoder->cfhddata.BurninFlags & 2) // tools
-        {
-            if (decoder->tools)
-            {
-                if (decoder->tools->histogram && decoder->cfhddata.ComputeFlags & 16)
-                    DrawGrid(decoder, 0/*decoder->MDPcurrent.parallax*/);
-
-                if (decoder->tools->histogram && decoder->cfhddata.ComputeFlags & 2)
-                    DrawHistogram(decoder, 0/*decoder->MDPcurrent.parallax*/);
-
-                if (decoder->tools->histogram && decoder->cfhddata.ComputeFlags & 4)
-                    DrawWaveform(decoder, 0/*decoder->MDPcurrent.parallax*/);
-
-                if (decoder->tools->histogram && decoder->cfhddata.ComputeFlags & 8)
-                    DrawVectorscope(decoder, 0/*decoder->MDPcurrent.parallax*/);
-
-            }
-        }
-        DrawScreen(decoder, output, pitch, output_format);
-    }
-
-#if 0
-#if _THREADED && 1
-    if (decoder->cfhddata.BurninFlags & 2 && decoder->cfhddata.ComputeFlags & 2 && decoder->tools) // histogram
-    {
-        WORKER_THREAD_DATA *mailbox = &decoder->worker_thread.data;
-        int workunits;
-        int targetW, targetH;
-
-        if (width < 256 || height < 256)
-            return;
-
-        targetW = width / 4;
-        targetH = height / 8;
-
-
-        mailbox->output = output;
-        mailbox->pitch = pitch;
-        workunits = targetW;
-
-        mailbox->jobType = JOB_TYPE_BURNINS; // burnin
-
-        // Set the work count to the number of rows to process
-        ThreadPoolSetWorkCount(&decoder->worker_thread.pool, workunits);
-
-        // Start the transform worker threads
-        ThreadPoolSendMessage(&decoder->worker_thread.pool, THREAD_MESSAGE_START);
-
-        // Wait for all of the worker threads to finish
-        ThreadPoolWaitAllDone(&decoder->worker_thread.pool);
-    }
-#else
-
-    if (decoder->histogram == 0)
-    {
-        for (y = 0; y < height; y += 4)
-        {
-            uint8_t *bptr = output;
-            bptr +=  pitch * y;
-
-            HistogramLine(decoder, (unsigned short *)bptr, width, output_format);
-
-            if (decoder->histogram == 0)
-                return; // don't know how to create Histogram for that format
-        }
-    }
-
-
-    for (x = 1; x < 255; x++)
-    {
-        if (maxR < decoder->histR[x]) maxR = decoder->histR[x];
-        if (maxG < decoder->histG[x]) maxG = decoder->histG[x];
-        if (maxB < decoder->histB[x]) maxB = decoder->histB[x];
-
-    }
-    maxR++;
-    maxG++;
-    maxB++;
-
-    decoder->maxR = maxR;
-    decoder->maxG = maxG;
-    decoder->maxB = maxB;
-
-
-    for (x = 0; x < targetW; x++)
-    {
-        HistogramRender(decoder, output, pitch, output_format, x, targetW, targetH);
-    }
-#endif
-#endif
-
-    if (decoder->tools)
-        memset(decoder->tools, 0, sizeof(ToolsHandle));
-}
-
-#endif
-
-
 extern int geomesh_alloc_cache(void *gm);
 
 #define DEG2RAD(d)    (PI*(d)/180.0f)
@@ -9217,7 +8866,6 @@ bool approx_equal(int x, int y)
     return false;
 }
 
-
 bool approx_equal_float(float x, float y)
 {
     if (x * 0.99 < y && y < x * 1.01)
@@ -9225,464 +8873,6 @@ bool approx_equal_float(float x, float y)
 
     return false;
 }
-
-#if WARPSTUFF
-void WarpFrame(DECODER *decoder, uint8_t *output, int pitch, int output_format)
-{
-    int width, height;
-    //int maxR = 0, maxG = 0, maxB = 0;
-    int status = WARPLIB_SUCCESS;
-    CFHDDATA *cfhddata = &decoder->cfhddata;
-    int backgroundfill = cfhddata->lensFill;
-    float sensorcrop = 1.0;
-    float phi, theta, rho;
-    int srcLens = HERO4;
-
-    if (!cfhddata->doMesh) return;
-
-    if (decoder->lastLensOffsetX != cfhddata->LensOffsetX ||
-            decoder->lastLensOffsetY != cfhddata->LensOffsetY ||
-            decoder->lastLensOffsetZ != cfhddata->LensOffsetZ ||
-            decoder->lastLensOffsetR != cfhddata->LensOffsetR ||
-            decoder->lastLensZoom != cfhddata->LensZoom ||
-            decoder->lastLensFishFOV != cfhddata->LensFishFOV ||
-            decoder->lastLensGoPro != cfhddata->lensGoPro ||
-            decoder->lastLensSphere != cfhddata->lensSphere ||
-            decoder->lastLensFill != cfhddata->lensFill ||
-            decoder->lastLensStyleSel != cfhddata->lensStyleSel ||
-            memcmp(decoder->lastLensCustomSRC, cfhddata->lensCustomSRC, sizeof(cfhddata->lensCustomSRC)) ||
-            memcmp(decoder->lastLensCustomDST, cfhddata->lensCustomDST, sizeof(cfhddata->lensCustomDST)) )
-    {
-        if (decoder->mesh)
-            geomesh_destroy(decoder->mesh);
-
-
-        width = decoder->frame.width;
-        height = decoder->frame.height;
-
-        if (approx_equal(width, height * 2)) // approx. 2:1
-        {
-            float outputaspect = 16.0f / 9.0f;
-            srcLens = EQUIRECT;
-            sensorcrop = 1.00623f; // Fixes the slight calculation error difference between 16x9 with a 4x3, and 16x9 within a 2x1 image.
-
-            if (cfhddata->lensCustomSRC[1])
-            {
-                outputaspect = cfhddata->lensCustomSRC[0] / cfhddata->lensCustomSRC[1];
-                if (outputaspect >= 1.0f && outputaspect <= 3.0f)
-                {
-                    //float sourceratio = (float)width / (float)height;
-
-                    if (approx_equal_float(outputaspect, 4.0f / 3.0f))
-                        sensorcrop = sqrtf((float)(width * width + height * height)) / sqrtf((float)((width * 2 / 3) * (width * 2 / 3) + (height * height)));
-
-                    if (approx_equal_float(outputaspect, 16.0f / 9.0f)) // 0.88;
-                        sensorcrop = 1.00623f; // Fixes the slight calculation error difference between 16x9 with a 4x3, and 16x9 within a 2x1 image.
-                }
-            }
-
-            if (width >= 2496)
-                decoder->mesh = geomesh_create(199, 99);
-            else if (width >= 1272)
-                decoder->mesh = geomesh_create(99, 49);
-            else
-                decoder->mesh = geomesh_create(49, 25);
-
-            phi = cfhddata->LensOffsetX * DEG2RAD(720.0f); // +-180deg HFOV for 2:1
-            theta = cfhddata->LensOffsetY * DEG2RAD(720.0f); // +-180deg VFOV for 2:1
-            rho = (cfhddata->LensOffsetZ - 1.0f) * 4.0f * DEG2RAD(360.0f); // +-360deg
-        }
-        else if (approx_equal(width * 3, height * 4)) // approx. 4:3
-        {
-            srcLens = HERO4;
-            sensorcrop = 1.0;
-
-            if (width > 2880) // UHD
-                decoder->mesh = geomesh_create(159, 119);
-            else if (width >= 1920) //HD/2.7K
-                decoder->mesh = geomesh_create(79, 59);
-            else
-                decoder->mesh = geomesh_create(39, 29);
-            phi = cfhddata->LensOffsetX * DEG2RAD(120.0f); // +-60deg HFOV for 16:9
-            theta = cfhddata->LensOffsetY * DEG2RAD(98.0f); // +-49deg VFOV for 16:9
-            rho = (cfhddata->LensOffsetZ - 1.0f) * 4.0f * DEG2RAD(360.0f); // +-360deg
-        }
-        else //if(approx_equal(width*9,height*16)) // approx. 16:9
-        {
-            srcLens = HERO4;
-            sensorcrop = sqrtf(1920 * 1920 + 1080 * 1080) / sqrtf(2000 * 2000 + 1500 * 1500); // 3840x2160 from 4000x3000
-            if (width > 2880) // UHD
-                decoder->mesh = geomesh_create(159, 119);
-            else if (width >= 1920) //HD/2.7K
-                decoder->mesh = geomesh_create(79, 59);
-            else
-                decoder->mesh = geomesh_create(39, 29);
-            phi = cfhddata->LensOffsetX * DEG2RAD(120.0f); // +-60.1deg HFOV for 16:9
-            theta = cfhddata->LensOffsetY * DEG2RAD(70.0f); // +-34.75deg VFOV for 16:9
-            rho = (cfhddata->LensOffsetZ - 1.0f) * 4.0f * DEG2RAD(360.0f); // +-360deg
-        }
-
-        if ((output_format & 0x7fffffff) == COLOR_FORMAT_YUYV)
-            status |= geomesh_init(decoder->mesh, width, height, pitch, WARPLIB_FORMAT_YUY2, width, height, pitch, WARPLIB_FORMAT_YUY2, backgroundfill);
-        else if ((output_format & 0x7fffffff) == COLOR_FORMAT_RGB32)
-            status |= geomesh_init(decoder->mesh, width, height, pitch, WARPLIB_FORMAT_32BGRA, width, height, pitch, WARPLIB_FORMAT_32BGRA, backgroundfill);
-        else if ((output_format & 0x7fffffff) == COLOR_FORMAT_W13A)
-            status |= geomesh_init(decoder->mesh, width, height, pitch, WARPLIB_FORMAT_W13A, width, height, pitch, WARPLIB_FORMAT_W13A, backgroundfill);
-        else if ((output_format & 0x7fffffff) == COLOR_FORMAT_WP13)
-            status |= geomesh_init(decoder->mesh, width, height, pitch, WARPLIB_FORMAT_WP13, width, height, pitch, WARPLIB_FORMAT_WP13, backgroundfill);
-        else if ((output_format & 0x7fffffff) == COLOR_FORMAT_RG48)
-            status |= geomesh_init(decoder->mesh, width, height, pitch, WARPLIB_FORMAT_RG48, width, height, pitch, WARPLIB_FORMAT_RG48, backgroundfill);
-        else if ((output_format & 0x7fffffff) == COLOR_FORMAT_BGRA64)
-            status |= geomesh_init(decoder->mesh, width, height, pitch, WARPLIB_FORMAT_64ARGB, width, height, pitch, WARPLIB_FORMAT_64ARGB, backgroundfill);
-        else
-            assert(0);
-
-        if (cfhddata->lensSphere == 1)
-        {
-            if (cfhddata->lensGoPro != 2) // not outputting EQUIRECT
-            {
-                if (cfhddata->LensOffsetR != 0.0)
-                {
-                    //float angle = 360.0 * asinf(cfhddata->LensOffsetR * 1.7777777777) / (2.0 * 3.14159);
-                    float angle = 360.0f * cfhddata->LensOffsetR * cfhddata->LensOffsetR * 2.1f;//asinf(cfhddata->LensOffsetR * 1.7777777777) / (2.0 * 3.14159);
-                    if (cfhddata->LensOffsetR < 0.0) angle = -angle;
-                    geomesh_transform_rotate(decoder->mesh, angle);
-                }
-                if (cfhddata->LensZoom != 1.0)
-                    geomesh_transform_scale(decoder->mesh, cfhddata->LensZoom, cfhddata->LensZoom);
-
-                if (cfhddata->LensFishFOV != 0.0) // DeFish
-                {
-                    float fov = cfhddata->LensFishFOV;// *180.0;
-                    if (fov > 89.9f) fov = 89.9f;
-                    if (fov < -89.9f) fov = -89.9f;
-
-                    if (fov)
-                        status |= geomesh_transform_defish(decoder->mesh, fov);
-                }
-            }
-
-            switch (cfhddata->lensGoPro)
-            {
-                case 0:
-                    geomesh_transform_repoint_src_to_dst(decoder->mesh, sensorcrop, phi, theta, rho, srcLens, RECTILINEAR);
-                    break;
-                case 1:
-                    geomesh_transform_repoint_src_to_dst(decoder->mesh, sensorcrop, phi, theta, rho, srcLens, HERO4);
-                    break;
-                case 2:
-                    geomesh_transform_repoint_src_to_dst(decoder->mesh, sensorcrop, phi, theta, rho, srcLens, EQUIRECT);
-                    break;
-                case 4:
-                    geomesh_set_custom_lens(decoder->mesh, cfhddata->lensCustomSRC, cfhddata->lensCustomDST, sizeof(cfhddata->lensCustomDST));
-                    if (srcLens == EQUIRECT) geomesh_transform_repoint_src_to_dst(decoder->mesh, sensorcrop, phi, theta, rho, EQUIRECT, CUSTOM_LENS);
-                    else geomesh_transform_repoint_src_to_dst(decoder->mesh, sensorcrop, phi, theta, rho, CUSTOM_LENS, CUSTOM_LENS);
-                    break;
-            }
-
-        }
-        else // old boring geometry
-        {
-            if (cfhddata->LensZoom != 1.0)
-                geomesh_transform_scale(decoder->mesh, cfhddata->LensZoom, cfhddata->LensZoom);
-
-            // basic orthographic moves
-            if (cfhddata->LensOffsetX != 0.0 || cfhddata->LensOffsetY != 0.0)
-                geomesh_transform_pan(decoder->mesh, cfhddata->LensOffsetX * (float)width, -cfhddata->LensOffsetY * (float)height);
-
-            if (cfhddata->LensOffsetR != 0.0)
-            {
-                float angle = 360.0f * asinf(cfhddata->LensOffsetR * 1.7777777777f) / (2.0f * 3.14159f);
-                geomesh_transform_rotate(decoder->mesh, angle);
-            }
-
-            if (cfhddata->lensGoPro == 0) //Rectilear
-                status |= geomesh_transform_gopro_to_rectilinear(decoder->mesh, sensorcrop);
-            //status |= geomesh_fisheye_gopro_adjustmesh(mesh, &correction_mode, WARPLIB_ALGORITHM_PRESERVE_EVERYTHING,//WARPLIB_ALGORITHM_BEST_FIT,
-            //	width, height, product, model, lens_type, fov, (int)decoder->frame.resolution);
-        }
-
-        geomesh_alloc_cache(decoder->mesh); // required for JOB_TYPE_WARP_CACHE
-
-        if (status == WARPLIB_SUCCESS)
-        {
-            if (decoder->lens_correct_buffer == NULL)
-            {
-#if _ALLOCATOR
-                decoder->lens_correct_buffer = (int *)Alloc(decoder->allocator, pitch * height);
-#else
-                decoder->lens_correct_buffer = (int *)MEMORY_ALLOC(pitch * height);
-#endif
-
-            }
-        }
-        else
-        {
-            return;
-        }
-        /* need resources?
-        	{
-        	if(decoder->tools == NULL)
-        	{
-        	#if _ALLOCATOR
-        	decoder->tools = (ToolsHandle *)Alloc(decoder->allocator, sizeof(ToolsHandle));
-        	#else
-        	decoder->tools = (ToolsHandle *)MEMORY_ALLOC(sizeof(ToolsHandle));
-        	#endif
-
-        	if(decoder->tools)
-        	{
-        	memset(decoder->tools, 0, sizeof(ToolsHandle));
-        	}
-        	else
-        	{
-        	return;
-        	}
-        	}
-        	}
-        	*/
-
-
-#if _THREADED && 1
-        {
-            WORKER_THREAD_DATA *mailbox = &decoder->worker_thread.data;
-            int workunits = decoder->frame.height;
-
-#if _DELAY_THREAD_START
-            if (decoder->worker_thread.pool.thread_count == 0)
-            {
-                CreateLock(&decoder->worker_thread.lock);
-                // Initialize the pool of transform worker threads
-                ThreadPoolCreate(&decoder->worker_thread.pool,
-                                 decoder->thread_cntrl.capabilities >> 16,
-                                 WorkerThreadProc,
-                                 decoder);
-            }
-#endif
-            {
-                // Post a message to the mailbox
-                mailbox->data = decoder->mesh;
-                mailbox->output = output;
-                mailbox->local_output = (uint8_t *)decoder->lens_correct_buffer;
-                mailbox->line_max = decoder->frame.height;
-                mailbox->chunk_size = 16;
-                workunits = (mailbox->line_max + mailbox->chunk_size - 1) / mailbox->chunk_size;
-                mailbox->jobType = JOB_TYPE_WARP_CACHE;
-
-                // Set the work count to the number of rows to process
-                ThreadPoolSetWorkCount(&decoder->worker_thread.pool, workunits);
-                // Start the transform worker threads
-                ThreadPoolSendMessage(&decoder->worker_thread.pool, THREAD_MESSAGE_START);
-                // Wait for all of the worker threads to finish
-                ThreadPoolWaitAllDone(&decoder->worker_thread.pool);
-            }
-        }
-#endif
-        //decoder->frame.output_format = output_format;
-
-        decoder->lastLensOffsetX = cfhddata->LensOffsetX;
-        decoder->lastLensOffsetY = cfhddata->LensOffsetY;
-        decoder->lastLensOffsetZ = cfhddata->LensOffsetZ;
-        decoder->lastLensOffsetR = cfhddata->LensOffsetR;
-        decoder->lastLensZoom = cfhddata->LensZoom;
-        decoder->lastLensFishFOV = cfhddata->LensFishFOV;
-        decoder->lastLensGoPro = cfhddata->lensGoPro;
-        decoder->lastLensSphere = cfhddata->lensSphere;
-        decoder->lastLensFill = cfhddata->lensFill;
-        decoder->lastLensStyleSel = cfhddata->lensStyleSel;
-        memcpy(decoder->lastLensCustomSRC, cfhddata->lensCustomSRC, sizeof(cfhddata->lensCustomSRC));
-        memcpy(decoder->lastLensCustomDST, cfhddata->lensCustomDST, sizeof(cfhddata->lensCustomDST));
-
-    }
-
-#if _THREADED && 1
-    {
-        WORKER_THREAD_DATA *mailbox = &decoder->worker_thread.data;
-        int workunits = decoder->frame.height;
-
-        mailbox->data = decoder->mesh;
-        mailbox->output = output;
-        mailbox->local_output = (uint8_t *)decoder->lens_correct_buffer;
-        mailbox->line_max = decoder->frame.height;
-        mailbox->chunk_size = 16;
-        workunits = (mailbox->line_max + mailbox->chunk_size - 1) / mailbox->chunk_size;
-        mailbox->jobType = JOB_TYPE_WARP;
-
-        // Set the work count to the number of rows to process
-        ThreadPoolSetWorkCount(&decoder->worker_thread.pool, workunits);
-        // Start the transform worker threads
-        ThreadPoolSendMessage(&decoder->worker_thread.pool, THREAD_MESSAGE_START);
-        // Wait for all of the worker threads to finish
-        ThreadPoolWaitAllDone(&decoder->worker_thread.pool);
-
-        if (backgroundfill) // may need to blur the filled in areas
-        {
-            mailbox->data = decoder->mesh;
-            mailbox->output = (uint8_t *)decoder->lens_correct_buffer;
-            mailbox->local_output = (uint8_t *)decoder->lens_correct_buffer;
-            mailbox->line_max = decoder->frame.width;
-            mailbox->chunk_size = 16;
-            mailbox->pitch = pitch;
-            workunits = (mailbox->line_max + mailbox->chunk_size - 1) / mailbox->chunk_size;
-            mailbox->jobType = JOB_TYPE_WARP_BLURV;
-
-            // Set the work count to the number of rows to process
-            ThreadPoolSetWorkCount(&decoder->worker_thread.pool, workunits);
-            // Start the transform worker threads
-            ThreadPoolSendMessage(&decoder->worker_thread.pool, THREAD_MESSAGE_START);
-            // Wait for all of the worker threads to finish
-            ThreadPoolWaitAllDone(&decoder->worker_thread.pool);
-        }
-    }
-#else // not threading
-    {
-        //geomesh_cache_init_bilinear(decoder->mesh);  //bad
-        geomesh_cache_init_bilinear_range(decoder->mesh, 0, decoder->frame.height); //good
-        geomesh_apply_bilinear(decoder->mesh, (unsigned char *)output, (unsigned char *)decoder->lens_correct_buffer, 0, decoder->frame.height);
-    }
-#endif
-
-    memcpy(output, decoder->lens_correct_buffer, pitch * decoder->frame.height);
-
-    /*
-    if(lens_correct_buffer)
-    #if _ALLOCATOR
-    	Free(decoder->allocator, lens_correct_buffer);
-    #else
-    	MEMORY_ALIGNED_FREE(lens_correct_buffer);
-    #endif
-
-    geomesh_destroy(mesh);
-    */
-
-}
-
-void MaskFrame(DECODER *decoder, uint8_t *output, int pitch, int output_format)
-{
-    int x, y, width, height;
-    int minY, maxY;
-    int minX, maxX;
-    CFHDDATA *cfhddata = &decoder->cfhddata;
-    uint8_t *line = output;
-    uint32_t fillA = 0;
-    uint32_t fillB = 0;
-    int bitsize = 8;
-
-    if (!cfhddata->doMesh) return;
-
-    width = decoder->frame.width;
-    height = decoder->frame.height;
-
-    if (decoder->cfhddata.LensYmin == 0.0 && decoder->cfhddata.LensXmin == 0.0 && decoder->cfhddata.LensYmax == 0.0 && decoder->cfhddata.LensXmax == 0.0) return;
-    if (decoder->cfhddata.LensYmin == 0.0 && decoder->cfhddata.LensXmin == 0.0 && decoder->cfhddata.LensYmax == 1.0 && decoder->cfhddata.LensXmax == 1.0) return;
-
-    minY = (int)(decoder->cfhddata.LensYmin * (float)height);
-    maxY = (int)(decoder->cfhddata.LensYmax * (float)height);
-    minX = 0xfffc & (int)(decoder->cfhddata.LensXmin * (float)pitch);
-    maxX = 0xfffc & (int)(decoder->cfhddata.LensXmax * (float)pitch);
-
-
-    if (FORMATRGB(output_format))
-    {
-
-        line = output;
-        // Top rows
-        for (y = 0; y < minY; y++)
-        {
-            memset(line, 0, abs(pitch));
-            line += pitch;
-        }
-
-        // Left and Right edges of middle rows
-        if (maxX - minX != pitch)
-        {
-            for (; y < maxY; y++)
-            {
-                memset(line, 0, minX);
-                memset(line + maxX, 0, pitch - maxX);
-                line += pitch;
-            }
-        }
-
-        //Bottom wows
-        y = maxY;
-        line = output + y * pitch;
-        for (; y < height; y++)
-        {
-            memset(line, 0, abs(pitch));
-            line += pitch;
-        }
-    }
-    else
-    {
-        switch (output_format & 0x7fffffff)
-        {
-            case COLOR_FORMAT_YVYU:
-            case COLOR_FORMAT_YUYV:
-                fillA = 0x10;
-                fillB = 0x80;
-                break;
-            case COLOR_FORMAT_UYVY:
-            case COLOR_FORMAT_2VUY:
-                fillA = 0x80;
-                fillB = 0x10;
-                break;
-            case COLOR_FORMAT_YU64:
-                fillA = 0x8000;
-                fillB = 0x1000;
-                bitsize = 16;
-                break;
-        }
-    }
-
-    if (bitsize == 8)
-    {
-        line = output;
-        // Top rows
-        for (y = 0; y < minY; y++)
-        {
-            for (x = 0; x < pitch; x += 2)
-            {
-                line[x] = fillA;
-                line[x + 1] = fillB;
-            }
-            line += pitch;
-        }
-
-        // Left and Right edges of middle rows
-        if (maxX - minX != pitch)
-        {
-            for (; y < maxY; y++)
-            {
-                for (x = 0; x < minX; x += 2)
-                {
-                    line[x] = fillA;
-                    line[x + 1] = fillB;
-                }
-                for (x = maxX; x < pitch; x += 2)
-                {
-                    line[x] = fillA;
-                    line[x + 1] = fillB;
-                }
-                line += pitch;
-            }
-        }
-
-        //Bottom wows
-        y = maxY;
-        line = output + y * pitch;
-        for (; y < height; y++)
-        {
-            for (x = 0; x < pitch; x += 2)
-            {
-                line[x] = fillA;
-                line[x + 1] = fillB;
-            }
-            line += pitch;
-        }
-    }
-}
-#endif //#if WARPSTUFF
 
 void ConvertLocalToOutput(DECODER *decoder, uint8_t *output, int pitch, int output_format, uint8_t *local_output, int local_pitch, int channel_offset)
 {
@@ -11052,20 +10242,10 @@ bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch
 
         // DAN20110404 Use left (first) eye metadata for both eyes (just in case right GUID is bad.)
         // OverrideCFHDDATA(decoder->parallelDecoder, input->lpCurrentBuffer, input->nWordsUsed);
-        //OverrideCFHDDATA(decoder->parallelDecoder, second_input.lpCurrentWord, second_input.nWordsUsed);
+        // OverrideCFHDDATA(decoder->parallelDecoder, second_input.lpCurrentWord, second_input.nWordsUsed);
 
         // Hack, this gets lost
         decoder->parallelDecoder->cfhddata.split_CC_position = decoder->cfhddata.split_CC_position;
-
-#if (_THREADED && _GRAPHICS)
-        if (decoder->cfhddata.process_path_flags & PROCESSING_BURNINS && output)
-        {
-            if (decoder->cfhddata.BurninFlags & 3) // overlays / tools
-            {
-                DrawStartThreaded(decoder);
-            }
-        }
-#endif
 
         // Post a message to the mailbox
         decoder->parallelDecoder->decoder_thread.input = &second_input;
@@ -11151,17 +10331,6 @@ bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch
 
             //OverrideCFHDDATA(local_decoder, input->lpCurrentBuffer, input->nWordsUsed);
 
-#if (_THREADED && _GRAPHICS)
-            if (decoder->cfhddata.process_path_flags & PROCESSING_BURNINS && output)
-            {
-                if (decoder->cfhddata.BurninFlags & 3) //overlays / tools
-                {
-                    DrawStartThreaded(decoder);
-                }
-            }
-#endif
-
-
 #if _THREADED
             local_decoder->entropy_worker_new.next_queue_num = 0;
             local_decoder->entropy_worker_new.threads_used = 0;
@@ -11231,23 +10400,7 @@ bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch
     if (use_local_buffer && output)
     {
         decoder->use_local_buffer = 0;
-
-#if WARPSTUFF
-        WarpFrame(decoder, local_buffer, local_pitch, decoder->StereoBufferFormat);
-
-        MaskFrame(decoder, local_buffer, local_pitch, decoder->StereoBufferFormat);
-#endif
-
         ConvertLocalToOutput(decoder, output, pitch, output_format, local_buffer, local_pitch, abs(channel_offset));
-
-    }
-    else
-    {
-#if WARPSTUFF
-        WarpFrame(decoder, output, pitch, output_format);
-
-        MaskFrame(decoder, output, pitch, output_format);
-#endif
     }
 
     if (decoder->channel_mix_half_res)	//HACK
@@ -11267,14 +10420,6 @@ bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch
     {
         decoder->frame.resolution = DECODED_RESOLUTION_FULL;
     }
-
-#if _GRAPHICS
-    if (decoder->cfhddata.process_path_flags & PROCESSING_BURNINS && output)
-    {
-        PaintFrame(decoder, output, pitch, output_format);
-    }
-#endif
-
 
     STOP(tk_decompress);
 
@@ -17509,81 +16654,6 @@ int DecodedResolution(int input_width, int input_height, int output_width, int o
     }
 
     return DECODED_RESOLUTION_UNSUPPORTED;
-}
-
-// Compute the decoded resolution that is closest to the output dimensions
-int DecodedScale(int input_width, int input_height, int output_width, int output_height)
-{
-    int decoded_width = input_width;
-    int decoded_height = input_height;
-
-    static int decodedResolution[] =
-    {
-        DECODED_RESOLUTION_FULL,
-        DECODED_RESOLUTION_HALF,
-        DECODED_RESOLUTION_QUARTER
-    };
-
-    int reduction = 0;
-    int max_reduction = 2;
-
-    // Output height can be negative for inverted RGB
-    output_height = abs(output_height);
-#if 1
-    // Always decode to the next larger size
-    while (decoded_width > output_width &&
-            decoded_height > output_height &&
-            reduction < max_reduction)
-    {
-        // Decode to a frame size that is larger than the output image
-        int reduced_width = decoded_width / 2;
-        int reduced_height = decoded_height / 2;
-
-        if (reduced_width >= output_width && reduced_height >= output_height)
-        {
-            decoded_width = reduced_width;
-            decoded_height = reduced_height;
-
-            reduction++;
-        }
-        else
-        {
-            break;
-        }
-    }
-#else
-    while (decoded_width * 4 > output_width * 5 &&
-            decoded_height * 4 > output_height * 5 &&
-            reduction < max_reduction)
-    {
-#if 0
-        // Decode to a frame size that is larger than the output image
-        int reduced_width = decoded_width / 2;
-        int reduced_height = decoded_height / 2;
-
-        if (reduced_width >= output_width && reduced_height >= output_height)
-        {
-            decoded_width = reduced_width;
-            decoded_height = reduced_height;
-
-            reduction++;
-        }
-        else
-        {
-            break;
-        }
-#else
-        // Better to scale up a smaller image than scale down a larger image
-        decoded_width /= 2;
-        decoded_height /= 2;
-        reduction++;
-#endif
-    }
-#endif
-    // Check that the decoded resolution is valid
-    assert(0 <= reduction && reduction <= max_reduction);
-
-    return decodedResolution[reduction];
 }
 
 void ComputeDecodedDimensions(int encoded_width, int encoded_height, int decoded_resolution,
@@ -24419,11 +23489,6 @@ DWORD WINAPI InterlacedWorkerThreadProc(LPVOID lpParam)
         SetThreadAffinityMask(hCurrentThread, decoder->thread_cntrl.affinity);
     }
 
-    // Set the handler for system exceptions
-#ifdef _WIN32
-    SetDefaultExceptionHandler();
-#endif
-
     // Determine the index of this worker thread
     if (decoder->interlaced_worker.lock_init)
     {
@@ -27774,9 +26839,6 @@ bool GetTuplet(unsigned char *data, int datasize,
     return ret;
 }
 
-/*!
-	Copied from metadata.cpp in the cedoc common directory
-*/
 uint8_t *GetTupletAddr(uint8_t *data,
                        int datasize,
                        uint16_t findtag,

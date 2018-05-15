@@ -33,7 +33,6 @@
 #include "codec.h"
 #include "color.h"
 #include "bitstream.h"
-#include "../Common/AVIExtendedHeader.h"
 
 #if _THREADED
 #include "thread.h"
@@ -210,24 +209,13 @@ typedef struct sample_header
 extern "C" {
 #endif
 
-//extern int PixelSize[];
-
-#if (0 && _DEBUG)
-extern char *decoded_format_string[];
-#endif
-
-// Find the codec tag (not the metadata tag) in the specified buffer
+//! Find the codec tag (not the metadata tag) in the specified buffer
 bool GetTuplet(unsigned char *data, int datasize,
                unsigned short findtag, unsigned short *retvalue);
 
-// Return the address of the codec tag (not the metadata tag)
+//! Return the address of the codec tag (not the metadata tag)
 uint8_t *GetTupletAddr(uint8_t *data, int datasize,
                        uint16_t findtag, int16_t *retvalue);
-
-#if 0
-unsigned char *GetTupletAddr(unsigned char *data, int datasize,
-                             unsigned short findtag, unsigned short *retvalue);
-#endif
 
 void InitDecoder(DECODER *decoder, FILE *logfile, CODESET *cs);
 void ClearDecoder(DECODER *decoder);
@@ -265,9 +253,6 @@ void GetDisplayAspectRatio(DECODER *decoder, int *w, int *h);
 
 // Compute the resolution corresponding to the specified combination of input and output dimensions
 int DecodedResolution(int input_width, int input_height, int output_width, int output_height);
-
-// Compute the decoded resolution that is closest to the output dimensions (for scaling)
-int DecodedScale(int input_width, int input_height, int output_width, int output_height);
 
 // Compute the dimensions of the decoded image from the encoded dimensions and decoding resolution
 void ComputeDecodedDimensions(int encoded_width, int encoded_height, int decoded_resolution,
@@ -424,7 +409,7 @@ bool VerifyTransformQueue(DECODER *decoder);
 void WaitForTransformThread(DECODER *decoder);
 THREAD_PROC(TransformThreadProc, lpParam);
 
-#endif
+#endif // _THREADED_DECODER
 
 enum	// Types of transforms supported by the worker threads
 {

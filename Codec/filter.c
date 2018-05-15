@@ -34,7 +34,6 @@
 
 #include "filter.h"			// Declarations of filter routines
 #include "image.h"			// Image processing data types
-#include "debug.h"
 #include "codec.h"
 #include "buffer.h"
 #include "quantize.h"

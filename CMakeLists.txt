@@ -33,7 +33,7 @@ if (APPLE)
 endif (APPLE)
 
 # Source files
-include_directories("Common" "Tables" "Codec" "ConvertLib" "WarpLib" "Example")
+include_directories("Common" "Tables" "Codec" "ConvertLib")
 file(GLOB PUBLIC_HEADERS "Common/CFHD*.h")
 file(GLOB CODEC_SOURCES "Codec/*.c" "Codec/*.h" "Codec/*.cpp" "Common/Settings.cpp")
 file(GLOB ENCODER_SOURCES "EncoderSDK/*.cpp" "Common/*.h" )

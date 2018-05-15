@@ -21,7 +21,6 @@
 #ifndef _SPATIAL_H
 #define _SPATIAL_H
 
-//#include "ipp.h"
 #include "image.h"
 #include "filter.h"
 #include "codec.h"

@@ -24,7 +24,6 @@
 
 #include "config.h"		// Configuration determines the pixel datatype
 #include "image.h"		// Use the pixel datatype from the image module
-//#include "ipp.h"		// Use Intel Performance Primitives
 
 
 #define _HIGHPASS_8S		0			// Output highpass values as signed bytes?

@@ -292,7 +292,7 @@ int /*CLanczosScaler::*/_LanczosCoeff(int inputsize, int outputsize, int line,
                 if (sincx == 0.0)
                     y = 1.0;
                 else
-                    y = (sin(sincx * Pi) / (sincx * Pi)) * (sin(sincx * Pi / lobes) / (sincx * Pi / lobes));
+                    y = (sin(sincx * M_PI) / (sincx * M_PI)) * (sin(sincx * M_PI / lobes) / (sincx * M_PI / lobes));
 
                 srcline = (int)floor(dst_pos * inv_step + sincx + 0.5);
                 if (srcline >= 0 && srcline < inputsizefield)
@@ -400,7 +400,6 @@ int /*CLanczosScaler::*/_LanczosCoeff(int inputsize, int outputsize, int line,
             //	if(changefielddominance)
             //		dst_offset += step*0.5;
 
-
             t = 0;
             pos = 0;
             for (x = dst_pos - lobes - dst_offset; x < dst_pos + lobes; x += step)
@@ -412,7 +411,7 @@ int /*CLanczosScaler::*/_LanczosCoeff(int inputsize, int outputsize, int line,
                     if (sincx == 0.0)
                         y = 1.0;
                     else
-                        y = (sin(sincx * Pi) / (sincx * Pi)) * (sin(sincx * Pi / lobes) / (sincx * Pi / lobes));
+                        y = (sin(sincx * M_PI) / (sincx * M_PI)) * (sin(sincx * M_PI / lobes) / (sincx * M_PI / lobes));
 
                     srcline = (int)floor(x * inv_step + 0.5);
                     if (srcline >= 0 && srcline < inputsizefield)

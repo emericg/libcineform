@@ -41,7 +41,6 @@
 #define METADATADLL_EXPORTS	1
 
 #include "CFHDMetadata.h"
-#include "../Common/AVIExtendedHeader.h"
 #include "SampleMetadata.h"
 #include "../Codec/metadata.h"
 #include "../Codec/lutpath.h"

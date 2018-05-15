@@ -26,19 +26,13 @@
 
 typedef unsigned char UInt8;
 
-#define Pi	3.1415926535
-
 typedef struct
 {
     int srcline;
     int mixval;
 } lanczosmix;
 
-//
-//
-//	Regular C interface that can be used threaded follow the C++ routines
-//
-//
+// Regular C interface that can be used threaded follow the C++ routines
 class CImageScaler
 {
 public:
@@ -72,7 +66,6 @@ protected:
 private:
 
     IMemAlloc *m_pMemAlloc;
-
 };
 
 // Base class for scalers that use the Lanczos algorithm

@@ -48,7 +48,6 @@
 #include "codec.h"
 #include "vlc.h"
 #include "codebooks.h"			// References to the codebooks
-#include "debug.h"
 #include "color.h"				// Color formats supported by image processing routines
 #include "image.h"
 #include "filter.h"
@@ -60,11 +59,6 @@
 #include "bitstream.h"
 #include "frame.h"
 #include "cpuid.h"
-#include "exception.h"
-
-#ifndef DUMP
-#define DUMP (0 && _DUMP)
-#endif
 
 #define ERROR_TOLERANT			1
 
@@ -333,9 +327,6 @@ THREAD_PROC(EntropyWorkerThreadProc, lpParam)
 #endif
     }
 
-    // Set the handler for system exceptions
-    SetDefaultExceptionHandler();
-
     // Determine the index of this worker thread
     error = PoolThreadGetIndex(&decoder->entropy_worker_new.pool, &thread_index);
     assert(error == THREAD_ERROR_OKAY);
@@ -408,9 +399,6 @@ THREAD_PROC(ParallelThreadProc, lpParam)
         SetThreadAffinityMask(thread, &thread_affinity);
 #endif
     }
-
-    // Set the handler for system exceptions
-    SetDefaultExceptionHandler();
 
     // Determine the index of this worker thread
     error = PoolThreadGetIndex(&decoder->decoder_thread.pool, &thread_index);

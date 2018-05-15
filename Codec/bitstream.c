@@ -32,16 +32,8 @@
 #define XMMOPT (1 && _XMMOPT)
 #define ASMOPT (1 && _ASMOPT)
 
-//#include <stddef.h>
-//#include <stdio.h>
-//#include <assert.h>
-//#include <memory.h>
-//#include <emmintrin.h>		// SSE2 intrinsics
-
 #include "bitstream.h"
 #include "codec.h"
-#include "debug.h"
-
 #include "swap.h"
 
 // Performance measurement

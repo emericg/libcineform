@@ -38,7 +38,6 @@
 #endif
 
 #include "CFHDMetadata.h"
-#include "../Common/AVIExtendedHeader.h"
 #include "SampleMetadata.h"
 #include "../Codec/metadata.h"
 #include "../Codec/lutpath.h"

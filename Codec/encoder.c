@@ -42,10 +42,8 @@
 #include "codec.h"
 #include "wavelet.h"
 #include "vlc.h"
-#include "debug.h"
 #include "codebooks.h"
 #include "frame.h"
-#include "stats.h"
 #include "color.h"
 #include "frame.h"
 #include "bitstream.h"
@@ -99,7 +97,6 @@
 #define VALUE(value) (value)
 
 // Must declare the byte swap function even though it is an intrinsic
-//int _bswap(int);
 #include "swap.h"
 
 #ifndef _FRAME_TRANSFORM
@@ -144,11 +141,6 @@ extern COUNTER progressive_encode_count;
 #ifndef PATH_MAX
 #define PATH_MAX MAX_PATH
 #endif
-
-#if _STATS
-static int stats_lastbits = 0;
-#endif
-
 
 // Local functions
 void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_transforms, BITSTREAM *output);
@@ -4178,9 +4170,6 @@ void EncodeLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
     RUN run = {0, 0};
     int row, column;
 
-#if _STATS
-    int current = (int)stream->cntBits;
-#endif
 
     // Convert the pitch from bytes to pixels
     pitch /= sizeof(PIXEL);
@@ -4220,18 +4209,6 @@ void EncodeLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
                 {
                     assert(run.value == 0);
                     PutZeroRun(stream, run.count, runsbook);
-
-#if _STATS
-                    CountRuns(STATS_DEFAULT, run.count);
-                    //CountValues(STATS_DEFAULT, 0, run.count);
-                    {
-                        int i;
-                        for (i = 0; i < run.count; i++)
-                        {
-                            CountValues(STATS_DEFAULT, 0, 1);
-                        }
-                    }
-#endif
                     run.count = 0;
                 }
 
@@ -4259,29 +4236,7 @@ void EncodeLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
     {
         assert(run.value == 0);
         PutZeroRun(stream, run.count, runsbook);
-
-#if _STATS
-        CountRuns(STATS_DEFAULT, run.count);
-        //		CountValues(STATS_DEFAULT, 0, run.count);
-        {
-            int i;
-            for (i = 0; i < run.count; i++)
-            {
-                CountValues(STATS_DEFAULT, 0, 1);
-            }
-        }
-#endif
     }
-
-
-#if _STATS
-    // Update the file of run length and value statistics
-    UpdateStats(STATS_DEFAULT);
-
-    NewSubBand(width, height, 0, ((int)stream->cntBits) - current, current - stats_lastbits);
-
-    stats_lastbits = (int)stream->cntBits;
-#endif
 }
 #endif
 
@@ -4312,11 +4267,6 @@ void EncodeLowPassBand(ENCODER *encoder, BITSTREAM *output, IMAGE *wavelet, int 
     int bits_per_pixel = 16;
     int solid_color, solid = 1;
 
-#if _STATS
-    int current;
-    stats_lastbits = (int)output->cntBits;
-#endif
-
     //START(tk_lowpass);
 
 #if (0 && DEBUG)
@@ -4344,10 +4294,6 @@ void EncodeLowPassBand(ENCODER *encoder, BITSTREAM *output, IMAGE *wavelet, int 
                 channel, width, height, quantization);
         DumpWaveletRow(wavelet, 0, 0, logfile);
     }
-#endif
-
-#if _STATS
-    SetQuantStats(quantization);
 #endif
 
 #if (0 && DEBUG)
@@ -4409,10 +4355,6 @@ void EncodeLowPassBand(ENCODER *encoder, BITSTREAM *output, IMAGE *wavelet, int 
     PutVideoLowPassHeader(output, subband, level, width, height,
                           left_margin, top_margin, right_margin, bottom_margin,
                           abs(pixel_offset), quantization, bits_per_pixel);
-
-#if _STATS
-    current = (int)output->cntBits;
-#endif
 
 #if (_CODEC_TAGS && _CODEC_MARKERS)
     PutVideoLowPassMarker(output);
@@ -4507,13 +4449,6 @@ void EncodeLowPassBand(ENCODER *encoder, BITSTREAM *output, IMAGE *wavelet, int 
 #if (0 && DEBUG)
     if (logfile) DumpBits(output, logfile);
 #endif
-
-#if _STATS
-    NewSubBand(width, height, 1, ((int)output->cntBits) - current, current - stats_lastbits);
-    stats_lastbits = (int)output->cntBits;
-#endif
-
-    //STOP(tk_lowpass);
 }
 
 
@@ -4532,10 +4467,6 @@ void EncodeQuantPackedLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image
     int gap;
     int count = 0;
     PIXEL *sptr;
-
-#if _STATS
-    int current = (int)stream->cntBits;
-#endif
 
     // Convert the pitch from bytes to pixels
     pitch /= sizeof(PIXEL);
@@ -4757,28 +4688,7 @@ void EncodeQuantPackedLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image
     if (count > 0)
     {
         PutZeroRun(stream, count, runsbook);
-
-#if _STATS
-        CountRuns(STATS_DEFAULT, count);
-        //		CountValues(STATS_DEFAULT, 0, count);
-        {
-            int i;
-            for (i = 0; i < count; i++)
-            {
-                CountValues(STATS_DEFAULT, 0, 1);
-            }
-        }
-#endif
     }
-
-#if _STATS
-    // Update the file of run length and value statistics
-    UpdateStats(STATS_DEFAULT);
-
-    NewSubBand(width, height, 0, ((int)stream->cntBits) - current, current - stats_lastbits);
-
-    stats_lastbits = (int)stream->cntBits;
-#endif
 }
 
 #endif
@@ -4799,10 +4709,6 @@ int EncodeZeroLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
     int gap;
     int count = 0;
 
-#if _STATS
-    int current = (int)stream->cntBits;
-#endif
-
     //CODEC_STATE *codec = &encoder->codec;
     //int subband = codec->band.subband;
 
@@ -4820,28 +4726,7 @@ int EncodeZeroLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
     if (count > 0)
     {
         PutZeroRun(stream, count, runsbook);
-
-#if _STATS
-        CountRuns(STATS_DEFAULT, count);
-        //		CountValues(STATS_DEFAULT, 0, count);
-        {
-            int i;
-            for (i = 0; i < count; i++)
-            {
-                CountValues(STATS_DEFAULT, 0, 1);
-            }
-        }
-#endif
     }
-
-#if _STATS
-    // Update the file of run length and value statistics
-    UpdateStats(STATS_DEFAULT);
-
-    NewSubBand(width, height, 0, ((int)stream->cntBits) - current, current - stats_lastbits);
-
-    stats_lastbits = (int)stream->cntBits;
-#endif
 
     return peakscounter;
 }
@@ -4864,10 +4749,6 @@ int EncodeQuantLongRunsPlusPeaks(ENCODER *encoder, BITSTREAM *stream, PIXEL *ima
     //int column;
     int gap;
     int count = 0;
-
-#if _STATS
-    int current = (int)stream->cntBits;
-#endif
 
     //CODEC_STATE *codec = &encoder->codec;
     //int subband = codec->band.subband;
@@ -5139,28 +5020,7 @@ int EncodeQuantLongRunsPlusPeaks(ENCODER *encoder, BITSTREAM *stream, PIXEL *ima
     if (count > 0)
     {
         PutZeroRun(stream, count, runsbook);
-
-#if _STATS
-        CountRuns(STATS_DEFAULT, count);
-        //		CountValues(STATS_DEFAULT, 0, count);
-        {
-            int i;
-            for (i = 0; i < count; i++)
-            {
-                CountValues(STATS_DEFAULT, 0, 1);
-            }
-        }
-#endif
     }
-
-#if _STATS
-    // Update the file of run length and value statistics
-    UpdateStats(STATS_DEFAULT);
-
-    NewSubBand(width, height, 0, ((int)stream->cntBits) - current, current - stats_lastbits);
-
-    stats_lastbits = (int)stream->cntBits;
-#endif
 
     return peakscounter;
 }
@@ -5465,10 +5325,6 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
     file = fopen(pathname, "w");
 #endif
 
-#if _STATS
-    int current = (int)stream->cntBits;
-#endif
-
     //CODEC_STATE *codec = &encoder->codec;
     //int subband = codec->band.subband;
 
@@ -5725,33 +5581,12 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
         fprintf(file, "PutZeroRun: %d\n", count);
 #endif
         PutZeroRun(stream, count, runsbook);
-
-#if _STATS
-        CountRuns(STATS_DEFAULT, count);
-        //		CountValues(STATS_DEFAULT, 0, count);
-        {
-            int i;
-            for (i = 0; i < count; i++)
-            {
-                CountValues(STATS_DEFAULT, 0, 1);
-            }
-        }
-#endif
     }
 
 #if (0 && DEBUG)
     stream->logfile = NULL;
     stream->putbits_flag = false;
     fclose(file);
-#endif
-
-#if _STATS
-    // Update the file of run length and value statistics
-    UpdateStats(STATS_DEFAULT);
-
-    NewSubBand(width, height, 0, ((int)stream->cntBits) - current, current - stats_lastbits);
-
-    stats_lastbits = (int)stream->cntBits;
 #endif
 }
 
@@ -5775,10 +5610,6 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
     int row, column;
     int gap;
     int count = 0;
-
-#if _STATS
-    int current = (int)stream->cntBits;
-#endif
 
 #if (0 && PREFETCH)
 
@@ -5841,18 +5672,6 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
                 if (count > 0)
                 {
                     PutZeroRun(stream, count, runsbook);
-
-#if _STATS
-                    CountRuns(STATS_DEFAULT, count);
-                    //					CountValues(STATS_DEFAULT, 0, count);
-                    {
-                        int i;
-                        for (i = 0; i < count; i++)
-                        {
-                            CountValues(STATS_DEFAULT, 0, 1);
-                        }
-                    }
-#endif
                     count = 0;
                 }
 
@@ -5889,28 +5708,7 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
     if (count > 0)
     {
         PutZeroRun(stream, count, runsbook);
-
-#if _STATS
-        CountRuns(STATS_DEFAULT, count);
-        //		CountValues(STATS_DEFAULT, 0, count);
-        {
-            int i;
-            for (i = 0; i < count; i++)
-            {
-                CountValues(STATS_DEFAULT, 0, 1);
-            }
-        }
-#endif
     }
-
-#if _STATS
-    // Update the file of run length and value statistics
-    UpdateStats(STATS_DEFAULT);
-
-    NewSubBand(width, height, 0, ((int)stream->cntBits) - current, current - stats_lastbits);
-
-    stats_lastbits = (int)stream->cntBits;
-#endif
 }
 #endif
 
@@ -6000,10 +5798,6 @@ void EncodeQuantizedCoefficients(ENCODER *encoder, BITSTREAM *stream, PIXEL *inp
     // Check that the count is not negative
     assert(count >= 0);
 
-#if (1 && _STATS)
-    int current = (int)stream->cntBits;
-#endif
-
     // Compute the number of pixels in the gap at the end of each row
     //gap = (pitch - width);
 
@@ -6034,19 +5828,6 @@ void EncodeQuantizedCoefficients(ENCODER *encoder, BITSTREAM *stream, PIXEL *inp
                 if (count > 0)
                 {
                     PutZeroRun(stream, count, runsbook);
-
-#if _STATS
-                    CountRuns(STATS_DEFAULT, count);
-                    //					CountValues(STATS_DEFAULT, 0, count);
-                    {
-                        int i;
-                        for (i = 0; i < count; i++)
-                        {
-                            CountValues(STATS_DEFAULT, 0, 1);
-                        }
-                    }
-#endif
-
                     count = 0;
                 }
 
@@ -6086,33 +5867,12 @@ void EncodeQuantizedCoefficients(ENCODER *encoder, BITSTREAM *stream, PIXEL *inp
         if (count > 0)
         {
             PutZeroRun(stream, count, runsbook);
-
-#if _STATS
-            CountRuns(STATS_DEFAULT, count);
-            //			CountValues(STATS_DEFAULT, 0, count);
-            {
-                int i;
-                for (i = 0; i < count; i++)
-                {
-                    CountValues(STATS_DEFAULT, 0, 1);
-                }
-            }
-#endif
             count = 0;
         }
 
         // Check that the zero run has been output
         assert(count == 0);
     }
-
-#if (1 && _STATS)
-    // Update the file of run length and value statistics
-    UpdateStats(STATS_DEFAULT);
-
-    NewSubBand(width, height, 0, ((int)stream->cntBits) - current, current - stats_lastbits);
-
-    stats_lastbits = (int)stream->cntBits;
-#endif
 
     // Save the count of zeros at the end of the row
     *zero_count_ptr = count;

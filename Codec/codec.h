@@ -489,23 +489,15 @@ typedef enum encoded_format
 
 } ENCODED_FORMAT;
 
-#if 0
-typedef enum bayer_format
+typedef enum BayerFormat
 {
-    BAYER_FORMAT_UNKNOWN = 0,		// Bayer pixel pattern not set
-    BAYER_FORMAT_GREEN_RED = 1,		// Green-Red
-    BAYER_FORMAT_GREEN_BLUE = 2,	// Green-Blue
-    BAYER_FORMAT_BLUE_GREEN = 3,	// Blue-Green
-    BAYER_FORMAT_RED_GREEN = 4,		// Red-Green
+    BAYER_FORMAT_DEFAULT = 0,		// Defaults to red-green
+    BAYER_FORMAT_GREEN_RED = 1,
+    BAYER_FORMAT_GREEN_BLUE = 2,
+    BAYER_FORMAT_BLUE_GREEN = 3,
+    BAYER_FORMAT_RED_GREEN = BAYER_FORMAT_DEFAULT,
 
-    // The default Bayer pixel format is Red-Green
-    BAYER_FORMAT_DEFAULT = BAYER_FORMAT_RED_GREEN
-
-} BAYER_FORMAT;
-#else
-// The Bayer pixel patterns are defined in AVIExtendedHeader.h
-typedef BayerFormat BAYER_FORMAT;
-#endif
+} BayerFormat;
 
 typedef struct codec_state		// State of bitstream during encoding or decoding
 {

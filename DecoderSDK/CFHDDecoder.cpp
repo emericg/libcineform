@@ -842,15 +842,9 @@ CFHD_CloseDecoder(CFHD_DecoderRef decoderRef)
 }
 
 
-#ifdef _WIN32
 #include "CFHDMetadata.h"
-#else
-#include "CFHDMetadata.h"
-#endif
-#include "AVIExtendedHeader.h"
 #include "SampleMetadata.h"
 #include "../Codec/metadata.h"
-
 
 
 // Return the pathname of the LUT directory and the filename of the database directory

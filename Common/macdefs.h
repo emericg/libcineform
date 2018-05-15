@@ -53,10 +53,7 @@ typedef void VOID;
 typedef void *HANDLE;
 typedef void *LPVOID;
 
-#ifdef  __INTEL_COMPILER
-#else
 typedef long long __int64;
-#endif
 
 typedef char INT8;
 typedef unsigned char UINT8;

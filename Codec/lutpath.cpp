@@ -33,8 +33,6 @@
 #include <errno.h>
 #endif
 
-#include "../Common/AVIExtendedHeader.h"
-
 #define MAX_PATH	260
 
 #include "codec.h"
@@ -2013,72 +2011,6 @@ void OverrideCFHDDATA(DECODER *decoder, unsigned char *lpCurrentBuffer, int nWor
         decoder->thread_cntrl.affinity = cfhddata->cpu_affinity;
         decoder->thread_cntrl.set_thread_params = 1;
     }
-
-
-
-#if WARPSTUFF
-    {
-        bool doMesh = false;
-
-        if (cfhddata->lensGoPro == 0 && cfhddata->lensSphere == 1)
-        {
-            doMesh = true; // rectilinear
-        }
-        if (cfhddata->lensFill == 1 && (cfhddata->FrameOffsetX != 0.0 || cfhddata->FrameOffsetY != 0.0 || cfhddata->FrameOffsetR != 0.0 || cfhddata->FrameOffsetF != 0.0 || decoder->cfhddata.channel[0].FrameZoom < 1.0))
-        {
-            doMesh = true; // fill background
-        }
-        if (cfhddata->lensSphere == 1)
-        {
-            doMesh = true; //zoom
-        }
-        if (cfhddata->lensSphere == 1 && (cfhddata->FrameOffsetX != 0.0 || cfhddata->FrameOffsetY != 0.0))
-        {
-            doMesh = true; //repoint
-        }
-        if ((cfhddata->lensSphere == 1 && cfhddata->FrameOffsetR != 0.0) || fabs(cfhddata->FrameOffsetR) > 0.01)
-        {
-            doMesh = true; //rotate
-        }
-        if (cfhddata->lensGoPro >= 2)
-        {
-            doMesh = true; // equi-rect or defish
-        }
-
-        if (doMesh)
-        {
-            decoder->cfhddata.LensZoom = decoder->cfhddata.channel[0].FrameZoom;
-            decoder->cfhddata.channel[0].FrameZoom = 1.0;
-            decoder->cfhddata.channel[1].FrameZoom = 1.0;
-            decoder->cfhddata.channel[2].FrameZoom = 1.0;
-
-            decoder->cfhddata.LensOffsetX = decoder->cfhddata.FrameOffsetX;
-            decoder->cfhddata.FrameOffsetX = 0.0;
-
-            decoder->cfhddata.LensOffsetY = decoder->cfhddata.FrameOffsetY;
-            decoder->cfhddata.FrameOffsetY = 0.0;
-
-            decoder->cfhddata.LensOffsetR = decoder->cfhddata.FrameOffsetR;
-            decoder->cfhddata.FrameOffsetR = 0.0;
-
-            decoder->cfhddata.LensFishFOV = decoder->cfhddata.FrameOffsetF;
-            decoder->cfhddata.LensOffsetZ = decoder->cfhddata.FrameHScale;
-            decoder->cfhddata.FrameHScale = 1.0;
-            decoder->cfhddata.FrameHDynamic = 1.0;
-            decoder->cfhddata.channel[0].user_vignette_start = 0.0;
-
-            decoder->cfhddata.LensXmin = decoder->cfhddata.channel[0].FrameMask.topLftX;
-            decoder->cfhddata.LensXmax = decoder->cfhddata.channel[0].FrameMask.topRgtX;
-            decoder->cfhddata.LensYmin = decoder->cfhddata.channel[0].FrameMask.topLftY;
-            decoder->cfhddata.LensYmax = decoder->cfhddata.channel[0].FrameMask.botLftY;
-
-            FRAME_REGION emptyFrameMask = FRAME_REGION_INITIALIZER;
-            memcpy(&decoder->cfhddata.channel[0].FrameMask, &emptyFrameMask, 32);
-        }
-
-        decoder->cfhddata.doMesh = doMesh;
-    }
-#endif
 }
 
 void OverrideCFHDDATAUsingParent(struct decoder *decoder, struct decoder *parentDecoder, unsigned char *lpCurrentBuffer, int nWordsUsed)

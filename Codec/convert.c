@@ -18,8 +18,6 @@
 *  limitations under the License.
 *
 */
-//#include <stdint.h>
-#include "stdint.h"			// Use a local copy until this file is available on Windows
 
 #include "config.h"
 #include "timing.h"
@@ -30,6 +28,7 @@
 #define TIMING (1 && _TIMING)
 #define XMMOPT (1 && _XMMOPT)
 
+#include <stdint.h>
 #include <assert.h>
 #include <limits.h>
 #include <emmintrin.h>		// SSE2 intrinsics

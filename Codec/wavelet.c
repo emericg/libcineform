@@ -41,12 +41,7 @@
 #include "wavelet.h"
 #include "image.h"
 
-#if (0 && _DEBUG)
-#include "ipp.h"		// The Intel Performance Primitives are used in the test routines
-#endif
-
 #include "filter.h"
-#include "debug.h"
 #include "timing.h"
 #include "string.h"
 #include "codec.h"

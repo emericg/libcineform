@@ -25,7 +25,6 @@
 // Include files from the codec library
 #include "encoder.h"
 #include "metadata.h"
-#include "AVIExtendedHeader.h"
 
 //TODO: Eliminate references to the codec library
 
