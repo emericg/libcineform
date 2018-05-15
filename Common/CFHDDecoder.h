@@ -1,26 +1,23 @@
-/*! @file CFHDDecoder.h
-*
-*  @brief Interface to the CineForm HD decoder.  The decoder API uses an opaque
-*  data type to represent an instance of an decoder.  The decoder reference
-*  is returned by the call to @ref CFHD_OpenDecoder.
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+/*!
+ * @file CFHDDecoder.h
+ * @brief Interface to the CineForm HD decoder.  The decoder API uses an opaque
+ * data type to represent an instance of an decoder.  The decoder reference
+ * is returned by the call to @ref CFHD_OpenDecoder.
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-#pragma once
 #ifndef CFHD_DECODER_H
 #define CFHD_DECODER_H
 
@@ -236,8 +233,7 @@ CFHD_PrepareToDecode(CFHD_DecoderRef decoderRef,
                      CFHD_PixelFormat *actualFormatOut);
 
 #ifdef __cplusplus
-// The sample header is parsed to obtain information about the
-//		video sample without decoding the video sample.
+// The sample header is parsed to obtain information about the video sample without decoding the video sample.
 CFHDDECODER_API CFHD_Error
 CFHD_ParseSampleHeader(void *samplePtr,
                        size_t sampleSize,

@@ -1895,5 +1895,3 @@ ISampleDecoder *CSampleDecoder::CreateSampleDecoder(IAllocator *allocator, CFHD_
 
     return dynamic_cast<ISampleDecoder *>(pSampleDecoder);
 }
-
-

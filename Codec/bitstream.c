@@ -43,9 +43,8 @@ extern TIMER tk_putbits;
 
 // Global Data
 
-#define _BITMASK(n)		((((uint32_t )1 << (n))) - 1)
-
-const uint32_t  _bitmask[] =
+#define _BITMASK(n) ((((uint32_t )1 << (n))) - 1)
+const uint32_t _bitmask[] =
 {
     _BITMASK(0),  _BITMASK(1),  _BITMASK(2),  _BITMASK(3),
     _BITMASK(4),  _BITMASK(5),  _BITMASK(6),  _BITMASK(7),
@@ -62,10 +61,6 @@ const uint32_t  _bitmask[] =
 // Local Functions
 void PutWord(BITSTREAM *stream, uint8_t  word);
 //void PutLong(BITSTREAM *stream, uint32_t  word);
-
-// Must declare the byte swap function even though it is an intrinsic
-//int _bswap(int);
-
 
 // Initialize the bitstream and bind it to a buffer
 void InitBitstreamBuffer(BITSTREAM *stream, uint8_t  *buffer, size_t length, uint32_t access)

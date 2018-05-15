@@ -1,28 +1,23 @@
-/*! @file AVIExtendedHeader.h
+/*!
+ * @file AVIExtendedHeader.h
+ * @brief Curve definitions and internal active metadata parameters.
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-*  @brief Curve definitions and internal active metadata parameters.
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
-
-#pragma once
-
-#ifndef AVIEH
-#define AVIEH
+#ifndef AVIEH_H
+#define AVIEH_H
 
 #include "CFHDMetadataTags.h"
 #include <math.h>
@@ -46,11 +41,12 @@ typedef struct myGUID
     uint16_t Data2;
     uint16_t Data3;
     uint8_t Data4[8];
+
 } myGUID;
 
-#define RATIONAL(a,b)	(((a) << 16) | (b))
+#define RATIONAL(a,b) (((a) << 16) | (b))
 
-// Aspect ratios for pictures and pixels
+//! Aspect ratios for pictures and pixels
 enum
 {
     ASPECT_RATIO_UNKNOWN = 0,
@@ -62,7 +58,6 @@ enum
     ASPECT_RATIO_6_5     = RATIONAL(6, 5),	// 720x486 16x9 NTSC
     ASPECT_RATIO_16_15   = RATIONAL(16, 15),// 720x576 4x3 PAL
     ASPECT_RATIO_64_45   = RATIONAL(64, 45),// 720x576 16x9 PAL
-
 };
 
 // The pixel aspect ratio is a rational number packed in a 32-bit word
@@ -76,16 +71,15 @@ typedef ASPECT_RATIO PICTURE_ASPECT_RATIO;
 typedef ASPECT_RATIO PAR;
 
 // Functions for getting the numerator and denominator of an aspect ratio
-static __inline uint16_t AspectRatioX(ASPECT_RATIO aspectRatio)
+static inline uint16_t AspectRatioX(ASPECT_RATIO aspectRatio)
 {
     return (uint16_t)(aspectRatio >> 16);
 }
 
-static __inline uint16_t AspectRatioY(ASPECT_RATIO aspectRatio)
+static inline uint16_t AspectRatioY(ASPECT_RATIO aspectRatio)
 {
     return (uint16_t)(aspectRatio & 0xFFFF);
 }
-
 
 #define CURVE_TYPE_UNDEF	0
 #define CURVE_TYPE_LOG		1
@@ -108,16 +102,6 @@ static __inline uint16_t AspectRatioY(ASPECT_RATIO aspectRatio)
 
 #define CURVE_TYPE(a,b,c)	(((a) << 16) | (b<<8) | c)		// 0xaaaabbcc  a - type, b - value numerator, c - value denominator
 #define CURVE_TYPE_EXT(a,b)	(((a|CURVE_TYPE_EXTENDED) << 16) | (b))		// 0xaaaabbcc  a - type, b - base
-
-#if 0
-
-#define CURVE_LOG2LIN(i,b)		((pow((double)(b), (double)(i))-1.0)/((double)(b) - 1.0))			// i = input float 0.0 to 1.0, b = log base
-#define CURVE_LIN2LOG(i,b)		((i)>=0.0?log10((i)*((b)-1.0)+1.0)/log10((b)):-log10(-(i)*((b)-1.0)+1.0)/log10((b)))
-
-#define CURVE_GAM2LIN(i,p)		((i)>=0.0?pow((double)(i),(double)(p)):-pow(-(double)(i),(double)(p)))
-#define CURVE_LIN2GAM(i,p)		((i)>=0.0?pow((double)(i),1.0/(double)(p)):-pow(-(double)(i),1.0/(double)(p)))
-
-#else
 
 #define CURVE_LOG2LIN(i,b)		log2lin((i),(b))
 #define CURVE_LIN2LOG(i,b)		lin2log((i),(b))
@@ -143,7 +127,6 @@ static __inline uint16_t AspectRatioY(ASPECT_RATIO aspectRatio)
 #define CURVE_LOGC2LIN(i)		logc2lin(i)
 #define CURVE_LIN2LOGC(i)		lin2logc(i)
 
-
 static __inline float log2lin(float i, float b)
 {
     return (float)((pow(b, i) - 1.0) / (b - 1.0));
@@ -154,21 +137,15 @@ static __inline float lin2log(float i, float b)
     return (float)((i >= 0.0) ? log10(i * (b - 1.0) + 1.0) / log10(b) : -log10(-i * (b - 1.0) + 1.0) / log10(b));
 }
 
-//static __inline float gam2lin(float i, float p)
 static __inline float gam2lin(double i, double p)
 {
-    //return (float)((i >= 0.0) ? pow(i, p) : -pow(-i, p));
-
     // New gamma curve has a linear extension in the negative values
     return (float)((i >= 0.0) ? pow(i, p) : i / (100.0 * pow(0.01, (1.0 / p))));
 }
 
-//static __inline float lin2gam(float i, float p)
 static __inline float lin2gam(double i, double p)
 {
-    //float exponent = (float)(1.0/p);
     double exponent = (float)(1.0 / p);
-    //	return (float)((i >= 0.0) ? pow(i, exponent) : -pow(-i, exponent));
 
     // New gamma curve has a linear extension in the negative values
     return (float)((i >= 0.0) ? pow(i, exponent) : i * 100.0 * pow(0.01, exponent));
@@ -200,7 +177,6 @@ static __inline float lin2cineon(double i, float p)
     i += black;
     if (i < 0.0001) i = 0.0001;
 
-    //return 685.0/1023.0 + (float)(log10(i) / ((p/1.7) * 0.002 / 0.6))/1023.0;
     return (float)(685.0 / 1023.0 + (float)(log10(i) / ((p / 1.7) * 0.002 / 0.6)) / 1023.0);
 }
 
@@ -231,7 +207,6 @@ static __inline float cine9852lin(double i, float p)
     return (float)(pow(10.0, (i - 985.0 / 1023.0) * 1023.0 * (p / 1.7) * 0.002 / 0.6));
 }
 
-
 //DAN20081011 - Support for Redspace (gain 202, power 4)
 static __inline float para2lin(float i, int gain, int power)
 {
@@ -247,8 +222,6 @@ static __inline float lin2para(float i, int gain, int power)
     // = (1-((1-i/gain)^(power*256)))
     return (float)(1.0 - (float)(pow((double)(1.0 - i / (float)gain), (double)(power * 256))));
 }
-
-
 
 static __inline float cstyle2lin(float i, int flavor)
 {
@@ -355,7 +328,6 @@ static __inline float slog2lin(float x)
     return (float)(pow(10.0, ((x - 0.616596 - 0.03) / 0.432699)) - 0.037584);
 }
 
-
 static __inline float lin2slog(float x)
 {
     //Linear to S-log (input i is 0 to 1, supports up to 10.0)
@@ -363,8 +335,7 @@ static __inline float lin2slog(float x)
     return (float)((0.432699 * log10(x + 0.037584) + 0.616596) + 0.03);
 }
 
-
-#define LOGCOFFSET		0.00937677
+#define LOGCOFFSET 0.00937677
 static __inline float logc2lin(float x)
 {
     //Alexa LogC to Linear
@@ -373,7 +344,6 @@ static __inline float logc2lin(float x)
     else
         return (float)((x / 0.9661776 - 0.04378604) * 0.18 - LOGCOFFSET);
 }
-
 
 static __inline float lin2logc(float x)
 {
@@ -384,7 +354,6 @@ static __inline float lin2logc(float x)
         return (float)((((x + LOGCOFFSET) / 0.18) + 0.04378604) * 0.9661776);
 }
 
-#endif
 
 // Enumerated values for the curves that are applied to the input pixels during encoding
 typedef enum encode_curve
@@ -655,10 +624,6 @@ typedef struct tagCFHDDATA_NEW
     float lensCustomSRC[6];
     float lensCustomDST[6];
 
-    //	custom_data_offset points here
-    // 256 byte more prevents mediaplayer/windows from working (can't find the codec.)
-    //	uint8_t freeform[MAX_METADATA_HEADER];
-
 } CFHDDATA;
 
-#endif //AVIEH
+#endif // AVIEH_H

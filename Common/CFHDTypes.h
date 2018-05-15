@@ -1,24 +1,21 @@
-/*! @file CFHDTypes.h
-*
-*  @brief Data types and pixel formats used within CineForm SDKs.
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+/*!
+ * @file CFHDTypes.h
+ * @brief Data types and pixel formats used within CineForm SDKs.
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-#pragma once
 #ifndef CFHD_TYPES_H
 #define CFHD_TYPES_H
 
@@ -29,84 +26,8 @@
 
 // Convert the four character code to the correct byte order
 #ifndef FOUR_CHAR_CODE
-#define FOUR_CHAR_CODE(a,b,c,d)		(((d&0xff)<<0)|((c&0xff)<<8)|((b&0xff)<<16)|((a&0xff)<<24))
+#define FOUR_CHAR_CODE(a,b,c,d) (((d&0xff)<<0)|((c&0xff)<<8)|((b&0xff)<<16)|((a&0xff)<<24))
 #endif
-
-// Opaque datatype for the CineForm license string
-typedef unsigned char *CFHD_LicenseKey;
-
-#ifdef __APPLE__
-
-//! Pixel formats are specified using four character codes
-typedef enum CFHD_PixelFormat
-{
-    CFHD_PIXEL_FORMAT_UNKNOWN = 0,
-    CFHD_PIXEL_FORMAT_CFHD = ('CFHD'),	// compressed data
-
-    // Encoder and Decoder formats
-    CFHD_PIXEL_FORMAT_BGRA = ('BGRA'),	// RGBA 8-bit 4:4:4:4 inverted
-    CFHD_PIXEL_FORMAT_BGRa = ('BGRa'),	// RGBA 8-bit 4:4:4:4
-    CFHD_PIXEL_FORMAT_RG24 = ('RG24'),	// RGB 8-bit 4:4:4 inverted
-    CFHD_PIXEL_FORMAT_2VUY = ('2vuy'),	// Component Y'CbCr 8-bit 4:2:2
-    CFHD_PIXEL_FORMAT_YUY2 = ('YUY2'),	// Component Y'CbCr 8-bit 4:2:2
-    CFHD_PIXEL_FORMAT_B64A = ('b64a'),	// ARGB with 16-bits per component
-    CFHD_PIXEL_FORMAT_RG48 = ('RG48'),	// 16-bit RGB CFHD format
-    CFHD_PIXEL_FORMAT_YU64 = ('YU64'),
-    CFHD_PIXEL_FORMAT_V210 = ('v210'),
-    CFHD_PIXEL_FORMAT_RG30 = ('RG30'),	// (AJA format)
-    CFHD_PIXEL_FORMAT_AB10 = ('AB10'),	// A2B10G10R10(same as RG30)
-    CFHD_PIXEL_FORMAT_AR10 = ('AR10'),	// A2R10G10B10
-    CFHD_PIXEL_FORMAT_R210 = ('r210'),	// DPX packed format
-    CFHD_PIXEL_FORMAT_DPX0 = ('DPX0'),	// DPX packed format
-    CFHD_PIXEL_FORMAT_NV12 = ('NV12'),	// Planar YUV 4:2:0 format for MPEG-2
-    CFHD_PIXEL_FORMAT_YV12 = ('YV12'),	// Planar YUV 4:2:0 format for MPEG-2
-    CFHD_PIXEL_FORMAT_R408 = ('R408'),	// Component Y'CbCrA 8-bit 4:4:4:4 (alpha is not populated.)
-    CFHD_PIXEL_FORMAT_V408 = ('V408'),	// Component Y'CbCrA 8-bit 4:4:4:4 (alpha is not populate
-    CFHD_PIXEL_FORMAT_BYR4 = ('BYR4'),	// Raw bayer 16-bits per componentd.)
-
-    // Decoder only formats
-    CFHD_PIXEL_FORMAT_BYR2 = ('BYR2'),	// Raw Bayer pixel data
-    CFHD_PIXEL_FORMAT_WP13 = ('WP13'),	// signed 16-bit RGB CFHD format, whitepoint at 1<<13
-    CFHD_PIXEL_FORMAT_W13A = ('W13A'),	// signed 16-bit RGBA CFHD format, whitepoint at 1<<13
-    CFHD_PIXEL_FORMAT_YUYV = ('yuyv'),	// YUYV 8-bit 4:2:2
-
-    // Encoder only formats
-    CFHD_PIXEL_FORMAT_BYR5 = ('BYR5'),	// Raw bayer 12-bits per component, packed line of 8bit then line a 4bit reminder.
-    CFHD_PIXEL_FORMAT_B48R = ('b48r'),	// RGB 16-bits per component
-    CFHD_PIXEL_FORMAT_RG64 = ('RG64'),	// 16-bit RGBA CFHD format
-
-    // Avid pixel formats
-    CFHD_PIXEL_FORMAT_CT_UCHAR = ('avu8'),		// Avid 8-bit CbYCrY 4:2:2 (no alpha)
-    CFHD_PIXEL_FORMAT_CT_10BIT_2_8 = ('av28'),	// Two planes of 8-bit and 2-bit pixels
-    CFHD_PIXEL_FORMAT_CT_SHORT_2_14 = ('a214'),	// Avid fixed point 2.14 pixel format
-    CFHD_PIXEL_FORMAT_CT_USHORT_10_6 = ('a106'),	// Avid fixed point 10.6 pixel format
-    CFHD_PIXEL_FORMAT_CT_SHORT = ('av16'),		// Avid 16-bit signed pixels
-    CFHD_PIXEL_FORMAT_UNC_ARGB_444 = ('ar10'),	// Avid 10-bit ARGB 4:4:4:4
-
-    // Pixel formats in the Macintosh coding style
-    kCFHDPixelFormatUnknown = CFHD_PIXEL_FORMAT_UNKNOWN,
-    kCFHDPixelFormat32BGRA = CFHD_PIXEL_FORMAT_BGRA,		// RGBA 8-bit 4:4:4:4
-    kCFHDPixelFormat422YpCbCr8 = CFHD_PIXEL_FORMAT_2VUY,	// Component Y'CbCr 8-bit 4:2:2
-    kCFHDPixelFormat64ARGB = CFHD_PIXEL_FORMAT_B64A,		// ARGB with 16-bits per component
-    kCFHDPixelFormatRG48 = CFHD_PIXEL_FORMAT_RG48,
-    kCFHDPixelFormatRG64 = CFHD_PIXEL_FORMAT_RG64,
-    kCFHDPixelFormatYU64 = CFHD_PIXEL_FORMAT_YU64,
-    kCFHDPixelFormat422YpCbCr10 = CFHD_PIXEL_FORMAT_V210,	// Component Y'CbCr 10-bit 4:2:2
-    kCFHDPixelFormatRG30 = CFHD_PIXEL_FORMAT_RG30,
-    kCFHDPixelFormatAB10 = CFHD_PIXEL_FORMAT_AB10,
-    kCFHDPixelFormatAR10 = CFHD_PIXEL_FORMAT_AR10,
-    kCFHDPixelFormatR210 = CFHD_PIXEL_FORMAT_R210,			// DPX packed format
-    kCFHDPixelFormatDPX0 = CFHD_PIXEL_FORMAT_DPX0,			// DPX packed format
-    kCFHDPixelFormatBayer = CFHD_PIXEL_FORMAT_BYR2,			// Raw Bayer pixel data
-    kCFHDPixelFormatWP13 = CFHD_PIXEL_FORMAT_WP13,
-    kCFHDPixelFormatW13A = CFHD_PIXEL_FORMAT_W13A,
-    kCFHDPixelFormatYUYV = CFHD_PIXEL_FORMAT_YUYV,
-    kCFHDPixelFormatb48r = CFHD_PIXEL_FORMAT_B48R,
-    k4444YpCrA32RPixelFormat = ('r4fl'),
-
-} CFHD_PixelFormat;
-
-#else // __APPLE__
 
 //! Pixel formats are specified using four character codes
 typedef enum CFHD_PixelFormat
@@ -147,56 +68,30 @@ typedef enum CFHD_PixelFormat
     CFHD_PIXEL_FORMAT_RG64 = FOUR_CHAR_CODE('R', 'G', '6', '4'),	// 16-bit RGBA CFHD format
 
     // Avid pixel formats
-    CFHD_PIXEL_FORMAT_CT_UCHAR =		FOUR_CHAR_CODE('a', 'v', 'u', '8'),		// Avid 8-bit CbYCrY 4:2:2 (no alpha)
-    CFHD_PIXEL_FORMAT_CT_10BIT_2_8 =	FOUR_CHAR_CODE('a', 'v', '2', '8'),	// Two planes of 8-bit and 2-bit pixels
-    CFHD_PIXEL_FORMAT_CT_SHORT_2_14 =	FOUR_CHAR_CODE('a', '2', '1', '4'),	// Avid fixed point 2.14 pixel format
-    CFHD_PIXEL_FORMAT_CT_USHORT_10_6 =  FOUR_CHAR_CODE('a', '1', '0', '6'),	// Avid fixed point 10.6 pixel format
-    CFHD_PIXEL_FORMAT_CT_SHORT =		FOUR_CHAR_CODE('a', 'v', '1', '6'),		// Avid 16-bit signed pixels
-    CFHD_PIXEL_FORMAT_UNC_ARGB_444 =	FOUR_CHAR_CODE('a', 'r', '1', '0'),	// Avid 10-bit ARGB 4:4:4:4
-
-    // Pixel formats in the Macintosh coding style
-    kCFHDPixelFormatUnknown = CFHD_PIXEL_FORMAT_UNKNOWN,
-    kCFHDPixelFormat32BGRA = CFHD_PIXEL_FORMAT_BGRA,		// RGBA 8-bit 4:4:4:4
-    kCFHDPixelFormat422YpCbCr8 = CFHD_PIXEL_FORMAT_2VUY,	// Component Y'CbCr 8-bit 4:2:2
-    kCFHDPixelFormat64ARGB = CFHD_PIXEL_FORMAT_B64A,		// ARGB with 16-bits per component
-    kCFHDPixelFormatRG48 = CFHD_PIXEL_FORMAT_RG48,
-    kCFHDPixelFormatRG64 = CFHD_PIXEL_FORMAT_RG64,
-    kCFHDPixelFormatYU64 = CFHD_PIXEL_FORMAT_YU64,
-    kCFHDPixelFormat422YpCbCr10 = CFHD_PIXEL_FORMAT_V210,	// Component Y'CbCr 10-bit 4:2:2
-    kCFHDPixelFormatRG30 = CFHD_PIXEL_FORMAT_RG30,
-    kCFHDPixelFormatAB10 = CFHD_PIXEL_FORMAT_AB10,
-    kCFHDPixelFormatAR10 = CFHD_PIXEL_FORMAT_AR10,
-    kCFHDPixelFormatR210 = CFHD_PIXEL_FORMAT_R210,			// DPX packed format
-    kCFHDPixelFormatDPX0 = CFHD_PIXEL_FORMAT_DPX0,			// DPX packed format
-    kCFHDPixelFormatBayer = CFHD_PIXEL_FORMAT_BYR2,			// Raw Bayer pixel data
-    kCFHDPixelFormatWP13 = CFHD_PIXEL_FORMAT_WP13,
-    kCFHDPixelFormatW13A = CFHD_PIXEL_FORMAT_W13A,
-    kCFHDPixelFormatYUYV = CFHD_PIXEL_FORMAT_YUYV,
-    kCFHDPixelFormatb48r = CFHD_PIXEL_FORMAT_B48R,
-    k4444YpCrA32RPixelFormat = FOUR_CHAR_CODE('r', '4', 'f', 'l'),
+    CFHD_PIXEL_FORMAT_CT_UCHAR =        FOUR_CHAR_CODE('a', 'v', 'u', '8'),    // Avid 8-bit CbYCrY 4:2:2 (no alpha)
+    CFHD_PIXEL_FORMAT_CT_10BIT_2_8 =    FOUR_CHAR_CODE('a', 'v', '2', '8'),    // Two planes of 8-bit and 2-bit pixels
+    CFHD_PIXEL_FORMAT_CT_SHORT_2_14 =   FOUR_CHAR_CODE('a', '2', '1', '4'),    // Avid fixed point 2.14 pixel format
+    CFHD_PIXEL_FORMAT_CT_USHORT_10_6 =  FOUR_CHAR_CODE('a', '1', '0', '6'),    // Avid fixed point 10.6 pixel format
+    CFHD_PIXEL_FORMAT_CT_SHORT =        FOUR_CHAR_CODE('a', 'v', '1', '6'),    // Avid 16-bit signed pixels
+    CFHD_PIXEL_FORMAT_UNC_ARGB_444 =    FOUR_CHAR_CODE('a', 'r', '1', '0'),    // Avid 10-bit ARGB 4:4:4:4
 
 } CFHD_PixelFormat;
 
-#endif // __APPLE__
-
 typedef enum CFHD_SampleInfoTag
 {
-    CFHD_SAMPLE_INFO_CHANNELS = 0,	// int_32
-    CFHD_SAMPLE_DISPLAY_WIDTH,		// int_32
-    CFHD_SAMPLE_DISPLAY_HEIGHT,		// int_32
-    CFHD_SAMPLE_KEY_FRAME,			// int_32
-    CFHD_SAMPLE_PROGRESSIVE,		// int_32
+    CFHD_SAMPLE_INFO_CHANNELS = 0,
+    CFHD_SAMPLE_DISPLAY_WIDTH,
+    CFHD_SAMPLE_DISPLAY_HEIGHT,
+    CFHD_SAMPLE_KEY_FRAME,
+    CFHD_SAMPLE_PROGRESSIVE,
 
     // The follow started working with 6.7.3
-    CFHD_SAMPLE_ENCODED_FORMAT,		// int_32   // With early SDKs return 1 for YUV (rather than 0)
-    CFHD_SAMPLE_SDK_VERSION,		// int_32	//
-    CFHD_SAMPLE_ENCODE_VERSION,		// int_32
+    CFHD_SAMPLE_ENCODED_FORMAT,// With early SDKs return 1 for YUV (rather than 0)
+    CFHD_SAMPLE_SDK_VERSION,
+    CFHD_SAMPLE_ENCODE_VERSION,
 } CFHD_SampleInfoTag;
 
-/*! @enum CFHD_EncodingQuality
-
-	@brief Encoding quality settings (adapted from Encoder2).
-*/
+//! Encoding quality settings (adapted from Encoder2).
 typedef enum CFHD_EncodingQuality
 {
     CFHD_ENCODING_QUALITY_FIXED = 0, // also interpreted as unset as there is no CBR mode.
@@ -224,67 +119,53 @@ typedef enum CFHD_EncodingQuality
 
 typedef int CFHD_EncodingBitrate;
 
-/*! @enum CFHD_EncodedFormat
-
-	@brief Internal format used by the encoder.
-*/
+//! Internal format used by the encoder.
 typedef enum CFHD_EncodedFormat
 {
     CFHD_ENCODED_FORMAT_YUV_422 = 0,
     CFHD_ENCODED_FORMAT_RGB_444,
     CFHD_ENCODED_FORMAT_RGBA_4444,
     CFHD_ENCODED_FORMAT_BAYER,
-    CFHD_ENCODED_FORMAT_YUVA_4444, //not implemented
+    CFHD_ENCODED_FORMAT_YUVA_4444, // not implemented
     CFHD_ENCODED_FORMAT_UNKNOWN
-} CFHD_EncodedFormat;
 
+} CFHD_EncodedFormat;
 
 #define THUMBNAILSIZE(w,h)  ((((w)+7)/8)*(((h)+7)/8)*4)
 
-/*! @enum CFHD_EncodingFlags
-
-	@brief Flags that provide additional information about the video format.
-*/
+//! Flags that provide additional information about the video format.
 enum
 {
     CFHD_ENCODING_FLAGS_NONE				= 0,
 
-    //YUV flags
-    CFHD_ENCODING_FLAGS_YUV_INTERLACED		= 1 << 0,	//YUV 4:2:2 only
-    CFHD_ENCODING_FLAGS_YUV_2FRAME_GOP		= 1 << 1,	//YUV 4:2:2 only
-    CFHD_ENCODING_FLAGS_YUV_601				= 1 << 2,	//YUV 4:2:2 only, force 601, default is 709.
-    //spare									= 1<<3, //unused
+    // YUV flags
+    CFHD_ENCODING_FLAGS_YUV_INTERLACED		= 1 << 0, // YUV 4:2:2 only
+    CFHD_ENCODING_FLAGS_YUV_2FRAME_GOP		= 1 << 1, // YUV 4:2:2 only
+    CFHD_ENCODING_FLAGS_YUV_601				= 1 << 2, // YUV 4:2:2 only, force 601, default is 709.
+    //spare									= 1 << 3, // unused
 
-    //Encoding curve
-    CFHD_ENCODING_FLAGS_CURVE_APPLIED		= 1 << 4,	//BYR4 source is typically linear, this instructs the encoder not to apply another curve
-    CFHD_ENCODING_FLAGS_CURVE_GAMMA22		= 0,	//default (particular for YUV and RGB sources.)
-    CFHD_ENCODING_FLAGS_CURVE_LOG90			= 1 << 5,	//recommended for RAW
-    CFHD_ENCODING_FLAGS_CURVE_LINEAR		= 1 << 6,	//not recommend
-    CFHD_ENCODING_FLAGS_CURVE_CUSTOM		= 1 << 7,	//use metadata tag TAG_ENCODE_CURVE
-    CFHD_ENCODING_FLAGS_RGB_STUDIO			= 1 << 8,	//RGB 4:4:4 only, force Studio RGB Levels, default is cgRGB (black at 0 vs black at 16/64 out of 255/1023).
+    // Encoding curve
+    CFHD_ENCODING_FLAGS_CURVE_APPLIED		= 1 << 4, // BYR4 source is typically linear, this instructs the encoder not to apply another curve
+    CFHD_ENCODING_FLAGS_CURVE_GAMMA22		= 0,      // default (particular for YUV and RGB sources.)
+    CFHD_ENCODING_FLAGS_CURVE_LOG90			= 1 << 5, // recommended for RAW
+    CFHD_ENCODING_FLAGS_CURVE_LINEAR		= 1 << 6, // not recommend
+    CFHD_ENCODING_FLAGS_CURVE_CUSTOM		= 1 << 7, // use metadata tag TAG_ENCODE_CURVE
+    CFHD_ENCODING_FLAGS_RGB_STUDIO			= 1 << 8, // RGB 4:4:4 only, force Studio RGB Levels, default is cgRGB (black at 0 vs black at 16/64 out of 255/1023).
 
-    //For Compressed DPX encoding (produces a 10-bit RGB 32-bit packed Thumbnail.)
+    // For Compressed DPX encoding (produces a 10-bit RGB 32-bit packed Thumbnail.)
     // thumbnail is appended to the end of the sample, so can be written directly into a compressed DPX file.  The image offset for the DPX header pointes
     // ((width+7)/8)*((height+7)/8)*4 bytes or THUMBNAILSIZE(width,height) from the end of the sample.
-    CFHD_ENCODING_FLAGS_APPEND_THUMBNAIL	= 1 << 9, //Auto generate a 1/8th size thumbnail, size (width+7)/8, (height+7)/8, 1920x1080 gives 240x135
-    CFHD_ENCODING_FLAGS_WATERMARK_THUMBNAIL	= 1 << 10, //Auto generate a 1/8th size thumbnail with compressed DPX watermark
+    CFHD_ENCODING_FLAGS_APPEND_THUMBNAIL	= 1 << 9,  // Auto generate a 1/8th size thumbnail, size (width+7)/8, (height+7)/8, 1920x1080 gives 240x135
+    CFHD_ENCODING_FLAGS_WATERMARK_THUMBNAIL	= 1 << 10, // Auto generate a 1/8th size thumbnail with compressed DPX watermark
 
-    CFHD_ENCODING_FLAGS_LARGER_OUTPUT		= 1 << 11, //Allocate output buffer big enough to support uncompressed stereo sequences.
+    CFHD_ENCODING_FLAGS_LARGER_OUTPUT		= 1 << 11, // Allocate output buffer big enough to support uncompressed stereo sequences.
     // The output buffer is typically 1:1 to the source frame size, for 3D the output can
     // be bigger than one fraem size (as there are two frames encoded.)
-
-    // Encoding flags in the Macintosh coding style
-    kCFHDEncodingFlagsNone = CFHD_ENCODING_FLAGS_NONE,
-    kCFHDEncodingFlagsInterlaced = CFHD_ENCODING_FLAGS_YUV_INTERLACED,
-
 };
 
 typedef uint32_t CFHD_EncodingFlags;
 
-/*! @enum CFHD_FieldType
-
-	@brief Organization of the video fields (progressive versus interlaced)
-*/
+//! Organization of the video fields (progressive versus interlaced)
 typedef enum CFHD_FieldType
 {
     CFHD_FIELD_TYPE_UNKNOWN = 0,
@@ -297,10 +178,10 @@ typedef enum CFHD_FieldType
 } CFHD_FieldType;
 
 
-// Four character code for the metadata tag
+//! Four character code for the metadata tag
 typedef uint32_t CFHD_MetadataTag;
 
-// Size of a single item of metadata
+//! Size of a single item of metadata
 typedef int32_t CFHD_MetadataSize;
 
 
@@ -323,7 +204,7 @@ typedef enum CFHD_MetadataType
 } CFHD_MetadataType;
 
 
-//  Use with TAG_BAYER_FORMAT metadata to set bayer phase
+//! Use with TAG_BAYER_FORMAT metadata to set bayer phase
 typedef enum CFHD_BayerFormat
 {
     CFHD_BAYER_FORMAT_UNKNOWN = -1,
@@ -333,7 +214,7 @@ typedef enum CFHD_BayerFormat
     CFHD_BAYER_FORMAT_BLU_GRN = 3,
 } CFHD_BayerFormat;
 
-// Use with TAG_DEMOSAIC_TYPE to control which demosaic
+//! Use with TAG_DEMOSAIC_TYPE to control which demosaic
 enum
 {
     DEMOSAIC_USER_DEFAULT = 0,
@@ -346,29 +227,28 @@ enum
 };
 
 
+#define CFHD_CURVE_TYPE_UNDEF   0
+#define CFHD_CURVE_TYPE_LOG     1
+#define CFHD_CURVE_TYPE_GAMMA   2
+#define CFHD_CURVE_TYPE_LINEAR  4
+#define CFHD_CURVE_TYPE_CINEON  5   // black at 95 and white 685, b and c are the gamma curve (ie. 17/10 = 1.7)
+#define CFHD_CURVE_TYPE_PARA    6   // b and c are the gain and power parameters  (1.0-(float)pow((1.0-(double)i),(1.0/((double)power*256.0)))*gain;
+#define CFHD_CURVE_TYPE_CINE985 7   // black at 95 and white 685, b and c are the gamma curve (ie. 17/10 = 1.7)
+#define CFHD_CURVE_TYPE_CSTYLE  8  	// Model close to Technicolor CineStyle(TM) for Canon DSLRs
+#define CFHD_CURVE_TYPE_SLOG    9  	// Sony's S-Log
+#define CFHD_CURVE_TYPE_LOGC   10  	// Alexa's Log-C
 
-#define CFHD_CURVE_TYPE_UNDEF	0
-#define CFHD_CURVE_TYPE_LOG		1
-#define CFHD_CURVE_TYPE_GAMMA	2
-#define CFHD_CURVE_TYPE_LINEAR	4
-#define CFHD_CURVE_TYPE_CINEON	5		//black at 95 and white 685, b and c are the gamma curve (ie. 17/10 = 1.7)
-#define CFHD_CURVE_TYPE_PARA	6		//b and c are the gain and power parameters  (1.0-(float)pow((1.0-(double)i),(1.0/((double)power*256.0)))*gain;
-#define CFHD_CURVE_TYPE_CINE985	7		//black at 95 and white 685, b and c are the gamma curve (ie. 17/10 = 1.7)
-#define CFHD_CURVE_TYPE_CSTYLE	8  		//Model close to Technicolor CineStyle(TM) for Canon DSLRs
-#define CFHD_CURVE_TYPE_SLOG	9  		//Sony's S-Log
-#define CFHD_CURVE_TYPE_LOGC   10  		//Alexa's Log-C
 
-
-//Flags or'd with the above types.
-#define CFHD_CURVE_TYPE_NEGATIVE	0x8000	//Negative filmscan support
-#define CFHD_CURVE_TYPE_EXTENDED	0x4000	//Use the b and c, fields read as a single 16-bit integer for the log base (range 0 to 65535)
+// Flags or'd with the above types.
+#define CFHD_CURVE_TYPE_NEGATIVE    0x8000  // Negative filmscan support
+#define CFHD_CURVE_TYPE_EXTENDED    0x4000  // Use the b and c, fields read as a single 16-bit integer for the log base (range 0 to 65535)
 
 //! Encode the curve as 0xaaaabbcc, where a is the type, b is the value numerator, and c is the value denominator
-#define CFHD_CURVE_TYPE(a,b,c)	(((a) << 16) | ((b) << 8) | (c))
-#define CFHD_CURVE_TYPE_EXT(a,b)	(((a|CFHD_CURVE_TYPE_EXTENDED) << 16) | (b))		// 0xaaaabbcc  a - type, b - base
+#define CFHD_CURVE_TYPE(a,b,c)      (((a) << 16) | ((b) << 8) | (c))
+#define CFHD_CURVE_TYPE_EXT(a,b)    (((a|CFHD_CURVE_TYPE_EXTENDED) << 16) | (b))    // 0xaaaabbcc  a - type, b - base
 
 
-//  Use with TAG_ENCODE_CURVE & TAG_ENCODE_PRESET metadata to set source encoding curve
+//! Use with TAG_ENCODE_CURVE & TAG_ENCODE_PRESET metadata to set source encoding curve
 enum
 {
     CFHD_CURVE_LOG_90 = 		CFHD_CURVE_TYPE(CFHD_CURVE_TYPE_LOG, 90, 1),
@@ -395,12 +275,11 @@ typedef float CFHD_WhiteBalance[4];
 typedef float CFHD_ColorMatrix[3][4];
 
 
-#define METADATAFLAG_FILTERED	1		//Data filtered by the users active decoder preference.
-//If the operater wasn't displaying corrected whitebalance,
-//whilebalance will be returned as zero.
-#define METADATAFLAG_MODIFIED	2		// Get any user changes from the database (external to the file.)
-#define METADATAFLAG_RIGHT_EYE  4		// Extract Right Eye metadata when reading/writing, default is both eyes.
-#define METADATAFLAG_LEFT_EYE	8		// Extract Left Eye metadata when reading/writing, default is both eyes.
+#define METADATAFLAG_FILTERED   1   // Data filtered by the users active decoder preference.
+// If the operater wasn't displaying corrected whitebalance, whilebalance will be returned as zero.
+#define METADATAFLAG_MODIFIED   2   // Get any user changes from the database (external to the file.)
+#define METADATAFLAG_RIGHT_EYE  4   // Extract Right Eye metadata when reading/writing, default is both eyes.
+#define METADATAFLAG_LEFT_EYE   8   // Extract Left Eye metadata when reading/writing, default is both eyes.
 
 typedef enum CFHD_MetadataTrack
 {
@@ -445,7 +324,7 @@ typedef enum CFHD_StereoFlags
 {
     STEREO_FLAGS_DEFAULT = 0,
     STEREO_FLAGS_SWAP_EYES = 1,
-    STEREO_FLAGS_SPEED_3D = 2,	//use half res wavelet decode, even if full res output is request (so scale.)
+    STEREO_FLAGS_SPEED_3D = 2, // use half res wavelet decode, even if full res output is request (so scale.)
 } CFHD_StereoFlags;
 
 typedef enum CFHD_DecodedResolution
@@ -458,32 +337,16 @@ typedef enum CFHD_DecodedResolution
 
     CFHD_DECODED_RESOLUTION_DEFAULT = CFHD_DECODED_RESOLUTION_FULL,
 
-    // Decoded resolution in the Macintosh coding style
-    kCFHDDecodedResolutionUnknown = CFHD_DECODED_RESOLUTION_UNKNOWN,
-    kCFHDDecodedResolutionFull = CFHD_DECODED_RESOLUTION_FULL,
-    kCFHDDecodedResolutionHalf = CFHD_DECODED_RESOLUTION_HALF,
-    kCFHDDecodedResolutionQuarter = CFHD_DECODED_RESOLUTION_QUARTER,
-    kCFHDDecodedResolutionThumbnail = CFHD_DECODED_RESOLUTION_THUMBNAIL,
-
-    kCFHDDecodedResolutionDefault = kCFHDDecodedResolutionFull,
-
 } CFHD_DecodedResolution;
 
-// Definitions of the flags for CFHD_DecodingFlags (see below)
+//! Definitions of the flags for CFHD_DecodingFlags (see below)
 enum
 {
-    CFHD_DECODING_FLAGS_NONE = 0,
-    CFHD_DECODING_FLAGS_IGNORE_OUTPUT	= (1 << 0),
-    CFHD_DECODING_FLAGS_MUST_SCALE		= (1 << 1),
-    CFHD_DECODING_FLAGS_USE_RESOLUTION	= (1 << 2),
-    CFHD_DECODING_FLAGS_INTERNAL_ONLY	= (1 << 3),
-
-    // Decoding flags in the Macintosh coding style
-    kCFHDDecodingFlagsNone = CFHD_DECODING_FLAGS_NONE,
-    kCFHDDecodingFlagsIgnoreOutput = CFHD_DECODING_FLAGS_IGNORE_OUTPUT,
-    kCFHDDecodingFlagsMustScale = CFHD_DECODING_FLAGS_MUST_SCALE,
-    kCFHDDecodingFlagsUseResolution = CFHD_DECODING_FLAGS_USE_RESOLUTION,
-
+    CFHD_DECODING_FLAGS_NONE            = 0,
+    CFHD_DECODING_FLAGS_IGNORE_OUTPUT   = (1 << 0),
+    CFHD_DECODING_FLAGS_MUST_SCALE      = (1 << 1),
+    CFHD_DECODING_FLAGS_USE_RESOLUTION  = (1 << 2),
+    CFHD_DECODING_FLAGS_INTERNAL_ONLY   = (1 << 3),
 };
 
 typedef uint32_t CFHD_DecodingFlags;

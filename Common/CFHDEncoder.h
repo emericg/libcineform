@@ -1,26 +1,23 @@
-/*! @file CFHDEncoder.h
-*
-*  @brief Interface to the CineForm HD encoder.  The encoder API uses an opaque
-*  data type to represent an instance of an encoder.  The encoder reference
-*  is returned by the call to @ref CFHD_OpenEncoder.
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+/*!
+ * @file CFHDEncoder.h
+ * @brief Interface to the CineForm HD encoder.  The encoder API uses an opaque
+ * data type to represent an instance of an encoder.  The encoder reference
+ * is returned by the call to @ref CFHD_OpenEncoder.
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-#pragma once
 #ifndef CFHD_ENCODER_H
 #define CFHD_ENCODER_H
 
