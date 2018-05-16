@@ -5021,7 +5021,6 @@ float *LoadCube64_3DLUT(DECODER *decoder, CFHDDATA *cfhddata, int *lutsize)
     float *LUT = NULL;
     bool useLUT = false;
     CFLook_Header CFLKhdr;
-    char crcname[256];
     FILE *fp = NULL;
     int err = 0;
 

@@ -25,7 +25,9 @@
 #if __APPLE__
 #include <string.h>
 #include "CoreFoundation/CoreFoundation.h"
-#else
+#endif
+
+#ifndef _WIN32
 #include  <mm_malloc.h>
 #endif
 

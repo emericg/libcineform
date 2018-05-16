@@ -338,7 +338,7 @@ int GetPixelSize(CFHD_PixelFormat format)
             break;
 
         default:
-            throw CFHD_ERROR_BADFORMAT;
+            pixelSize = 0;
             break;
     }
 

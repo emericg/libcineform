@@ -64,7 +64,7 @@ public:
         if (handle)
         {
             long count;
-            bool result = ReleaseSemaphore(handle, 1, &count);
+            BOOL result = ReleaseSemaphore(handle, 1, &count);
             assert(result);
             return result != 0;
         }

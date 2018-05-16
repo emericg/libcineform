@@ -274,7 +274,6 @@ void OverrideCFHDDATA(DECODER *decoder, unsigned char *lpCurrentBuffer, int nWor
         if (decoder->image_dev_only || (metadatastart = MetaDataFindFirst(buf, samplesize,
                                         &metadatasize, &tag, &size, &type)))
         {
-            int firstmetadatachunk = 1;
             //DAN20080710 -- reset the value before loading them, as some RAW streams didn't have all the
             //value, which causes a database reset to fail (switch color database would not switch for
             //Premiere.)
@@ -308,9 +307,6 @@ void OverrideCFHDDATA(DECODER *decoder, unsigned char *lpCurrentBuffer, int nWor
 
             if (decoder->image_dev_only || memcmp( &lastGUID, &cfhddata->clip_guid, sizeof(cfhddata->clip_guid) ) != 0)
             {
-                //                    fprintf(stderr, "newclip \n");
-                int i;
-
                 if (cfhddata->ignore_disk_database == false)
                 {
                     checkdiskinfo = 1;	// CD See if it is a new clip  Need to set if not ignoring disk
