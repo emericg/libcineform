@@ -46,6 +46,10 @@
 #include "macdefs.h"
 #endif
 
+#if _WIN32
+#define PATH_MAX MAX_PATH
+#endif
+
 #if !defined(_WIN32)
 #define min(x,y)	(((x) < (y)) ? (x) : (y))
 #define max(x,y)	(((x) > (y)) ? (x) : (y))

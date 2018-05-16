@@ -25,6 +25,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#define PATH_MAX MAX_PATH
 #elif __APPLE__
 #include <Carbon/Carbon.h>
 #include "macdefs.h"
