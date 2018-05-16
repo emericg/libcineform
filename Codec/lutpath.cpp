@@ -1,7 +1,5 @@
 /*! @file lutpath.h
-
 *  @brief Active MetadataTools
-*
 *  @version 1.0.0
 *
 *  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
@@ -16,9 +14,7 @@
 *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
-*
 */
-
 
 #include "stdafx.h"
 #include "config.h"
@@ -38,41 +34,6 @@
 #include "codec.h"
 #include "lutpath.h"
 
-
-#ifdef _WIN32
-
-// Define the locations of registry keys for color processing
-#define REG_COLORPROCESSING_PATH _T("SOFTWARE\\CineForm\\ColorProcessing") // HKCU Where default props are stored
-#define REG_COLORPROCESSING_PREMIERE_KEY _T("Premiere") // The default Decoder resolution key
-#define REG_COLORPROCESSING_DEFAULT_KEY _T("Default") // The default Decoder resolution key
-#define REG_COLORPROCESSING_CS_OVERRIDE_KEY _T("ColorSpaceOverride")  //Use to tell the decode that the source was not what it think it is.
-#define REG_COLORPROCESSING_LAST_GUID_KEY _T("LastGUID")  // Last GUID played
-#define REG_COLORPROCESSING_FRAME_COUNT_KEY _T("LastFrameCount")  // Last frame count played
-#define REG_COLORPROCESSING_LAST_TIMECODE_KEY _T("LastTimecode")  // Last timecode played
-
-
-//TODO: Remove this routine as it does not appear to be used anywhere
-
-static int
-WINAPI
-lstrlenWInternal(
-    LPCWSTR lpString
-)
-{
-    int i = -1;
-    while (*(lpString + (++i)))
-        ;
-    return i;
-}
-
-#elif __APPLE_REMOVE__
-
-//TODO: define subroutines for parsing the preferences on Macintosh
-
-#else
-
-#include "scanner.h"
-
 // Define the maximum length of a keyword including the terminating nul
 #define KEYWORD_MAX 64
 
@@ -84,397 +45,7 @@ lstrlenWInternal(
 #define DEBUG (1 && _DEBUG)
 #endif
 
-
-// Define the token values
-enum
-{
-    // The lookup routine assumes that the unknown opcode is zero
-    OPCODE_UNKNOWN = 0,
-    OPCODE_DBPATH,
-    OPCODE_LUTPATH,
-    OPCODE_OVERRIDE_PATH,
-
-};
-
-// Table of token keywords and values
-TOKEN token_table[] =
-{
-    { (char *)"DBPath", OPCODE_DBPATH},
-    { (char *)"LUTPath", OPCODE_LUTPATH},
-    { (char *)"OverridePath", OPCODE_OVERRIDE_PATH},
-};
-const int token_table_length = sizeof(token_table) / sizeof(token_table[0]);
-
-
-#define CHECK_ERROR(err)	{ int _e = (err); if (_e != SCANNER_ERROR_OKAY) \
-	return ((_e == SCANNER_ERROR_EOF) ? CODEC_ERROR_OKAY : CODEC_ERROR_PREFSFILE); }
-
-#define BREAK_ERROR(err)	{ int _e = (err); if (_e != SCANNER_ERROR_OKAY) break; }
-
-#define IGNORE_ERROR(err, e1, e2)	{ if (err == e1) err = e2; }
-
-#define STRING_LENGTH(str)	(sizeof(str)/sizeof(str[0]))
-
-
-// Safely copy a string after clearing the destination
-void CopyString(char *target, const char *source, size_t size)
-{
-    int length = size / sizeof(target[0]);
-    memset(target, 0, size);
-    strncpy(target, source, length);
-    target[length - 1] = '\0';
-}
-
-// Open the first user preferences file that exists
-FILE *OpenUserPrefsFile(char *actual_pathname, size_t actual_size)
-{
-    // The system-wide preferences files are listed in search order
-    static const char *system_preferences_path[] =
-    {
-        "/etc/cineform/dbsettings",
-        "/usr/local/cineform/etc/dbsettings",
-    };
-    const int system_preferences_path_count =
-        sizeof(system_preferences_path) / sizeof(system_preferences_path[0]);
-
-    // Look for a preferences file in the user home directory
-    const char *home_dir = getenv("HOME");
-    if (home_dir)
-    {
-        // Initialize the preferences path with the user home directory
-        std::string pathname(home_dir);
-        pathname.append("/.cineform/dbsettings");
-
-        // Does the user have a preferences file?
-        FILE *file = fopen(pathname.c_str(), "r");
-        if (file)
-        {
-            if (actual_pathname)
-            {
-                // Return the actual preferences pathname for error messages
-                int actual_length = actual_size / sizeof(actual_pathname[0]);
-                strncpy(actual_pathname, pathname.c_str(), actual_length);
-                actual_pathname[actual_length - 1] = '\0';
-            }
-            return file;
-        }
-    }
-
-    // Look for a system-wide preferences file
-    for (int i = 0; i < system_preferences_path_count; i++)
-    {
-        // Try to open the preferences file
-        FILE *file = fopen(system_preferences_path[i], "r");
-        if (file)
-        {
-            if (actual_pathname)
-            {
-                // Return the actual preferences pathname for error messages
-                int actual_length = actual_size / sizeof(actual_pathname[0]);
-                strncpy(actual_pathname, system_preferences_path[i], actual_length);
-                actual_pathname[actual_length - 1] = '\0';
-            }
-            return file;
-        }
-    }
-
-    return NULL;
-}
-
-FILE *OpenLogFile()
-{
-    // Open the logfile for reporting errors
-    FILE *logfile = fopen("/var/cineform/public/messages", "a");
-    return logfile;
-}
-
-// Set decoder parameters from the preferences file
-CODEC_ERROR ParseUserDecoderPrefs(FILE *file, SCANNER *scanner, DECODER *decoder)
-{
-    // Buffer for keywords
-    char keyword[KEYWORD_MAX];
-    //int keyword_count = 0;
-    char *result_string = NULL;
-    int result_length = 0;
-
-    InitScanner(scanner, file);
-    while (scanner->error == SCANNER_ERROR_OKAY)
-    {
-        BREAK_ERROR(SkipBlanks(scanner));
-
-        // Found a comment?
-        if (scanner->c == '#')
-        {
-            // Skip the rest of the line
-            CHECK_ERROR(SkipLine(scanner));
-
-            // Loop to process the next line
-            continue;
-        }
-
-        // Found the start of a keyword?
-        if (isalpha(scanner->c))
-        {
-            CHECK_ERROR(ScanKeyword(scanner, keyword, KEYWORD_MAX));
-        }
-
-        // Lookup the keyword
-        int opcode = Lookup(keyword, token_table, token_table_length);
-
-        // Set the output location for the argument string
-        switch (opcode)
-        {
-            case OPCODE_DBPATH:
-                //result_string = result.dbpath;
-                result_string = decoder->UserDBPathStr;
-                result_length = STRING_LENGTH(decoder->UserDBPathStr);
-                break;
-
-            case OPCODE_LUTPATH:
-                //result_string = result.lutpath;
-                result_string = decoder->LUTsPathStr;
-                result_length = STRING_LENGTH(decoder->LUTsPathStr);
-                break;
-
-            case OPCODE_OVERRIDE_PATH:
-                //result_string = result.overridepath;
-                result_string = decoder->OverridePathStr;
-                result_length = STRING_LENGTH(decoder->OverridePathStr);
-                break;
-
-            case OPCODE_UNKNOWN:
-            default:
-                CHECK_ERROR(scanner->error = SCANNER_ERROR_KEYWORD);
-                break;
-        }
-
-        // Skip whitespace between the keyword and the argument string
-        BREAK_ERROR(SkipBlanks(scanner));
-
-        //int result_count = 0;
-        if (scanner->c == '\"')
-        {
-            // Copy the argument string into the result
-            CHECK_ERROR(CopyQuotedString(scanner, result_string, result_length));
-        }
-        else
-        {
-            // Copy the argument string without trailing spaces
-            CHECK_ERROR(CopyTrimmedString(scanner, result_string, result_length));
-        }
-
-#if (0 && DEBUG)
-        printf("Keyword: \"%s\", argument string: \"%s\"\n",
-               Keyword(opcode, token_table, token_table_length),
-               result_string);
-#endif
-        // Skip the rest of the line
-        CHECK_ERROR(SkipLine(scanner));
-    }
-
-    // Do not report end of file as an error
-    IGNORE_ERROR(scanner->error, SCANNER_ERROR_EOF, SCANNER_ERROR_OKAY);
-
-    return (scanner->error == SCANNER_ERROR_OKAY ? CODEC_ERROR_OKAY : CODEC_ERROR_PREFSFILE);
-}
-
-// Set metadata parameters from the preferences file
-CODEC_ERROR ParseUserMetadataPrefs(FILE *file,
-                                   SCANNER *scanner,
-                                   char *lut_pathname_string,
-                                   size_t lut_pathname_size,
-                                   char *database_filename_string,
-                                   size_t database_filename_size)
-{
-    // Buffer for keywords
-    char keyword[KEYWORD_MAX];
-    //int keyword_count = 0;
-    char *result_string = NULL;
-    int result_length = 0;
-
-    const int lut_pathname_length = lut_pathname_size / sizeof(lut_pathname_string[0]);
-    const int database_filename_length = database_filename_size / sizeof(database_filename_string[0]);
-
-    InitScanner(scanner, file);
-    while (scanner->error == SCANNER_ERROR_OKAY)
-    {
-        BREAK_ERROR(SkipBlanks(scanner));
-
-        // Found a comment?
-        if (scanner->c == '#')
-        {
-            // Skip the rest of the line
-            CHECK_ERROR(SkipLine(scanner));
-
-            // Loop to process the next line
-            continue;
-        }
-
-        // Found the start of a keyword?
-        if (isalpha(scanner->c))
-        {
-            CHECK_ERROR(ScanKeyword(scanner, keyword, KEYWORD_MAX));
-        }
-
-        // Lookup the keyword
-        int opcode = Lookup(keyword, token_table, token_table_length);
-
-        // Set the output location for the argument string
-        switch (opcode)
-        {
-            case OPCODE_DBPATH:
-                result_string = database_filename_string;
-                result_length = database_filename_length;
-                break;
-
-            case OPCODE_LUTPATH:
-                result_string = lut_pathname_string;
-                result_length = lut_pathname_length;
-                break;
-
-            case OPCODE_OVERRIDE_PATH:
-                //result_string = decoder->OverridePathStr;
-                //result_length = STRING_LENGTH(decoder->OverridePathStr);
-                CHECK_ERROR(SkipLine(scanner));
-                continue;
-                break;
-
-            case OPCODE_UNKNOWN:
-            default:
-                CHECK_ERROR(scanner->error = SCANNER_ERROR_KEYWORD);
-                break;
-        }
-
-        // Skip whitespace between the keyword and the argument string
-        BREAK_ERROR(SkipBlanks(scanner));
-
-        //int result_count = 0;
-        if (scanner->c == '\"')
-        {
-            // Copy the argument string into the result
-            CHECK_ERROR(CopyQuotedString(scanner, result_string, result_length));
-        }
-        else
-        {
-            // Copy the argument string without trailing spaces
-            CHECK_ERROR(CopyTrimmedString(scanner, result_string, result_length));
-        }
-
-#if (0 && DEBUG)
-        printf("Keyword: \"%s\", argument string: \"%s\"\n",
-               Keyword(opcode, token_table, token_table_length),
-               result_string);
-#endif
-        // Skip the rest of the line
-        CHECK_ERROR(SkipLine(scanner));
-    }
-
-    // Do not report end of file as an error
-    IGNORE_ERROR(scanner->error, SCANNER_ERROR_EOF, SCANNER_ERROR_OKAY);
-
-    return (scanner->error == SCANNER_ERROR_OKAY ? CODEC_ERROR_OKAY : CODEC_ERROR_PREFSFILE);
-}
-
-// Set encoder parameters from the preferences file
-CODEC_ERROR ParseUserEncoderPrefs(FILE *file, SCANNER *scanner, ENCODER *encoder)
-{
-    // Buffer for keywords
-    char keyword[KEYWORD_MAX];
-    //int keyword_count = 0;
-    char *result_string = NULL;
-    int result_length = 0;
-
-    InitScanner(scanner, file);
-    while (scanner->error == SCANNER_ERROR_OKAY)
-    {
-        BREAK_ERROR(SkipBlanks(scanner));
-
-        // Found a comment?
-        if (scanner->c == '#')
-        {
-            // Skip the rest of the line
-            CHECK_ERROR(SkipLine(scanner));
-
-            // Loop to process the next line
-            continue;
-        }
-
-        // Found the start of a keyword?
-        if (isalpha(scanner->c))
-        {
-            CHECK_ERROR(ScanKeyword(scanner, keyword, KEYWORD_MAX));
-        }
-
-        // Lookup the keyword
-        int opcode = Lookup(keyword, token_table, token_table_length);
-
-        // Set the output location for the argument string
-        switch (opcode)
-        {
-            case OPCODE_DBPATH:
-                //result_string = result.dbpath;
-                result_string = encoder->UserDBPathStr;
-                result_length = STRING_LENGTH(encoder->UserDBPathStr);
-                break;
-
-            case OPCODE_LUTPATH:
-                //result_string = result.lutpath;
-                result_string = encoder->LUTsPathStr;
-                result_length = STRING_LENGTH(encoder->LUTsPathStr);
-                break;
-
-            case OPCODE_OVERRIDE_PATH:
-                //result_string = result.overridepath;
-                result_string = encoder->OverridePathStr;
-                result_length = STRING_LENGTH(encoder->OverridePathStr);
-                break;
-
-            case OPCODE_UNKNOWN:
-            default:
-                CHECK_ERROR(scanner->error = SCANNER_ERROR_KEYWORD);
-                break;
-        }
-
-        // Skip whitespace between the keyword and the argument string
-        BREAK_ERROR(SkipBlanks(scanner));
-
-        //int result_count = 0;
-        if (scanner->c == '\"')
-        {
-            // Copy the argument string into the result
-            CHECK_ERROR(CopyQuotedString(scanner, result_string, result_length));
-        }
-        else
-        {
-            // Copy the argument string without trailing spaces
-            CHECK_ERROR(CopyTrimmedString(scanner, result_string, result_length));
-        }
-
-#if (0 && DEBUG)
-        printf("Keyword: \"%s\", argument string: \"%s\"\n",
-               Keyword(opcode, token_table, token_table_length),
-               result_string);
-#endif
-        // Skip the rest of the line
-        CHECK_ERROR(SkipLine(scanner));
-    }
-
-    // Do not report end of file as an error
-    IGNORE_ERROR(scanner->error, SCANNER_ERROR_EOF, SCANNER_ERROR_OKAY);
-
-    return (scanner->error == SCANNER_ERROR_OKAY ? CODEC_ERROR_OKAY : CODEC_ERROR_PREFSFILE);
-}
-
-#endif
-
-
-// Newer name for the decoder LUT paths routine
-void InitLUTPathsDec(struct decoder *decoder)
-{
-    InitLUTPaths(decoder);
-}
-
-void InitLUTPaths(DECODER *decoder)
+void InitLUTPathsDec(DECODER *decoder)
 {
     if (decoder)
     {
@@ -594,49 +165,14 @@ void InitLUTPaths(DECODER *decoder)
         {
             strcpy(decoder->UserDBPathStr, "db");
         }
-#else
-        // Initialize the default locations on Linux
-        CopyString(decoder->OverridePathStr, OVERRIDE_PATH_STRING, sizeof(decoder->OverridePathStr));
-        CopyString(decoder->LUTsPathStr, LUT_PATH_STRING, sizeof(decoder->LUTsPathStr));
-        CopyString(decoder->UserDBPathStr, DATABASE_PATH_STRING, sizeof(decoder->UserDBPathStr));
-
-        // Open the first users preferences file that exists
-        //FILE *file = fopen(SETTINGS_PATH_STRING, "r");
-        char pathname[PATH_MAX];
-        FILE *file = OpenUserPrefsFile(pathname, sizeof(pathname));
-        if (file)
-        {
-            SCANNER scanner;
-
-            // Parse the preferences file and set parameters in the decoder
-            CODEC_ERROR error = ParseUserDecoderPrefs(file, &scanner, decoder);
-            if (error != CODEC_ERROR_OKAY)
-            {
-                // Restore the default paths
-                CopyString(decoder->OverridePathStr, OVERRIDE_PATH_STRING, sizeof(decoder->OverridePathStr));
-                CopyString(decoder->LUTsPathStr, LUT_PATH_STRING, sizeof(decoder->LUTsPathStr));
-                CopyString(decoder->UserDBPathStr, DATABASE_PATH_STRING, sizeof(decoder->UserDBPathStr));
-
-                // Report the error code and line number from the scanner
-                FILE *logfile = OpenLogFile();
-                if (logfile)
-                {
-                    int error = scanner.error;
-                    fprintf(logfile, "Error %s line %d: %s (%d)\n", pathname, scanner.line, Message(error), error);
-                    fclose(logfile);
-                }
-            }
-
-            fclose(file);
-        }
 #endif
     }
 }
 
 void InitLUTPathsEnc(ENCODER *encoder)
 {
-    if (encoder && encoder->LUTsPathStr[0] == 0)
 #ifdef _WIN32
+    if (encoder && encoder->LUTsPathStr[0] == 0)
     {
         DWORD dwType = REG_SZ, length = 260;
         HKEY hKey = 0;
@@ -690,9 +226,9 @@ void InitLUTPathsEnc(ENCODER *encoder)
         strncpy_s(encoder->OverridePathStr, sizeof(encoder->OverridePathStr), defaultOverridePath, sizeof(encoder->OverridePathStr));
         strncpy_s(encoder->LUTsPathStr, sizeof(encoder->LUTsPathStr), defaultLUTpath, sizeof(encoder->LUTsPathStr));
         strncpy_s(encoder->UserDBPathStr, sizeof(encoder->UserDBPathStr), DbNameStr, sizeof(encoder->UserDBPathStr));
-
     }
 #elif __APPLE_REMOVE__
+    if (encoder && encoder->LUTsPathStr[0] == 0)
     {
         CFPropertyListRef	appValue;
 
@@ -757,23 +293,11 @@ void InitLUTPathsEnc(ENCODER *encoder)
     }
 #else
     {
-        // Initialize the default locations on Linux
-        strncpy(encoder->OverridePathStr, OVERRIDE_PATH_STRING, STRING_LENGTH(encoder->OverridePathStr));
-        strncpy(encoder->LUTsPathStr, LUT_PATH_STRING, STRING_LENGTH(encoder->LUTsPathStr));
-        strncpy(encoder->UserDBPathStr, DATABASE_PATH_STRING, STRING_LENGTH(encoder->UserDBPathStr));
-
-        //FILE *file = fopen(SETTINGS_PATH_STRING, "r");
-        FILE *file = OpenUserPrefsFile();
-        if (file)
-        {
-            //TODO: Parse the encoder preferences file
-            assert(0);
-
-            fclose(file);
-        }
+        //
     }
 #endif
 }
+
 void WriteLastGUIDAndFrame(DECODER *decoder, int checkdiskinfotime)
 {
     //GetColorProcessingOverides()
@@ -2198,8 +1722,6 @@ void OverrideCFHDDATAUsingParent(struct decoder *decoder, struct decoder *parent
         decoder->Cube_format = 0;
         decoder->Cube_output_colorspace = 0;
 
-        //DAN20110114
-        //OutputDebugString("GUID change");
         // Clear out databases related to the old GUID.
         for (i = METADATA_PRIORITY_DATABASE; i < METADATA_PRIORITY_OVERRIDE; i++)
         {
@@ -2221,7 +1743,6 @@ void OverrideCFHDDATAUsingParent(struct decoder *decoder, struct decoder *parent
                 }
             }
         }
-
     }
     // Copy the metadata from the parent.  Process the metadata in the correct priority order
     // NOTE: This is done in 2 passes for a good reason.  First clear out all the metadata databases and copy

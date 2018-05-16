@@ -171,42 +171,6 @@ void InitGetLUTPaths(char *pPathStr, size_t pathSize, char *pDBStr, size_t DBSiz
         {
             strcpy(pDBStr, "db");
         }
-
-#else
-        // Initialize the default locations on Linux
-        strcpy(pPathStr, LUT_PATH_STRING);
-        strcpy(pDBStr, DATABASE_PATH_STRING);
-
-        // Open the first user preferences file that exists
-        //FILE *file = fopen(SETTINGS_PATH_STRING, "r");
-        char pathname[PATH_MAX];
-        FILE *file = OpenUserPrefsFile(pathname, sizeof(pathname));
-        if (file)
-        {
-            SCANNER scanner;
-
-            // Parse the preferences file and set parameters in the decoder
-            CODEC_ERROR error = ParseUserMetadataPrefs(file, &scanner,
-                                pPathStr, pathSize,
-                                pDBStr, DBSize);
-            if (error != CODEC_ERROR_OKAY)
-            {
-                // Restore the default paths
-                strcpy(pPathStr, LUT_PATH_STRING);
-                strcpy(pDBStr, DATABASE_PATH_STRING);
-
-                // Report the error code and line number from the scanner
-                FILE *logfile = OpenLogFile();
-                if (logfile)
-                {
-                    int error = scanner.error;
-                    fprintf(logfile, "Error %s line %d: %s (%d)\n", pathname, scanner.line, Message(error), error);
-                    fclose(logfile);
-                }
-            }
-
-            fclose(file);
-        }
 #endif
     }
 }

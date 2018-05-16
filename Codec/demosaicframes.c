@@ -5021,23 +5021,6 @@ void BayerRippleFilter(	int width,
     }
 }
 
-
-#ifdef _WIN32
-
-static int
-WINAPI
-lstrlenWInternal(
-    LPCWSTR lpString
-)
-{
-    int i = -1;
-    while (*(lpString + (++i)))
-        ;
-    return i;
-}
-
-#endif
-
 float *LoadCube64_3DLUT(DECODER *decoder, CFHDDATA *cfhddata, int *lutsize)
 {
     int size = 0;
@@ -5149,7 +5132,7 @@ float *LoadCube64_3DLUT(DECODER *decoder, CFHDDATA *cfhddata, int *lutsize)
         }
 
         if (decoder->LUTsPathStr[0] == 0)
-            InitLUTPaths(decoder);
+            InitLUTPathsDec(decoder);
 
 #ifdef _WIN32
         sprintf_s(crcname, sizeof(crcname), "%s/%08X.cflook", decoder->LUTsPathStr, (uint32_t)cfhddata->user_look_CRC);

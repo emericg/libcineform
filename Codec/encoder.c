@@ -36,7 +36,6 @@
 
 #include <emmintrin.h>
 
-#include "dump.h"
 #include "encoder.h"
 #include "quantize.h"
 #include "codec.h"
@@ -54,7 +53,6 @@
 #include "metadata.h"
 #include "thumbnail.h"
 #include "lutpath.h"
-#include "bandfile.h"
 
 #if _RECURSIVE
 #include "recursive.h"
@@ -82,9 +80,6 @@
 #endif
 #ifndef XMMOPT
 #define XMMOPT (1 && _XMMOPT)
-#endif
-#ifndef DUMP
-#define DUMP   (0 && _DUMP)
 #endif
 
 #define PREFETCH (1 && _PREFETCH)
@@ -312,20 +307,6 @@ void InitEncoder(ENCODER *encoder, FILE *logfile, CODESET *cs)
 
     // Set the encoded format to the default internal representation
     encoder->encoded_format = ENCODED_FORMAT_YUV_422;
-
-#if _DUMP
-
-    // Initialize the descriptor for controlling debug output
-
-    encoder->dump.enabled = false;
-
-    encoder->dump.channel_mask = 0;
-    encoder->dump.wavelet_mask = 0;
-
-    memset(encoder->dump.directory, 0, sizeof(encoder->dump.directory));
-    memset(encoder->dump.filename, 0, sizeof(encoder->dump.filename));
-
-#endif
 
 #if _ALLOCATOR
     //TODO: Need to create a memory allocator for the encoder
@@ -1676,18 +1657,6 @@ THREAD_TYPE_FRAMES:	// Process frames in parallel
 #if _THREADED_ENCODER
     // Determine the processors on which this encoder can execute
     SetEncoderAffinityMask(encoder);
-#endif
-
-#if (1 && DUMP)
-    // Write the wavelet bands as images
-    SetDumpDirectory(CODEC_TYPE(encoder), DUMP_ENCODER_DIRECTORY);
-    SetDumpFilename(CODEC_TYPE(encoder), DUMP_DEFAULT_FILENAME);
-    SetDumpChannelMask(CODEC_TYPE(encoder), 1/*ULONG_MAX*/);
-    //	SetDumpWaveletMask(CODEC_TYPE(encoder), 7<<4 | 1/*ULONG_MAX*/);
-    SetDumpWaveletMask(CODEC_TYPE(encoder), ULONG_MAX);
-
-    // Set this flag to enable output
-    encoder->dump.enabled = true;
 #endif
 
     // The internal representation is YUV 4:2:2 by default
@@ -4951,21 +4920,6 @@ void EncodeQuantLongRuns2Pass(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
     // Compute the number of pixels in the gap at the end of each row
     gap = (pitch - width);
 
-    /*	if(once <= 60)
-    	{
-    		char name[200];
-    		FILE *fp;
-
-    		sprintf(name,"C:/Cedoc/DUMP/Encoder/dump%02d.raw", once);
-
-    		fp = fopen(name,"wb");
-    		fwrite(rowptr,width*height,1,fp);
-    		fclose(fp);
-    		once++;
-    	//	image[0] = 0xa4fe;
-    	//	image[1] = 0x00ff;
-    	}*/
-
     for (pass = 1; pass <= 2; pass++)
     {
         for (row = 0; row < height; row++)
@@ -8107,14 +8061,6 @@ void EncodeQuantizedFieldPlusTransform(ENCODER *encoder, TRANSFORM *transform, B
 #endif
             {
                 EncodeQuantizedBand(encoder, output, wavelet, band, subband, encoding_method, quantization);
-#if DUMP && DEBUG
-                if (output->nWordsUsed * 100 > output->dwBlockLength * 80)
-                {
-                    FILE *fp = fopen("c:/overflow.txt", "a");
-                    fprintf(fp, "%d%% full subband %d\n", output->nWordsUsed * 100 / output->dwBlockLength, subband);
-                    fclose(fp);
-                }
-#endif
             }
             ++subband;
         }
@@ -8184,14 +8130,6 @@ void ComputeGroupTransformQuant(ENCODER *encoder, TRANSFORM *transform[], int nu
                 assert(0);
                 break;
         }
-
-#if (1 && DUMP)
-        if (encoder->dump.enabled)
-        {
-            // Dump the wavelet bands in the transform for this channel
-            DumpTransformBands(CODEC_TYPE(encoder), transform[channel], channel, false);
-        }
-#endif
     }
 }
 

@@ -24,7 +24,6 @@
 
 #include "config.h"
 #include "timing.h"
-#include "dump.h"
 #include "image.h"
 #include "wavelet.h"
 #include "bitstream.h"
@@ -669,22 +668,6 @@ typedef struct codec_state		// State of bitstream during encoding or decoding
 #define CODEC_FLAGS_PROTECTED			0x01	// Copy protection flags
 #define CODEC_FLAGS_PROTECTION_MASK		0x01	// Unused bits must be zero
 
-#if 0
-// Quantization table
-typedef struct quantization_table
-{
-    int num_levels;			// Number of levels in the quantization table
-    struct quant_level
-    {
-        int num_bands;		// Number of bands including the lowpass band
-        int divisor;		// Common quantization divisor at this level
-        struct quant_band
-        {
-            int divisor;	// Quantization divisor for this band and level
-        } quant[CODEC_MAX_BANDS];
-    } quant[CODEC_MAX_LEVELS + 1];
-} QUANT;
-#endif
 
 // Bitstream structures for unpacked data representation
 typedef struct sequence_header
@@ -1002,10 +985,6 @@ typedef struct codec		// Fields common to the encoder and decoder
     FILE *logfile;			// Output file for status information
     CODEC_ERROR error;		// Code for error during encoding or decoding
     uint32_t frame_count;	// Number of frames encoded or decoded
-
-#if _DUMP
-    DUMP_INFO dump;			// Used for dumping wavelet bands to files
-#endif
 
 } CODEC;
 
@@ -1333,15 +1312,10 @@ typedef struct decoder		// Decoder state (derived from codec)
 
     CODEC_STATE codec;		// Current state of bitstream during decoding
 
-#if _DUMP
-    DUMP_INFO dump;			// Used for dumping wavelet bands to files
-#endif
-
     /***** End of the fields that are common between the encoder and decoder *****/
 
     DECODER_STATE state;	// Decoder state
     uint32_t marker;		// Last marker found during decoding
-    //DWORD sample_count;	// Number of samples processed
 
     uint32_t flags;			// Flags that control decoding
 
@@ -1359,9 +1333,6 @@ typedef struct decoder		// Decoder state (derived from codec)
     // It is also defined in the codec state and is read from the bitstream
     int gop_length;
 
-    // Second frame in a decoded group of frames (obsolete)
-    //FRAME *next_frame;
-
     char *buffer;			// Buffer used during decoding
     size_t buffer_size;		// Size of the buffer in bytes
 
@@ -1372,9 +1343,7 @@ typedef struct decoder		// Decoder state (derived from codec)
 
     //TODO: The scratch buffer should replace buffer/buffer_size throughout the codec
 
-    int vfw;
     int no_output;
-    int sdk_access;			// Codec under direct control (not called form DShow or QT, VFW etc.)
 
     // Array of wavelet transforms (one per channel)
     TRANSFORM *transform[TRANSFORM_MAX_CHANNELS];
@@ -1413,7 +1382,6 @@ typedef struct decoder		// Decoder state (derived from codec)
 #endif
 
 #if _INTERLACED_WORKER_THREADS
-
     struct interlaced_worker							// Worker threads used for the final transform
     {
         DWORD id[THREADS_IN_LAST_WAVELET];				// Worker thread identifier
@@ -1444,7 +1412,6 @@ typedef struct decoder		// Decoder state (derived from codec)
         } interlace_data;
 
     } interlaced_worker;
-
 #endif
 
 #if _THREADED
@@ -1461,7 +1428,8 @@ typedef struct decoder		// Decoder state (derived from codec)
         int threads_used;
         int next_queue_num;
 
-        struct entropy_data_new			// Processing parameters for each worker thread
+        // Processing parameters for each worker thread
+        struct entropy_data_new
         {
             BITSTREAM stream;
             PIXEL *rowptr;
@@ -1495,7 +1463,6 @@ typedef struct decoder		// Decoder state (derived from codec)
         WORKER_THREAD_DATA data;
 
     } worker_thread;
-
 
     struct draw_thread
     {
@@ -1580,22 +1547,6 @@ typedef struct decoder		// Decoder state (derived from codec)
     char OverridePathStr[260];	// default path to overrides
     char LUTsPathStr[260];		// default path to LUTs
     char UserDBPathStr[64];		// database directory in LUTs
-    /*	unsigned char baseData[MAX_DATADASE_LENGTH]; // default user data
-    	unsigned int baseDataSize; // default user data
-    	unsigned char userData[MAX_DATADASE_LENGTH]; // database user data
-    	unsigned int userDataSize; // database user data
-    	unsigned char userData2[MAX_DATADASE_LENGTH]; // database user data
-    	unsigned int userData1Size; // database user data
-    	unsigned char userData1[MAX_DATADASE_LENGTH]; // database user data
-    	unsigned int userData2Size; // database user data
-    	unsigned char userDataB[MAX_DATADASE_LENGTH]; // database user data
-    	unsigned int userDataBSize; // database user data
-    	unsigned char forceData[MAX_DATADASE_LENGTH];// override user data
-    	unsigned int forceDataSize; // override user data
-    	unsigned char forceData2[MAX_DATADASE_LENGTH];// override user data
-    	unsigned int forceData2Size; // override user data
-    	unsigned char forceDataB[MAX_DATADASE_LENGTH];// override user data
-    	unsigned int forceDataBSize; // override user data*/
 
     unsigned char *DataBases[METADATA_PRIORITY_MAX + 1];
     unsigned int DataBasesAllocSize[METADATA_PRIORITY_MAX + 1];
@@ -1633,29 +1584,8 @@ typedef struct decoder		// Decoder state (derived from codec)
 
     ToolsHandle *tools;
 
-    void *vs_surface;	//cast to cairo_surface_t
-    void *vs_cr;		//cast to cairo_t
-    int vs_surface_w;
-    int vs_surface_h;
-
-    /*	int histogram;					// set when active
-    	uint32_t histR[256];
-    	uint32_t histG[256];
-    	uint32_t histB[256];
-    	uint32_t maxR,maxG,maxB;
-
-    	int waveformWidth;					// up to 360
-    	unsigned short waveR[360][256];		// 0-359 screen width, 0-255 intesity, 0 to 65535 instance count.
-    	unsigned short waveG[360][256];
-    	unsigned short waveB[360][256];
-
-    	unsigned short scopeUV[256][256];	// 0-255 U, 0-255 V, 0 to 65535 instance count.
-    */
     int source_channels; // 3D file, pseudo preformatted or real multichannel -- either way.
     int real_channels; // number of real video channels (not performatted.)
-
-    int cairo_loaded;
-    void *cairoHandle;
 
     //Different places in memory metadata chunks to search
     int metadatachunks;
@@ -1682,22 +1612,6 @@ typedef struct decoder		// Decoder state (derived from codec)
     unsigned int  LUTcacheCRC; // last LUT CRC currently loaded
     float *LUTcache; // last LUT currently loaded
     int LUTcacheSize; // last LUT currently loaded
-
-    float lastLensOffsetX;
-    float lastLensOffsetY;
-    float lastLensOffsetZ;
-    float lastLensOffsetR;
-    float lastLensZoom;
-    float lastLensFishFOV;
-    int32_t lastLensGoPro;
-    uint32_t lastLensSphere;
-    uint32_t lastLensFill;
-    uint32_t lastLensStyleSel;
-    float lastLensCustomSRC[6];
-    float lastLensCustomDST[6];
-    void *mesh;
-    int *lens_correct_buffer;
-
 
     int lin2curve_type;
     float lin2curve_base;
@@ -1746,25 +1660,11 @@ typedef struct decoder		// Decoder state (derived from codec)
 #define FLAG3D_HALFRES				2
 #define FLAG3D_GHOSTBUST			4
 
-
-#define LICENSE_FORMAT_DEEP			1 // greater than 8-bit
-#define LICENSE_FORMAT_444			2
-#define LICENSE_FORMAT_BAYER		4
-#define LICENSE_FORMAT_3D			8
-#define LICENSE_FORMAT_ALL			0xf
-
-#define FEATURE_DSHOW_ENCODER		0 // feature is set to zero, likely the licensing for Oceaneering encoders
-#define FEATURE_ENCODING_FLAG		1
-#define FEATURE_DECODING_FLAG		2
-#define FEATURE_ENDUSER_LICENSE		4
-#define FEATURE_DECODING_FULL_FLAG	8
-
 #define ISBAYER(format)(((format) == COLOR_FORMAT_BYR1) || \
 						((format) == COLOR_FORMAT_BYR2) || \
 						((format) == COLOR_FORMAT_BYR3) || \
 						((format) == COLOR_FORMAT_BYR4) || \
 						((format) == COLOR_FORMAT_BYR5)	)
-
 
 #define IS444(format)  (((format) == COLOR_FORMAT_RGB24) || \
 						((format) == COLOR_FORMAT_QT32) || \
@@ -1783,15 +1683,9 @@ typedef struct decoder		// Decoder state (derived from codec)
 						((format) == COLOR_FORMAT_RGB_8PIXEL_PLANAR) || \
 						((format) == COLOR_FORMAT_W13A)	)
 
-
-#define DECODER_INITIALIZER {NULL, 0, 0, 0, 0, 0, 0, NULL, NULL, NULL, NULL}
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-//extern QUANT *quant1;		// Default quantization table
 
 // Initialize the current state of the bitstream
 void InitCodecState(CODEC_STATE *state);

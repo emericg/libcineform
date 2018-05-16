@@ -30,61 +30,7 @@
 // The codec SDK and the codec library use the same memory allocator
 #include "../Common/CFHDAllocator.h"
 
-
-#ifdef _WIN32
-
-#ifdef INLINE
-#undef INLINE
-#endif
-#define INLINE __forceinline
-
-#elif defined(__APPLE__)
-
-#ifndef INLINE
 #define INLINE inline
-#endif
-
-#else
-
-// The GCC compiler requires declaration of the aligned memory allocation routines
-#include <mm_malloc.h>
-
-#ifndef INLINE
-#define INLINE inline
-#endif
-
-#endif
-
-
-//TODO: Need to test calling the virtual methods in the allocator on the Macintosh
-/*
-
-typedef void * (* UnalignedAllocProc)(void *allocator, size_t size);
-typedef void * (* AlignedAllocProc)(void *allocator, size_t size, size_t alignment);
-typedef void (* UnalignedFreeProc)(void *allocator, void *block);
-typedef void (* AlignedFreeProc)(void *allocator, void *block);
-
-// Table of function pointers in an instance of a C++ allocator interface
-struct allocator_vtable
-{
-	// Do not change the order of the procedure pointers
-	UnalignedAllocProc unaligned_malloc;
-	UnalignedFreeProc unaligned_free;
-	AlignedAllocProc aligned_malloc;
-	AlignedFreeProc aligned_free;
-};
-
-typedef struct allocator
-{
-	// Pointer to the vtable in the allocator interface
-	struct allocator_vtable *vtable;
-
-	// Add member variables here if they are accessed in the C code
-
-} ALLOCATOR;
-
-#define CFHD_ALLOCATOR	 ALLOCATOR
-*/
 
 
 #ifdef __cplusplus

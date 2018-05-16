@@ -26,9 +26,7 @@
 #include "codec.h"
 #include "wavelet.h"
 #include "quantize.h"
-#include "dump.h"
 #include "metadata.h"
-#include "bandfile.h"
 
 #define TRANSFORM_GOP_LENGTH	2
 
@@ -211,10 +209,6 @@ typedef struct encoder  	// Encoder state (derived from codec)
     ALLOCATOR *allocator;		// Interface for memory allocation (optional)
 
     CODEC_STATE codec;			// Current state of bitstream during encoding
-
-#if _DUMP
-    DUMP_INFO dump;			// Used for dumping wavelet bands to files
-#endif
 
     /***** End of the fields that are common between the encoder and decoder *****/
 

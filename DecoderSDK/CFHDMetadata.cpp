@@ -302,17 +302,6 @@ void GetLUTPath(char PathStr[260])
 }
 */
 
-#ifdef _WIN32
-static int WINAPI lstrlenWInternal(LPCWSTR lpString)
-{
-    int i = -1;
-    while (*(lpString + (++i)))
-        ;
-    return i;
-}
-#endif
-
-
 void *LeftRightDelta(CSampleMetadata *metadata,
                      CFHD_MetadataTag tag,
                      METADATA_SIZE size,

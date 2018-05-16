@@ -1008,7 +1008,7 @@ CSampleDecoder::PrepareDecoder(int outputWidth,
             goto finish;
         }
 
-        //char formatString[FOURCC_STRING_LENGTH];
+        //char formatString[5];
         //ConvertFourccToString(pixelFormat, formatString);
         //fprintf(m_logfile, "CFHD_DecompressorBeginBand, glob: 0x%08X, pixel format: %s, decoded format: %d, decoded resolution: %d\n",
         //        (unsigned int)glob, formatString, decodedFormat, decodedResolution);
@@ -1606,30 +1606,12 @@ CFHD_Error CSampleDecoder::CopyToOutputBuffer(void *decodedBuffer, int decodedPi
 
     if (m_decodedWidth == m_outputWidth && decodedHeight == m_outputHeight)
     {
-#if (0 && LOGFILE)
-        if (m_logfile)
-        {
-            char formatString[FOURCC_STRING_LENGTH];
-            ConvertFourccToString(outputFormat, formatString);
-            fprintf(glob->logfile, "CopyToOutputBuffer, glob: 0x%08X, converting input format: %d, output format: %s\n",
-                    (unsigned int)glob, inputFormat, formatString);
-        }
-#endif
         return ConvertToOutputBuffer(m_decodedFrameBuffer, m_decodedFramePitch, m_decodedFormat,
                                      outputBuffer, outputPitch, m_outputFormat,
                                      m_decodedWidth, decodedHeight, byte_swap_flag);
     }
     else
     {
-#if (0 && LOGFILE)
-        if (m_logfile)
-        {
-            char formatString[FOURCC_STRING_LENGTH];
-            ConvertFourccToString(outputFormat, formatString);
-            fprintf(glob->logfile, "ScaleToOutputBuffer, glob: 0x%08X, scaling input format: %d, output format: %s\n",
-                    (unsigned int)glob, inputFormat, formatString);
-        }
-#endif
         return ScaleToOutputBuffer(m_decodedFrameBuffer,  m_decodedWidth, decodedHeight, m_decodedFramePitch, m_decodedFormat,
                                    outputBuffer, m_outputWidth, m_outputHeight, outputPitch, m_outputFormat,
                                    byte_swap_flag);

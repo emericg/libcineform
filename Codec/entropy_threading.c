@@ -43,7 +43,6 @@
 #include <emmintrin.h>			// Intel aligned alloc and free
 
 #include "config.h"
-#include "dump.h"
 #include "decoder.h"
 #include "codec.h"
 #include "vlc.h"
@@ -53,7 +52,6 @@
 #include "filter.h"
 #include "spatial.h"
 #include "temporal.h"
-//#include "logo40x5.h"
 #include "convert.h"
 #include "wavelet.h"
 #include "bitstream.h"

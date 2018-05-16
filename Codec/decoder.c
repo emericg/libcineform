@@ -51,7 +51,6 @@
 #include <assert.h>
 #include <emmintrin.h>			// Intel aligned alloc and free
 
-#include "dump.h"
 #include "decoder.h"
 #include "codec.h"
 #include "vlc.h"
@@ -100,10 +99,6 @@ extern void FastSharpeningBlurVW13A(short *Aptr,
                                     float sharpness,
                                     int resolution,
                                     int channel_blend_type);
-
-#ifndef DUMP
-#define DUMP (0 && _DUMP)
-#endif
 
 #define ERROR_TOLERANT			1
 
@@ -603,21 +598,6 @@ void InitDecoder(DECODER *decoder, FILE *logfile, CODESET *cs)
         InitCodecState(&decoder->codec);
 
         InitScratchBuffer(&decoder->scratch, NULL, 0);
-
-#if _DUMP
-
-        // Initialize the descriptor for controlling debug output
-
-        decoder->dump.enabled = false;
-
-        decoder->dump.channel_mask = 0;
-        decoder->dump.wavelet_mask = 0;
-
-        memset(decoder->dump.directory, 0, sizeof(decoder->dump.directory));
-        memset(decoder->dump.filename, 0, sizeof(decoder->dump.filename));
-
-#endif
-
     }
 
 #if _ALLOCATOR
@@ -1522,18 +1502,6 @@ bool DecodeInit(DECODER *decoder, int width, int height, int format, int resolut
 
     // Indicate that the decoder has been initialized
     decoder->state = DECODER_STATE_INITIALIZED;
-
-#if (1 && DUMP)
-    // Write the wavelet bands as images
-    SetDumpDirectory(CODEC_TYPE(decoder), DUMP_DECODER_DIRECTORY);
-    SetDumpFilename(CODEC_TYPE(decoder), DUMP_DEFAULT_FILENAME);
-    SetDumpChannelMask(CODEC_TYPE(decoder), 1/*ULONG_MAX*/);
-    //	SetDumpWaveletMask(CODEC_TYPE(decoder), 7<<4 | 1/*ULONG_MAX*/);
-    SetDumpWaveletMask(CODEC_TYPE(decoder), ULONG_MAX);
-
-    // Set this flag to enable output
-    decoder->dump.enabled = true;
-#endif
 
 #if _TIMING
     // Initialize the global timers and counters
