@@ -26,7 +26,6 @@
 #include "codec.h"
 #include "wavelet.h"
 #include "quantize.h"
-//#include <vfw.h>
 #include "dump.h"
 #include "metadata.h"
 #include "bandfile.h"

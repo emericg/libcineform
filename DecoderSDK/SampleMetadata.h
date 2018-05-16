@@ -125,7 +125,6 @@ public:
         return m_allocator;
     }
 
-
     void *Alloc(size_t size)
     {
 #if _ALLOCATOR
@@ -166,8 +165,7 @@ public:
         // Otherwise use the default memory allocator
 #ifdef _WIN32
         return _aligned_malloc(size, alignment);
-#else
-#ifdef __APPLE__
+#elif __APPLE__
         return malloc(size);
 #else
         int     memerror;
@@ -182,7 +180,6 @@ public:
         {
             return NULL;
         }
-#endif
 #endif
     }
 
@@ -239,9 +236,6 @@ public:
 
 protected:
     CFHD_ALLOCATOR *m_allocator;
-
-private:
-
 };
 
 // Return the pathname of the LUT directory and the filename of the database directory

@@ -1,7 +1,5 @@
 /*! @file RGB2YUV.c
-
 *  @brief
-*
 *  @version 1.0.0
 *
 *  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
@@ -16,8 +14,8 @@
 *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
-*
 */
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <emmintrin.h>		// SSE2 intrinsics
@@ -60,24 +58,6 @@ const int tweakYUV2RGB_VS601[8] =	{-26, 12, 9, -8, 1, -6, 15, 14};
 #ifdef _WIN32
 #include <windows.h>
 #endif
-
-/*
-void LoadTweak()
-{
-	FILE *fp = fopen("c:/tweak.txt","r");
-	char txt[128];
-	//int j;
-	int len = fread(txt,1,100,fp);
-	fclose(fp);
-
-	sscanf(txt,"%d,%d,%d,%d,%d,%d,%d,%d,%d",&tweak[0],&tweak[1],&tweak[2],&tweak[3],&tweak[4],&tweak[5],&tweak[6],&tweak[7],&tweak[8]);
-
-	txt[len] = 0;
-#ifdef _WIN32
-	OutputDebugString(txt);
-#endif
-}
-*/
 
 void ChunkyRGB16toPlanarRGB16(unsigned short *in_rgb16, unsigned short *out_rgb16, int width)
 {

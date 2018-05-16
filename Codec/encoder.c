@@ -1489,9 +1489,6 @@ bool InitializeEncoderWithParameters(ENCODER *encoder, TRANSFORM *transform[], i
     //SetEncoderParams(encoder, CODEC_GOP_LENGTH, TRANSFORM_NUM_SPATIAL);
     SetEncoderParams(encoder, gop_length, num_spatial);
 
-    // Initialize the default quantization tables
-    //InitDefaultQuantizer();
-
     // Initialize the quantizer in the encoder
     InitQuantizer(q);
 

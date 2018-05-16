@@ -234,9 +234,6 @@ public:
 
 protected:
     CFHD_ALLOCATOR *m_allocator;
-
-private:
-
 };
 
 // Return the pathname of the LUT directory and the filename of the database directory

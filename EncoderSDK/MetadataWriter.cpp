@@ -16,9 +16,7 @@
 *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
-*
 */
-
 
 #include "StdAfx.h"
 
@@ -69,11 +67,11 @@ void look_make_crc_table(void)
     look_crc_table_computed = 1;
 }
 
-/* Update a running CRC with the bytes buf[0..len-1]--the CRC
-  should be initialized to all 1's, and the transmitted value
-  is the 1's complement of the final running CRC (see the
-  crc() routine below)). */
-
+/*!
+ * Update a running CRC with the bytes buf[0..len-1]--the CRC should be
+ * initialized to all 1's, and the transmitted value is the 1's complement of
+ * the final running CRC (see the crc() routine below)).
+ */
 unsigned long look_update_crc(unsigned long crc, unsigned char *buf,
                               int len)
 {

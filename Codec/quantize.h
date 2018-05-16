@@ -24,13 +24,6 @@
 
 #include "codec.h"
 #include "wavelet.h"
-//#include "encoder.h"
-
-
-// Forward reference (to avoid including encoder.h)
-//typedef struct encoder ENCODER;
-//struct encoder;
-
 
 #define MAX_QUANT_SUBBANDS	17		// Maximum number of subbands
 
@@ -76,9 +69,7 @@ enum
 };
 
 
-
 // Default quantization parameters
-
 #define DEFAULT_TARGET_BITRATE	16000000
 #define DEFAULT_FIXED_QUALITY	0
 #define DEFAULT_QUANT_LIMIT		3072
@@ -86,7 +77,6 @@ enum
 
 
 // Definition of the quantizer data structure
-
 typedef struct quantizer
 {
     int TargetBitRate;
@@ -121,12 +111,6 @@ extern const unsigned char delta[];
 
 // Initialize the quantization parameters
 void InitQuantizer(QUANTIZER *q);
-
-// Initialize the default quantization tables
-//void InitDefaultQuantizer(void);
-
-// Read updated quality table from disk (eventually this should be in a registary I guess)
-void QuantizationLoadTables(QUANTIZER *q);
 
 // Set the quantization quality (1: low,  2: medium,  3: high, 0: default)
 void QuantizationSetQuality(QUANTIZER *q, int factor, bool progressive, int precision, int goplength,

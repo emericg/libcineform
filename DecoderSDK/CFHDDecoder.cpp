@@ -1353,8 +1353,6 @@ CFHD_SetActiveMetadata(	CFHD_DecoderRef decoderRef,
             char ext[64];
             char filename[260];
 
-            //DANREMOVE			crc = ValidateLookGenCRC((char *)data);
-
 #ifdef _WIN32
             strcpy_s(lastpath, sizeof(lastpath), (char *)data);
             _splitpath_s((char *)data, drive, sizeof(drive), dir, sizeof(dir), fname, sizeof(fname), ext, sizeof(ext));
@@ -1364,7 +1362,6 @@ CFHD_SetActiveMetadata(	CFHD_DecoderRef decoderRef,
             _splitpath((char *)data, drive, dir, fname, ext);
             _makepath(filename, NULL, NULL, fname, ext);
 #endif
-
 
             if (strlen(filename) < 40)
             {
@@ -1460,7 +1457,6 @@ CFHD_ClearActiveMetadata(	CFHD_DecoderRef decoderRef,
 
     return errorCode;
 }
-
 
 
 /*!

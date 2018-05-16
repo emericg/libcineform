@@ -27,9 +27,12 @@
 extern "C"
 #endif
 
+//TODO: Replace uses of _bswap with SwapInt32
+
 // Define a platform independent byte swapping routine
 
 #ifdef _WIN32
+
 #define _bswap(x)		_byteswap_ulong(x)
 #define SwapInt32(x)	_byteswap_ulong(x)
 #define SwapInt16(x)	_byteswap_ushort(x)
@@ -41,7 +44,9 @@ extern "C"
 #define SwapInt32NtoL(x)	(x)
 
 #elif __APPLE__
+
 #include "CoreFoundation/CoreFoundation.h"
+
 #define _bswap(x)		_OSSwapInt32(x)
 #define SwapInt32(x)	_OSSwapInt32(x)
 #define SwapInt16(x)	_OSSwapInt16(x)
@@ -66,9 +71,8 @@ extern "C"
 #define SwapInt32NtoB(x)	SwapInt32(x)
 #define SwapInt32NtoL(x)	(x)
 
-//TODO: Replace uses of _bswap with SwapInt32
 #define _bswap(x)		SwapInt32(x)
 
 #endif
 
-#endif
+#endif // SWAP_H

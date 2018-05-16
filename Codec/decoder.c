@@ -172,7 +172,6 @@ extern void Row16uQuarter2OutputFormat(DECODER *decoder, FRAME_INFO *info, int t
                                        int channelpitch[TRANSFORM_MAX_CHANNELS]); // used in quarter res decodes);
 //extern void ComputeCube(DECODER *decoder);
 extern bool NeedCube(DECODER *decoder);
-extern void LoadTweak();
 
 //extern int g_topdown;
 //extern int g_bottomup;
@@ -620,9 +619,6 @@ void InitDecoder(DECODER *decoder, FILE *logfile, CODESET *cs)
 #endif
 
     }
-    //REDTEST
-    decoder->frm = 0;
-    decoder->run = 1;
 
 #if _ALLOCATOR
     decoder->allocator = NULL;
@@ -828,8 +824,7 @@ void ClearDecoder(DECODER *decoder)
 #endif
         decoder->parallelDecoder = NULL;
     }
-
-#endif
+#endif // _THREADED
 
 
 #if _ALLOCATOR
@@ -12199,18 +12194,6 @@ bool DecodeBand16sLossless(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet,
             }
         }
     }
-    /*	if(once <= 60)
-    	{
-    		char name[200];
-    		FILE *fp;
-
-    		sprintf(name,"C:/Cedoc/DUMP/Decoder/dump%02d.raw", once);
-
-    		fp = fopen(name,"wb");
-    		fwrite(rowptr,width*height,1,fp);
-    		fclose(fp);
-    		once++;
-    	}*/
 
     assert(result == true);
     if (! (result == true))
@@ -12625,9 +12608,6 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
     int uncompressed = decoder->uncompressed_chunk && decoder->uncompressed_size && decoder->sample_uncompressed;
     //TODO: Change this routine to return the codec error code
     CODEC_ERROR error = CODEC_ERROR_OKAY;
-
-    //if(decoder->cfhddata.calibration)
-    //	LoadTweak();
 
     //TODO: Change this routine to return an error code
     if (decoder == NULL)

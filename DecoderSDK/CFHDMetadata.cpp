@@ -170,10 +170,6 @@ CFHD_InitSampleMetadata(CFHD_MetadataRef metadataRef,
     {
         return CFHD_ERROR_INVALID_ARGUMENT;
     }
-    //	DAN20140515 -- it is now possible to initialize the metadata for color correction of an image buffer so the sampleData and size will be NULL.
-    //	if (sampleData == NULL || sampleSize == 0) {
-    //		return CFHD_ERROR_INVALID_ARGUMENT;
-    //	}
 
     CSampleMetadata *metadata = reinterpret_cast<CSampleMetadata *>(metadataRef);
 
@@ -238,7 +234,6 @@ static void FilterData(CFHD_MetadataTag tag, void *data, CFHD_MetadataSize *size
         break;
     }
 }
-
 
 static void NewReturnType(CFHD_MetadataType *type, unsigned char ctype)
 {
@@ -391,8 +386,8 @@ void *LeftRightDelta(CSampleMetadata *metadata,
                 }
                 break;
         }
-
     }
+
     return ldata;
 }
 

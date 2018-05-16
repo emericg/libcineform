@@ -1,27 +1,24 @@
-/*! @file codec.h
+/*!
+ * @file codec.h
+ * @brief Definitions and data structures that are common to the decoder and encoder.
+ * Note that some data structures that are used only be the decoder, such as the
+ * decoder state information (DECODER), are defined in this file even though the
+ * data structures are not used by the encoder.
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-*  @brief Definitions and data structures that are common to the decoder and encoder.
-*
-*  Note that some data structures that are used only be the decoder, such as the
-*  decoder state information (DECODER), are defined in this file even though the
-*  data structures are not used by the encoder.
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
 #ifndef _CODEC_H
 #define _CODEC_H
 
@@ -1576,10 +1573,6 @@ typedef struct decoder		// Decoder state (derived from codec)
 
     uint8_t *local_output;
 
-    //REDTEST
-    int frm;
-    int run;
-
     //database overrides
     unsigned char *overrideData;
     int overrideSize;
@@ -1984,4 +1977,4 @@ ENCODED_FORMAT Toggle4444vs422EncodedFormat(COLOR_FORMAT format, uint32_t channe
 }
 #endif
 
-#endif
+#endif // _CODEC_H

@@ -145,13 +145,6 @@ void InitQuantizer(QUANTIZER *q)
     memcpy(q->quantChromaMAX, quantChromaMAX, sizeof(quantChromaMAX));
 }
 
-#if 0
-void InitDefaultQuantizer(void)
-{
-    InitQuantizer(&q);
-}
-#endif
-
 #if DEBUG_VBR
 void DumpText(char *txt, int hex)
 {
@@ -716,59 +709,6 @@ void QuantizationSetRate(QUANTIZER *q,
     }
 #endif
 }
-
-/*
-void QuantizationLoadTables(QUANTIZER *q)
-{
-	FILE *fp;
-	int *ptr;
-
-	fp = fopen(QUANT_TABLES_FILENAME, "r");
-	if (fp)
-	{
-		ptr = &q->quantLuma[0];
-		fscanf(fp,"%d, %d,%d,%d, %d,%d,%d, %d,%d,%d,%d, %d,%d,%d, %d,%d,%d\n", &ptr[0], &ptr[1], &ptr[2], &ptr[3], &ptr[4], &ptr[5], &ptr[6], &ptr[7], &ptr[8], &ptr[9], &ptr[10], &ptr[11], &ptr[12], &ptr[13], &ptr[14], &ptr[15], &ptr[16] );
-
-		ptr = &q->quantLumaMAX[0];
-		fscanf(fp,"%d, %d,%d,%d, %d,%d,%d, %d,%d,%d,%d, %d,%d,%d, %d,%d,%d\n", &ptr[0], &ptr[1], &ptr[2], &ptr[3], &ptr[4], &ptr[5], &ptr[6], &ptr[7], &ptr[8], &ptr[9], &ptr[10], &ptr[11], &ptr[12], &ptr[13], &ptr[14], &ptr[15], &ptr[16] );
-
-		ptr = &q->quantChroma[0];
-		fscanf(fp,"%d, %d,%d,%d, %d,%d,%d, %d,%d,%d,%d, %d,%d,%d, %d,%d,%d\n", &ptr[0], &ptr[1], &ptr[2], &ptr[3], &ptr[4], &ptr[5], &ptr[6], &ptr[7], &ptr[8], &ptr[9], &ptr[10], &ptr[11], &ptr[12], &ptr[13], &ptr[14], &ptr[15], &ptr[16] );
-
-		ptr = &q->quantChromaMAX[0];
-		fscanf(fp,"%d, %d,%d,%d, %d,%d,%d, %d,%d,%d,%d, %d,%d,%d, %d,%d,%d\n", &ptr[0], &ptr[1], &ptr[2], &ptr[3], &ptr[4], &ptr[5], &ptr[6], &ptr[7], &ptr[8], &ptr[9], &ptr[10], &ptr[11], &ptr[12], &ptr[13], &ptr[14], &ptr[15], &ptr[16] );
-
-		fscanf(fp,"scale=%d\n", &quantScaleFactor);
-		fscanf(fp,"bitrate=%d\n", &q->TargetBitRate);
-		fscanf(fp,"fixed quality=%d\n", &q->FixedQuality);
-		fscanf(fp,"limit=%d\n", &q->quantLimit);
-
-		fclose(fp);
-
-		if (fp = fopen("c:\\cedoc\\quantnow.txt", "w"))
-		{
-			ptr = &q->quantLuma[0];
-			fprintf(fp,"%d, %d,%d,%d, %d,%d,%d, %d,%d,%d,%d, %d,%d,%d, %d,%d,%d\n", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5], ptr[6], ptr[7], ptr[8], ptr[9], ptr[10], ptr[11], ptr[12], ptr[13], ptr[14], ptr[15], ptr[16] );
-
-			ptr = &q->quantLumaMAX[0];
-			fprintf(fp,"%d, %d,%d,%d, %d,%d,%d, %d,%d,%d,%d, %d,%d,%d, %d,%d,%d\n", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5], ptr[6], ptr[7], ptr[8], ptr[9], ptr[10], ptr[11], ptr[12], ptr[13], ptr[14], ptr[15], ptr[16] );
-
-			ptr = &q->quantChroma[0];
-			fprintf(fp,"%d, %d,%d,%d, %d,%d,%d, %d,%d,%d,%d, %d,%d,%d, %d,%d,%d\n", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5], ptr[6], ptr[7], ptr[8], ptr[9], ptr[10], ptr[11], ptr[12], ptr[13], ptr[14], ptr[15], ptr[16] );
-
-			ptr = &q->quantChromaMAX[0];
-			fprintf(fp,"%d, %d,%d,%d, %d,%d,%d, %d,%d,%d,%d, %d,%d,%d, %d,%d,%d\n", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5], ptr[6], ptr[7], ptr[8], ptr[9], ptr[10], ptr[11], ptr[12], ptr[13], ptr[14], ptr[15], ptr[16] );
-
-			fprintf(fp,"scale=%d\n", quantScaleFactor);
-			fprintf(fp,"bitrate=%d\n", q->TargetBitRate);
-			fprintf(fp,"fixed quality=%d\n", q->FixedQuality);
-			fprintf(fp,"limit=%d\n", q->quantLimit);
-
-			fclose(fp);
-		}
-	}
-}
-*/
 
 #if 0 //unused
 void QuantizeBand(IMAGE *wavelet, int band, int divisor)

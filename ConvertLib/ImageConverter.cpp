@@ -20,6 +20,7 @@
 */
 
 #include "StdAfx.h"
+#include <cstdint>
 
 //TODO: Eliminate coding problems that cause warnings about no EMMS instruction before call
 #pragma warning(disable: 964)
@@ -29,7 +30,7 @@
 
 #include "ColorFlags.h"
 #include "ImageConverter.h"
-//#include "ConvertLib.h"
+#include "../Codec/swap.h"
 
 #if !defined(_WIN64) // certain SIMD instructions are NOT supported in Win64...
 #ifndef _XMMOPT
@@ -49,46 +50,7 @@
 
 #define DEBUG  (1 && _DEBUG)
 
-// Copied from Adobe AfterEffects 6.5 SDK file AE_Effect.h
-#define PF_MAX_CHAN8			255
-#define PF_MAX_CHAN16			32768
-
-
-#if _WIN32
-
-//#include <stdlib.h>
-
-// Use the byte swapping routines defined in the standard library
-#if _DEBUG
-#define SwapInt16(x) ((((x)&0xff00)>>8)|(((x)&0xff)<<8))
-#else
-#define SwapInt16(x)	_byteswap_ushort(x)
-#endif
-#define SwapInt32(x)	_byteswap_ulong(x)
-
-#define _SWAPBYTES	1
-
-#elif __APPLE__
-
-#include "CoreFoundation/CoreFoundation.h"
-
-// Use the byte swapping routines from the Core Foundation framework
-#define SwapInt16(x)	_OSSwapInt16(x)
-#define SwapInt32(x)	_OSSwapInt32(x)
-
-#define _SWAPBYTES	1
-#define UINT8_MAX 255
-
-#else
-
-// Use the byte swapping routines that are built into GCC
-#define SwapInt16(x)	__builtin_bswap16(x)
-#define SwapInt32(x)	__builtin_bswap32(x)
-
-#define _SWAPBYTES	1
-
-#endif
-
+#define _SWAPBYTES 1
 
 //TODO: Change the following routine to use integer coefficients exclusively
 
@@ -3279,4 +3241,3 @@ void CImageConverterBGRA::ConvertToDPX0(void *input_buffer, size_t input_pitch,
         output_row_ptr += output_pitch;
     }
 }
-
