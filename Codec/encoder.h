@@ -19,8 +19,8 @@
 *
 */
 
-#ifndef _ENCODE_H
-#define _ENCODE_H
+#ifndef ENCODE_H
+#define ENCODE_H
 
 #include "config.h"
 #include "codec.h"
@@ -397,27 +397,6 @@ typedef struct encoder  	// Encoder state (derived from codec)
         METADATA local;
     } metadata;
 
-    //database overrides
-    uint32_t last_set_time;		// External Metadata is only checked every 1000ms
-    char OverridePathStr[260];	// default path to overrides
-    char LUTsPathStr[260];		// default path to LUTs
-    char UserDBPathStr[64];		// database directory in LUTs
-    unsigned char baseData[MAX_ENCODE_DATADASE_LENGTH]; // default user data
-    uint32_t baseDataSize; // default user data
-    //unsigned char userData[MAX_DATADASE_LENGTH]; // database user data
-    //uint32_t userDataSize; // database user data
-    unsigned char forceData[MAX_ENCODE_DATADASE_LENGTH];// override user data
-    uint32_t forceDataSize; // override user data
-
-#if _DEBUG
-    // Band data file and bitstream used to debug entropy coding of highpass bands
-    BANDFILE encoded_band_file;
-    BITSTREAM *encoded_band_bitstream;
-    int encoded_band_channel;
-    int encoded_band_wavelet;
-    int encoded_band_number;
-#endif
-
 } ENCODER;
 
 #pragma pack(pop)
@@ -577,23 +556,8 @@ void SetTransformQuantization(ENCODER *encoder, TRANSFORM *transform, int channe
 // Encode highpass coefficients that have been quantized and run length encoded
 void EncodeQuantizedRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image, int num_runs, int width, int height);
 
-void OverrideEncoderSettings(ENCODER *encoder);
 int RemoveHiddenMetadata(unsigned char *ptr, int len);
 void UpdateEncoderOverrides(ENCODER *encoder, unsigned char *ptr, int len);
-
-
-#if _DEBUG
-
-CODEC_ERROR WriteTransformBandFile(TRANSFORM *transform[], int num_transforms,
-                                   uint32_t channel_mask, uint32_t wavelet_mask,
-                                   uint32_t wavelet_band_mask, const char *pathname);
-
-CODEC_ERROR CreateEncodedBandFile(ENCODER *encoder, const char *pathname);
-
-CODEC_ERROR CloseEncodedBandFile(ENCODER *encoder);
-
-#endif
-
 
 #if _THREADED_ENCODER
 
@@ -623,4 +587,4 @@ void EncodeQuantizedCoefficients(ENCODER *encoder, BITSTREAM *stream, PIXEL *inp
 }
 #endif
 
-#endif
+#endif // ENCODE_H

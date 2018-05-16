@@ -229,7 +229,6 @@ size_t DecoderSize();
 
 void DecodeEntropyInit(DECODER *decoder);
 
-bool DecodeOverrides(DECODER *decoder, unsigned char *overrideData, int overrideSize);
 bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch, ColorParam *colorparams, CFHDDATA *cfhddata);
 void DecodeRelease(DECODER *decoder, TRANSFORM **transform, int num_transforms);
 void DecodeForceMetadataRefresh(DECODER *decoder);

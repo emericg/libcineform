@@ -16,7 +16,6 @@
  * limitations under the License.
  */
 
-#pragma once
 #ifndef CFHD_METADATA_H
 #define CFHD_METADATA_H
 

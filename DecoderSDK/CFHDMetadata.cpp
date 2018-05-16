@@ -1,28 +1,24 @@
-/*! @file CFHDMetadata.cpp
-
-*  @brief This module implements the C functions for the metadata API
-*
-*  Interface to the CineForm HD decoder.  The decoder API uses an opaque
-*  data type to represent an instance of a decoder.  The decoder reference
-*  is returned by the call to CFHD_OpenDecoder.
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
-
+/*!
+ * @file CFHDMetadata.cpp
+ * @brief This module implements the C functions for the metadata API
+ *
+ * Interface to the CineForm HD decoder.  The decoder API uses an opaque
+ * data type to represent an instance of a decoder.  The decoder reference
+ * is returned by the call to CFHD_OpenDecoder.
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "StdAfx.h"
 
@@ -285,23 +281,6 @@ static void NewReturnType(CFHD_MetadataType *type, unsigned char ctype)
     }
 }
 
-/*
-void GetLUTPath(char PathStr[260])
-{
-#ifdef _WIN32
-	USES_CONVERSION;
-
-	CSettings cfg;
-	cfg.Open(HKEY_CURRENT_USER, ("SOFTWARE\\CineForm\\ColorProcessing"));
-	CComBSTR path(cfg.GetString(_T("LUTPath"), _T("C:/Program Files/Common Files/CineForm/LUTs")));
-	strcpy(PathStr, CW2T(path));
-#else
-	strcpy(PathStr, "/Library/Application Support/CineForm/LUTs");
-
-#endif
-}
-*/
-
 void *LeftRightDelta(CSampleMetadata *metadata,
                      CFHD_MetadataTag tag,
                      METADATA_SIZE size,
@@ -432,19 +411,14 @@ bool CSampleMetadata::GetClipDatabase()
     }
 
     //Get any changes from the database
-    if (	m_currentClipGUID.Data1 ||
-            m_currentClipGUID.Data2 ||
-            m_currentClipGUID.Data3)
+    if (m_currentClipGUID.Data1 ||
+        m_currentClipGUID.Data2 ||
+        m_currentClipGUID.Data3)
     {
         char filenameGUID[260];
-        //char namelen = 0;
+        char PathStr[260];
+        char DBStr[260];
 
-        if (PathStr[0] == 0 || DBStr[0] == 0)
-        {
-            //OutputDebugString("InitGetLUTPaths");
-            InitGetLUTPaths(PathStr, (size_t)sizeof(PathStr), DBStr, (size_t)sizeof(DBStr));
-        }
-        //GetLUTPath(PathStr);
         bool checkdiskinfo = false;
 
 #ifdef _WIN32
@@ -465,7 +439,6 @@ bool CSampleMetadata::GetClipDatabase()
                   m_currentClipGUID.Data4[5],
                   m_currentClipGUID.Data4[6],
                   m_currentClipGUID.Data4[7]);
-
 
 #if _WIN32
         uint32_t write_time = GetLastWriteTime(filenameGUID);

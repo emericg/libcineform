@@ -58,9 +58,6 @@ public:
         m_allocator(NULL)
     {
         memset(&m_currentClipGUID, 0, sizeof(myGUID));
-        memset(PathStr, 0, sizeof(PathStr));
-        memset(DBStr, 0, sizeof(DBStr));
-
         memset(m_overrideData, 0, MAX_OVERRIDE_SIZE);
         memset(m_workspaceData, 0, MAX_OVERRIDE_SIZE);
     }
@@ -106,9 +103,6 @@ public:
     uint32_t m_hash;
     uint32_t m_smart_render_ok;
 
-    char PathStr[260];
-    char DBStr[64];
-
     clock_t last_process_time;
     time_t last_now_time;
 
@@ -151,7 +145,6 @@ public:
         // Otherwise use the default memory allocator
         free(block);
     }
-
 
     void *AlignAlloc(size_t size, size_t alignment)
     {
@@ -237,10 +230,3 @@ public:
 protected:
     CFHD_ALLOCATOR *m_allocator;
 };
-
-// Return the pathname of the LUT directory and the filename of the database directory
-void InitGetLUTPaths(char *pPathStr,	//!< Pathname to the LUT directory
-                     size_t pathSize,	//!< Size of the LUT pathname (in bytes)
-                     char *pDBStr,		//!< Filename of the database directory
-                     size_t DBSize		//!< Size of the database filename (in bytes)
-                    );

@@ -110,8 +110,6 @@ public:
                             void *outputBuffer,
                             int outputPitch);
 
-    CFHD_Error SetDecoderOverrides(unsigned char *databaseData, int databaseSize);
-
     CFHD_Error GetFrameFormat(int &width, int &height, CFHD_PixelFormat &format);
 
     CFHD_Error GetRequiredBufferSize(uint32_t &bytes);

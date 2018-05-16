@@ -1618,20 +1618,6 @@ CFHD_Error CSampleDecoder::CopyToOutputBuffer(void *decodedBuffer, int decodedPi
     }
 }
 
-
-CFHD_Error
-CSampleDecoder::SetDecoderOverrides(unsigned char *overrideData, int overrideSize)
-{
-    // can't do this if the decoder was prepared for thumbnails
-    if (m_preparedForThumbnails)
-        return CFHD_ERROR_UNEXPECTED;
-
-    DecodeOverrides(m_decoder, overrideData, overrideSize);
-
-    return CFHD_ERROR_OKAY;
-}
-
-
 CFHD_Error
 CSampleDecoder::GetThumbnail(void *samplePtr,
                              size_t sampleSize,

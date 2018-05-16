@@ -1540,20 +1540,6 @@ typedef struct decoder		// Decoder state (derived from codec)
 
     uint8_t *local_output;
 
-    //database overrides
-    unsigned char *overrideData;
-    int overrideSize;
-
-    char OverridePathStr[260];	// default path to overrides
-    char LUTsPathStr[260];		// default path to LUTs
-    char UserDBPathStr[64];		// database directory in LUTs
-
-    unsigned char *DataBases[METADATA_PRIORITY_MAX + 1];
-    unsigned int DataBasesAllocSize[METADATA_PRIORITY_MAX + 1];
-    unsigned int DataBasesSize[METADATA_PRIORITY_MAX + 1];
-
-    unsigned char hasFileDB[METADATA_PRIORITY_MAX + 1]; // Flag whether .colr existed.
-
     Thread_cntrl thread_cntrl;		// holds CPU/limits and affinity
 
     int	premiere_embedded;			// 1 is true
@@ -1609,7 +1595,7 @@ typedef struct decoder		// Decoder state (derived from codec)
     unsigned int dmo_png_height[64];
     char dmo_png_path[64][260];
 
-    unsigned int  LUTcacheCRC; // last LUT CRC currently loaded
+    unsigned int LUTcacheCRC; // last LUT CRC currently loaded
     float *LUTcache; // last LUT currently loaded
     int LUTcacheSize; // last LUT currently loaded
 

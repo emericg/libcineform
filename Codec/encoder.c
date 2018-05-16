@@ -26,6 +26,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #elif __APPLE__
+#include <Carbon/Carbon.h>
 #include "macdefs.h"
 #endif
 
@@ -60,10 +61,6 @@
 
 #if (0 && _THREADED_ENCODER)
 #include "threaded.h"
-#endif
-
-#if __APPLE__
-#include "macdefs.h"
 #endif
 
 #if !defined(_WIN32)
@@ -116,20 +113,6 @@ extern TIMER tk_finish;
 
 extern COUNTER progressive_encode_count;
 
-#endif
-
-
-#ifdef _WIN32
-// Forward reference
-
-#elif defined(__APPLE__)
-#include <Carbon/Carbon.h>
-
-
-
-#ifndef MAX_PATH
-#define MAX_PATH	260
-#endif
 #endif
 
 // Use the standard definition for the maximum number of characters in a pathname
@@ -315,11 +298,6 @@ void InitEncoder(ENCODER *encoder, FILE *logfile, CODESET *cs)
 
     // Clear all of the metadata entries (local and global)
     memset(&encoder->metadata, 0, sizeof(encoder->metadata));
-
-#if _DEBUG
-    // Buffer used to debug entropy coding of highpass bands
-    encoder->encoded_band_bitstream = NULL;
-#endif
 }
 
 
@@ -1302,7 +1280,6 @@ void SetDefaultEncodingParameters(ENCODING_PARAMETERS *parameters)
     if (parameters->version < ENCODING_PARAMETERS_CURRENT_VERSION)
     {
         // Initialize any parameters that were added since the older version
-
     }
 }
 
@@ -2040,7 +2017,6 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
 
     if (encoder->video_channels <= 1 && encoder->ignore_database == 0 && encoder->ignore_overrides == 0) // not doing a double high encode
     {
-        OverrideEncoderSettings(encoder); // psuedo 3D encoding, and encoder override.
         //
         //	Patch this to only do single channel encode when FCP starts up
         //
@@ -3133,13 +3109,6 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
                 // Compute the spatial transform wavelet tree for each channel
                 ComputeGroupTransformQuant(encoder, transform, num_transforms);
 
-#if (0 && DEBUG)
-                // Dump selected wavelet bands to a file (for debugging)
-                if (encoder->frame_count == 0)
-                {
-                    WriteTransformBandFile(transform, num_transforms, channel_mask, wavelet_mask, wavelet_band_mask, pathname);
-                }
-#endif
                 // Encode the transform for the current frame
                 EncodeQuantizedGroup(encoder, transform, num_transforms, output);
             }
@@ -6118,72 +6087,13 @@ void EncodeQuantizedBand(ENCODER *encoder, BITSTREAM *stream, IMAGE *wavelet,
         EncodeQuantLongRuns(encoder, stream, wavelet->band[band], width, height, wavelet->pitch, 1, active_codebook);
     }
 #else
-#if 0
-    ss1 = BandEnergy(wavelet->band[band], width, height, wavelet->pitch, band, subband);
-    //	if (subband == 12 || subband == 15) {
-    //		FilterHorizontalDelta(wavelet->band[band], width, height, wavelet->pitch);
-    //	}
-    //	ss2 = BandEnergy(wavelet->band[band], width, height, wavelet->pitch);
-#endif
-
-
     if (peaks_coding)
     {
-#if (0 && DEBUG)
-        if (logfile)
-        {
-            PIXEL *rowptr = wavelet->band[band];
-            int i;
-            fprintf(logfile, "EncodeQuantizedBand subband: %d\n", subband);
-
-            for (i = 0; i < 16; i++)
-            {
-                fprintf(logfile, "%5d", rowptr[i]);
-            }
-            fprintf(logfile, "\n");
-        }
-#endif
         peakscounter = EncodeQuantLongRunsPlusPeaks(encoder, stream, wavelet->band[band], width, height, wavelet->pitch, 1, active_codebook, quantization);
     }
     else
     {
-#if (0 && DEBUG)
-        if (encoder->encoded_band_bitstream)
-        {
-            BITSTREAM *bitstream = encoder->encoded_band_bitstream;
-            const int frame = (int)encoder->frame_number;
-            const int channel = encoder->encoded_band_channel;
-            const int wavelet_index = encoder->encoded_band_wavelet;
-            const int band_index = encoder->encoded_band_number;
-            //const int width = wavelet->width;
-            //const int height = wavelet->height;
-            void *data;
-            size_t size;
-
-            uint32_t channel_mask = 0x01;
-            uint32_t wavelet_mask = 0x04;
-            uint32_t band_mask = 0x08;
-
-            EncodeQuantLongRuns(encoder, bitstream, wavelet->band[band], width, height, wavelet->pitch, 1, active_codebook);
-
-            if ((((1 << channel) & channel_mask) != 0) &&
-                    (((1 << wavelet_index) & wavelet_mask) != 0) &&
-                    (((1 << band_index) & band_mask) != 0))
-            {
-                data = bitstream->lpCurrentBuffer;
-                size = bitstream->nWordsUsed;
-
-                WriteWaveletBand(&encoder->encoded_band_file, frame, channel, wavelet_index,
-                                 band_index, BAND_TYPE_ENCODED_RUNLENGTHS, width, height, data, size);
-            }
-
-            RewindBitstream(bitstream);
-        }
-        else
-#endif
-        {
-            EncodeQuantLongRuns(encoder, stream, wavelet->band[band], width, height, wavelet->pitch, 1, active_codebook);
-        }
+        EncodeQuantLongRuns(encoder, stream, wavelet->band[band], width, height, wavelet->pitch, 1, active_codebook);
     }
 #endif
 
@@ -7454,11 +7364,6 @@ void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_tran
     }
     else
     {
-
-#if (0 && _DEBUG)
-        const char *pathname = "C:/Users/bschunck/Temp/entropy1.dat";
-        CreateEncodedBandFile(encoder, pathname);
-#endif
         for (channel = 0; channel < num_channels; channel++)
         {
             int num_wavelets = transform[channel]->num_wavelets;
@@ -7467,21 +7372,6 @@ void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_tran
             //int k;
             int channel_size_in_byte;
 
-#if (0 && DEBUG)
-            if (logfile)
-            {
-                fprintf(logfile, "Encoding channel: %d\n", channel);
-            }
-#endif
-#if (0 && DEBUG)
-            if (logfile)
-            {
-                char label[256];
-                sprintf(label, "Channel %d transform", channel);
-                DumpTransform(label, transform[channel], logfile);
-                fprintf(logfile, "\n");
-            }
-#endif
 #if (1 && TRACE_PUTBITS)
             TraceEncodeChannel(channel);
 #endif
@@ -7509,9 +7399,6 @@ void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_tran
             switch (transform[channel]->type)
             {
                 case TRANSFORM_TYPE_SPATIAL:
-#if _DEBUG
-                    encoder->encoded_band_channel = channel;
-#endif
                     EncodeQuantizedFrameTransform(encoder, transform[channel], output, channel);
                     break;
 
@@ -7552,17 +7439,10 @@ void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_tran
             // Start numbering the subbands in the next channel beginning with zero
             subband = 0;
         }
-
-#if (0 && DEBUG)
-        CloseEncodedBandFile(encoder);
-#endif
     }
 
     if (!(encoder->uncompressed & 2)) // only hdr is written
     {
-#if (DEBUG && _WIN32)
-        //OutputDebugString("pop 1");
-#endif
         if (encode_iframe)
         {
             // Output the trailer for an intra frame
@@ -7579,10 +7459,7 @@ void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_tran
     }
     else if (encoder->uncompressed == 3)
     {
-#if (DEBUG && _WIN32)
-        OutputDebugString("pop 2");
-#endif
-        //	Set Sample size field here.
+        // Set Sample size field here.
         SizeTagPop(output);
 
         // only the header is output
@@ -7591,10 +7468,7 @@ void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_tran
     }
     else
     {
-#if (DEBUG && _WIN32)
-        OutputDebugString("pop 3");
-#endif
-        //	Set Sample size field here.
+        // Set Sample size field here.
         SizeTagPop(output);
     }
 
@@ -7623,9 +7497,6 @@ void EncodeQuantizedFrameTransform(ENCODER *encoder, TRANSFORM *transform, BITST
         int divisor = 0;
         int i;
 
-#if _DEBUG
-        encoder->encoded_band_wavelet = k;
-#endif
         // Output the header for the high pass bands at this level
         PutVideoHighPassHeader(output, wavelet_type, wavelet_number, wavelet_level,
                                wavelet->width, wavelet->height, wavelet->num_bands,
@@ -7640,9 +7511,7 @@ void EncodeQuantizedFrameTransform(ENCODER *encoder, TRANSFORM *transform, BITST
             //int precent = output->nWordsUsed*100 / output->dwBlockLength;
 
             quantization = wavelet->quantization[band];
-#if _DEBUG
-            encoder->encoded_band_number = band;
-#endif
+
             /* TODO -- Does this work correctly for 3D, as the dwBlockLength might be twice the size?
             if(	encoder->encoded_format == ENCODED_FORMAT_RGB_444)
             {
@@ -8507,120 +8376,6 @@ void FinishFrameTransformQuant(ENCODER *encoder, TRANSFORM *transform, int chann
     transform->num_wavelets = wavelet_index;
 }
 
-void OverrideEncoderSettings(ENCODER *encoder)
-{
-    unsigned int *last_set_time = &encoder->last_set_time;
-    int checkdiskinfo = 0;
-    int type;
-
-    clock_t time = clock();
-    int32_t diff = (long)time - (long) * last_set_time;
-#define MS_ENC_DIFF	(CLOCKS_PER_SEC / 5)
-
-    if (abs(diff) > MS_ENC_DIFF || *last_set_time == 0) // only test every 1000ms
-    {
-        *last_set_time = (unsigned int)time;
-        checkdiskinfo = 1;
-    }
-
-
-    if (checkdiskinfo) // only test every 1000ms)
-    {
-        unsigned char *ptr;
-        int len;
-
-        InitLUTPathsEnc(encoder);
-
-        for (type = 0; type < 2; type++)
-        {
-            unsigned int *size;
-            unsigned char *buffer = encoder->forceData;
-            char filenameGUID[PATH_MAX + 1] = "";
-            len = 0;
-
-            if (type == 0) // preset_default an colr file for all clips.
-            {
-#ifdef _WIN32
-                sprintf_s(filenameGUID, sizeof(filenameGUID), "%s/%s/defaults.colr", encoder->LUTsPathStr, encoder->UserDBPathStr);
-#else
-                sprintf(filenameGUID, "%s/%s/defaults.colr", encoder->LUTsPathStr, encoder->UserDBPathStr);
-#endif
-
-                buffer = encoder->baseData; // default user data
-                size = &encoder->baseDataSize;
-            }
-            else if (type == 1) // preset_override an colr file for all clips.
-            {
-#ifdef _WIN32
-                sprintf_s(filenameGUID, sizeof(filenameGUID), "%s/override.colr", encoder->OverridePathStr);
-#else
-                sprintf(filenameGUID, "%s/override.colr", encoder->OverridePathStr);
-#endif
-
-                buffer = encoder->forceData;// override user data
-                size = &encoder->forceDataSize;
-            }
-
-            len = 0;
-            if (strlen(filenameGUID))
-            {
-                int err = 0;
-                FILE *fp;
-
-#ifdef _WIN32
-                err = fopen_s(&fp, filenameGUID, "rb");
-#else
-                fp = fopen(filenameGUID, "rb");
-#endif
-                if (err == 0 && fp != NULL)
-                {
-                    ptr = buffer;
-                    len = 0;
-                    fseek (fp, 0, SEEK_END);
-                    len = ftell(fp);
-
-                    if (len <= MAX_ENCODE_DATADASE_LENGTH)
-                    {
-                        fseek (fp, 0, SEEK_SET);
-#ifdef _MSVC_VER
-                        len = (int)fread_s(buffer, MAX_ENCODE_DATADASE_LENGTH, 1, len, fp);
-#else
-                        len = (int)fread(buffer, 1, len, fp);
-#endif
-                        *size = len;
-                    }
-                    else
-                        *size = 0;
-
-
-                    fclose(fp);
-                }
-                else
-                    *size = 0;
-            }
-        }
-    }
-
-    for (type = 0; type < 2; type++)
-    {
-        int len = 0;
-        unsigned char *buffer = NULL;
-
-        if (type == 0) // preset_default an colr file for all clips.
-        {
-            buffer = encoder->baseData; // default user data
-            len = encoder->baseDataSize;
-        }
-        else if (type == 1) // preset_override an colr file for all clips.
-        {
-            buffer = encoder->forceData;// override user data
-            len = encoder->forceDataSize;
-        }
-
-        UpdateEncoderOverrides(encoder, buffer, len);
-    }
-}
-
 int RemoveHiddenMetadata(unsigned char *ptr, int len)
 {
     int retlen = len;
@@ -8834,129 +8589,6 @@ void UpdateEncoderOverrides(ENCODER *encoder, unsigned char *ptr, int len)
 
     }
 }
-
-#if _DEBUG && 0
-
-CODEC_ERROR WriteTransformBandFile(TRANSFORM *transform[],
-                                   int num_transforms,
-                                   uint32_t channel_mask,
-                                   uint32_t channel_wavelet_mask,
-                                   uint32_t wavelet_band_mask,
-                                   const char *pathname)
-{
-    BANDFILE file;
-    int max_band_width;
-    int max_band_height;
-    int channel_count;
-    int channel_index;
-
-    //TODO: Modify this routine to take the frame index as an argument
-    const int frame_index = 0;
-
-    // Get the number of channels in the encoder wavelet transform
-    channel_count = num_transforms;
-
-    // Compute the maximum dimensions of each subband
-    max_band_width = transform[0]->width;
-    max_band_height = transform[0]->height;
-
-    // Create the band file
-    CreateBandFile(&file, pathname);
-
-    // Write the band file header
-    WriteFileHeader(&file, max_band_width, max_band_height);
-
-    for (channel_index = 0;
-            channel_index < channel_count && channel_mask != 0;
-            channel_mask >>= 1, channel_index++)
-    {
-        uint32_t wavelet_mask = channel_wavelet_mask;
-        int wavelet_count = transform[channel_index]->num_wavelets;
-        int wavelet_index;
-
-        for (wavelet_index = 0;
-                wavelet_index < wavelet_count && wavelet_mask != 0;
-                wavelet_mask >>= 1, wavelet_index++)
-        {
-            // Write bands in this wavelet?
-            if ((wavelet_mask & 0x01) != 0)
-            {
-                IMAGE *wavelet = transform[channel_index]->wavelet[wavelet_index];
-                uint32_t band_mask = wavelet_band_mask;
-                int band_count = wavelet->num_bands;
-                int band_index;
-
-                // Get the actual dimensions of the bands in this wavelet
-                int width = wavelet->width;
-                int height = wavelet->height;
-
-                for (band_index = 0;
-                        band_index < band_count && band_mask != 0;
-                        band_mask >>= 1, band_index++)
-                {
-                    // Write this band in the wavelet?
-                    if ((band_mask & 0x01) != 0)
-                    {
-                        void *data = wavelet->band[band_index];
-                        size_t size = wavelet->width * wavelet->height * sizeof(PIXEL);
-
-                        WriteWaveletBand(&file, frame_index, channel_index, wavelet_index,
-                                         band_index, BAND_TYPE_SINT16, width, height, data, size);
-                    }
-                }
-            }
-        }
-    }
-
-    CloseBandFile(&file);
-
-    return CODEC_ERROR_OKAY;
-}
-
-// Create a band data file for the encoded highpass bands
-CODEC_ERROR CreateEncodedBandFile(ENCODER *encoder, const char *pathname)
-{
-    ALLOCATOR *allocator = encoder->allocator;
-    BITSTREAM *encoded_bitstream;
-    int max_band_width;
-    int max_band_height;
-    void *encoded_band_buffer;
-    size_t encoded_band_size;
-
-    // Use the encoded dimensions to maximum dimensions of each subband
-    max_band_width = encoder->input.width;
-    max_band_height = encoder->input.height;
-    encoded_band_size = max_band_width * max_band_height;
-
-    // Create the band file
-    CreateBandFile(&encoder->encoded_band_file, pathname);
-
-    // Write the band file header
-    WriteFileHeader(&encoder->encoded_band_file, max_band_width, max_band_height);
-
-    // Allocate a buffer for the encoded band data
-    encoded_band_buffer = Alloc(allocator, encoded_band_size);
-    encoded_band_size = encoded_band_size;
-
-    // Create a new bitstream for the encoded band data
-    encoded_bitstream = Alloc(allocator, sizeof(BITSTREAM));
-
-    // Redirect the encoded bitstream to a buffer
-    InitBitstreamBuffer(encoded_bitstream, encoded_band_buffer, encoded_band_size, BITSTREAM_ACCESS_WRITE);
-    encoder->encoded_band_bitstream = encoded_bitstream;
-
-    return CODEC_ERROR_OKAY;
-}
-
-//TODO: Close the bitstream used for encoded band data?
-CODEC_ERROR CloseEncodedBandFile(ENCODER *encoder)
-{
-    CloseBandFile(&encoder->encoded_band_file);
-    return CODEC_ERROR_OKAY;
-}
-
-#endif
-
 
 /***** Threaded implementations of the encoding routines *****/
 

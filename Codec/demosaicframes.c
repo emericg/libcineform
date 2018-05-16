@@ -5131,17 +5131,6 @@ float *LoadCube64_3DLUT(DECODER *decoder, CFHDDATA *cfhddata, int *lutsize)
             }
         }
 
-        if (decoder->LUTsPathStr[0] == 0)
-            InitLUTPathsDec(decoder);
-
-#ifdef _WIN32
-        sprintf_s(crcname, sizeof(crcname), "%s/%08X.cflook", decoder->LUTsPathStr, (uint32_t)cfhddata->user_look_CRC);
-        err = fopen_s(&fp, crcname, "rb");
-#else
-        sprintf(crcname, "%s/%08X.cflook", decoder->LUTsPathStr, (uint32_t)cfhddata->user_look_CRC);
-        fp = fopen(crcname, "rb");
-#endif
-
         if (err == 0 && fp != NULL)
         {
             int endianswap = 0;
@@ -6550,41 +6539,6 @@ void UpdateCFHDDATA(DECODER *decoder, unsigned char *ptr, int len, int delta, in
                         localpri++;
                     case TAG_EYE_DELTA_1:
                         localpri++;
-
-                        decoder->hasFileDB[localpri] = 2; // Indicate the COL1 and COL2 where retrieved from the sample/colr, no need to read files *.col1|*.col2,
-
-                        if (priority == METADATA_PRIORITY_FRAME || priority == METADATA_PRIORITY_DATABASE || priority == METADATA_PRIORITY_OVERRIDE)
-                        {
-                            if (size > decoder->DataBasesAllocSize[localpri] || decoder->DataBases[localpri] == NULL)
-                            {
-                                if (decoder->DataBases[localpri])
-                                {
-#if _ALLOCATOR
-                                    Free(decoder->allocator, decoder->DataBases[localpri]);
-#else
-                                    MEMORY_FREE(decoder->DataBases[localpri]);
-#endif
-                                    decoder->DataBases[localpri] = NULL;
-                                }
-                                decoder->DataBasesAllocSize[localpri] = (size + 511) & ~0xff;
-#if _ALLOCATOR
-                                decoder->DataBases[localpri] = (unsigned char *)Alloc(decoder->allocator, decoder->DataBasesAllocSize[localpri]);
-#else
-                                decoder->DataBases[localpri] = (unsigned char *)MEMORY_ALLOC(decoder->DataBasesAllocSize[localpri]);
-#endif
-
-                            }
-
-                            if (size && size <= decoder->DataBasesAllocSize[localpri] && decoder->DataBases[localpri])
-                            {
-                                memcpy(decoder->DataBases[localpri], data, size);
-                                decoder->DataBasesSize[localpri] = (unsigned int)size;
-                            }
-                            else
-                            {
-                                decoder->DataBasesSize[localpri] = 0;
-                            }
-                        }
                         localpri = priority;
                         break;
                 }

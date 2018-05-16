@@ -624,22 +624,6 @@ void ClearDecoder(DECODER *decoder)
     if (decoder->initialized == 0)
         return;
 
-    for (i = 0; i <= METADATA_PRIORITY_MAX; i++)
-    {
-        if (decoder->DataBases[i])
-        {
-#if _ALLOCATOR
-            Free(decoder->allocator, decoder->DataBases[i]);
-#else
-            MEMORY_FREE(decoder->DataBases[i]);
-#endif
-
-            decoder->DataBases[i] = NULL;
-            decoder->DataBasesSize[i] = 0;
-            decoder->DataBasesAllocSize[i] = 0;
-        }
-    }
-
     if (decoder->sqrttable)
     {
 #if _ALLOCATOR
@@ -878,13 +862,6 @@ void ClearDecoder(DECODER *decoder)
             Free(decoder->allocator, decoder->LUTcache);
         decoder->LUTcache = NULL;
         decoder->LUTcacheCRC = 0;
-    }
-
-    if (decoder->overrideData)
-    {
-        Free(decoder->allocator, decoder->overrideData);
-        decoder->overrideData = NULL;
-        decoder->overrideSize = 0;
     }
 
     for (i = 0; i < 64; i++)
@@ -1572,58 +1549,6 @@ void DecodeEntropyInit(DECODER *decoder)
 #endif
 }
 
-
-bool DecodeOverrides(DECODER *decoder, unsigned char *overrideData, int overrideSize)
-{
-    if (decoder->overrideData)
-    {
-
-#if _ALLOCATOR
-        Free(decoder->allocator, decoder->overrideData);
-#else
-        MEMORY_FREE(decoder->overrideData);
-#endif
-        decoder->overrideData = NULL;
-        decoder->overrideSize = 0;
-    }
-
-    if (overrideSize)
-    {
-
-#if _ALLOCATOR
-        decoder->overrideData = Alloc(decoder->allocator, overrideSize);
-#else
-        decoder->overrideData = MEMORY_ALLOC(overrideSize);
-#endif
-
-        if (decoder->overrideData)
-        {
-            memcpy(decoder->overrideData, overrideData, overrideSize);
-            decoder->overrideSize = overrideSize;
-        }
-    }
-    else
-    {
-        int i;
-        for (i = METADATA_PRIORITY_OVERRIDE; i <= METADATA_PRIORITY_MAX; i++) //This was 0 to max but that cause right eye primary corrections(side-by-side) mode to flicker.
-            // This database cleariing was added but I don't know why.
-        {
-            if (decoder->DataBases[i])
-            {
-#if _ALLOCATOR
-                Free(decoder->allocator, decoder->DataBases[i]);
-#else
-                MEMORY_FREE(decoder->DataBases[i]);
-#endif
-
-                decoder->DataBases[i] = NULL;
-                decoder->DataBasesSize[i] = 0;
-                decoder->DataBasesAllocSize[i] = 0;
-            }
-        }
-    }
-    return true;
-}
 
 TRANSFORM *AllocGroupTransform(GROUP *group, int channel)
 {
@@ -10141,7 +10066,6 @@ bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch
 
         DecodeEntropyInit(decoder->parallelDecoder);
 
-        DecodeOverrides(decoder->parallelDecoder, decoder->overrideData, decoder->overrideSize);
         decoder->parallelDecoder->channel_decodes = decoder->channel_decodes;
         decoder->parallelDecoder->channel_blend_type = decoder->channel_blend_type;
         decoder->parallelDecoder->flags = decoder->flags;
@@ -10182,10 +10106,6 @@ bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch
 
         // Instead of reading the metadata databases again, use the ones in the main decoder
         OverrideCFHDDATAUsingParent(decoder->parallelDecoder, decoder, input->lpCurrentBuffer, input->nWordsUsed);
-
-        // DAN20110404 Use left (first) eye metadata for both eyes (just in case right GUID is bad.)
-        // OverrideCFHDDATA(decoder->parallelDecoder, input->lpCurrentBuffer, input->nWordsUsed);
-        // OverrideCFHDDATA(decoder->parallelDecoder, second_input.lpCurrentWord, second_input.nWordsUsed);
 
         // Hack, this gets lost
         decoder->parallelDecoder->cfhddata.split_CC_position = decoder->cfhddata.split_CC_position;
@@ -10271,8 +10191,6 @@ bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch
             int sample_type;
 
             local_decoder->channel_current = channel_current++;
-
-            //OverrideCFHDDATA(local_decoder, input->lpCurrentBuffer, input->nWordsUsed);
 
 #if _THREADED
             local_decoder->entropy_worker_new.next_queue_num = 0;

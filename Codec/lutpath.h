@@ -22,15 +22,8 @@
 extern "C" {
 #endif
 
-// Routine that initializes the LUT paths in the decoder
-void InitLUTPathsDec(struct decoder *decoder);
-
-void WriteLastGUIDAndFrame(struct decoder *decoder, int checkdiskinfotime);
 void OverrideCFHDDATA(struct decoder *decoder, unsigned char *lpCurrentBuffer, int nWordsUsed);
 void OverrideCFHDDATAUsingParent(struct decoder *decoder, struct decoder *parentDecoder, unsigned char *lpCurrentBuffer, int nWordsUsed);
-
-// Routine that initializes the LUT paths in the encoder
-void InitLUTPathsEnc(struct encoder *encoder);
 
 #ifdef __cplusplus
 }

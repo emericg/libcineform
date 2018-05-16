@@ -110,9 +110,6 @@ uint32_t ValidateLookGenCRCEnc(char *path)
 
     if (err || fp == NULL)
     {
-#if (OUTPUT && _WIN32)
-        OutputDebugString("ValidateLookGenCRCEnc : no file");
-#endif
         return 0;
     }
     else

@@ -1,5 +1,4 @@
 /*! @file SampleMetadata.h
-
 *  @brief Metadata Tools
 *
 *  @version 1.0.0
@@ -16,10 +15,11 @@
 *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 *  See the License for the specific language governing permissions and
 *  limitations under the License.
-*
 */
+
 #pragma once
 #define MAX_OVERRIDE_SIZE	16384
+
 class CSampleMetadata
 {
 public:
@@ -235,10 +235,3 @@ public:
 protected:
     CFHD_ALLOCATOR *m_allocator;
 };
-
-// Return the pathname of the LUT directory and the filename of the database directory
-void InitGetLUTPaths(char *pPathStr,	//!< Pathname to the LUT directory
-                     size_t pathSize,	//!< Size of the LUT pathname (in bytes)
-                     char *pDBStr,		//!< Filename of the database directory
-                     size_t DBSize		//!< Size of the database filename (in bytes)
-                    );
