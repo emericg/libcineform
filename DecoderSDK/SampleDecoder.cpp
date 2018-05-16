@@ -360,7 +360,7 @@ int V210FramePitch(int width)
 }
 
 
-__inline static size_t Align16(size_t x)
+inline static size_t Align16(size_t x)
 {
     return ((x + 0x0F) & ~0x0F);
 }

@@ -57,14 +57,6 @@
 #include "recursive.h"
 #endif
 
-#if __APPLE__
-#include "macdefs.h"
-#else
-#ifndef ZeroMemory
-#define ZeroMemory(p,s)		memset(p,0,s)
-#endif
-#endif
-
 #if DEBUG
 // Make the logfile available for debugging
 #include <stdio.h>
@@ -962,9 +954,9 @@ void InitTransform(TRANSFORM *transform)
         InitTransformState(&transform->state[i], transform);
     }
 
-    ZeroMemory(transform->rowptr, sizeof(transform->rowptr));
+    memset(transform->rowptr, 0, sizeof(transform->rowptr));
 
-    ZeroMemory(transform->descriptor, sizeof(transform->descriptor));
+    memset(transform->descriptor, 0, sizeof(transform->descriptor));
 
 #endif
 
@@ -5654,7 +5646,7 @@ void TransformInverseSpatialQuantLowpass(IMAGE *input, IMAGE *output,
 
     {
 #if (0 && DEBUG)
-        char name[_MAX_PATH];
+        char name[PATH_MAX];
         sprintf(name, "Input");
         DumpPGM(name, input, NULL);
 #endif
@@ -5663,7 +5655,7 @@ void TransformInverseSpatialQuantLowpass(IMAGE *input, IMAGE *output,
         if (0)
         {
 #if (0 && DEBUG)
-            char filename[_MAX_PATH];
+            char filename[PATH_MAX];
             static int count = 0;
             sprintf(filename, "Lowpass-%d-", count++);
 #endif

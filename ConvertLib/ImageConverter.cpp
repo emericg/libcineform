@@ -584,9 +584,9 @@ void CImageConverterYU64ToRGB::ConvertToBGRA64(unsigned char *input,
 #endif
     }
 
-    //y_src_ptr = (UINT16 *)y_input_ptr;
-    //u_src_ptr = (UINT16 *)u_input_ptr;
-    //v_src_ptr = (UINT16 *)v_input_ptr;
+    //y_src_ptr = (uint16_t *)y_input_ptr;
+    //u_src_ptr = (uint16_t *)u_input_ptr;
+    //v_src_ptr = (uint16_t *)v_input_ptr;
 
     yuvptr = (unsigned short *)yuv_input_ptr;
     outptr = (unsigned short *)argb_output_ptr;
@@ -1048,9 +1048,9 @@ void CImageConverterYU64ToRGB::ConvertToBGRA64(unsigned char *input, int input_p
 #endif
         }
 
-        //y_src_ptr = (UINT16 *)y_input_ptr;
-        //u_src_ptr = (UINT16 *)u_input_ptr;
-        //v_src_ptr = (UINT16 *)v_input_ptr;
+        //y_src_ptr = (uint16_t *)y_input_ptr;
+        //u_src_ptr = (uint16_t *)u_input_ptr;
+        //v_src_ptr = (uint16_t *)v_input_ptr;
 
         yuvptr = (unsigned short *)yuv_input_ptr;
         outptr = (unsigned short *)argb_output_ptr;
@@ -1583,9 +1583,9 @@ void CImageConverterYU64ToRGB::ConvertToAfterEffectsBGRA64(unsigned char *input,
 #endif
         }
 
-        //y_src_ptr = (UINT16 *)y_input_ptr;
-        //u_src_ptr = (UINT16 *)u_input_ptr;
-        //v_src_ptr = (UINT16 *)v_input_ptr;
+        //y_src_ptr = (uint16_t *)y_input_ptr;
+        //u_src_ptr = (uint16_t *)u_input_ptr;
+        //v_src_ptr = (uint16_t *)v_input_ptr;
 
         yuvptr = (unsigned short *)yuv_input_ptr;
         outptr = (unsigned short *)argb_output_ptr;

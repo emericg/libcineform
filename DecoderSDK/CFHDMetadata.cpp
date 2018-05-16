@@ -22,15 +22,11 @@
 
 #include "StdAfx.h"
 
-#ifdef _WIN32
-#else
-#define MAX_PATH	260
 #if __APPLE__
 #include <string.h>
 #include "CoreFoundation/CoreFoundation.h"
 #else
 #include  <mm_malloc.h>
-#endif
 #endif
 
 // Export the metadata interface

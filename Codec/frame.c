@@ -66,47 +66,6 @@ extern COUNTER alloc_frame_count;		// Number of frames allocated
 #define SATURATE_10U(x) _saturate10u(x)
 #define SATURATE_12U(x) _saturate12u(x)
 
-#if 0
-#ifdef _WIN32
-
-#include <stdlib.h>
-
-// Use the byte swapping routines defined in the standard library
-#ifndef SwapInt16
-#define SwapInt16(x)	_byteswap_ushort(x)
-#endif
-
-#ifndef SwapInt32
-#define SwapInt32(x)	_byteswap_ulong(x)
-#endif
-
-#elif __APPLE__
-
-#include "CoreFoundation/CoreFoundation.h"
-
-// Use the byte swapping routines from the Core Foundation framework
-#define SwapInt16(x)	_OSSwapInt16(x)
-#define SwapInt32(x)	_OSSwapInt32(x)
-
-#else
-
-#define SwapInt32(x)	_builtin_bswap32(x)
-
-#endif
-#else
-#include "swap.h"
-#endif
-
-//TODO: Replace uses of _bswap with SwapInt32
-
-
-#if __APPLE__
-#include "macdefs.h"
-#else
-#ifndef CopyMemory
-#define CopyMemory(p,q,s)	memcpy(p,q,s)
-#endif
-#endif
 
 typedef union
 {
@@ -122,7 +81,7 @@ typedef union
 } m128i;
 
 
-FORCEINLINE static int _saturate10u(int x)
+inline static int _saturate10u(int x)
 {
     const int upper_limit = 1023;
 
@@ -132,7 +91,7 @@ FORCEINLINE static int _saturate10u(int x)
     return x;
 }
 
-FORCEINLINE static int _saturate12u(int x)
+inline static int _saturate12u(int x)
 {
     const int upper_limit = 4095;
 
@@ -1537,7 +1496,7 @@ void ConvertV210ToFrame16s(uint8_t *data, int pitch, FRAME *frame, uint8_t *buff
             assert(ISALIGNED16(buffer));
 
             // Copy the row into aligned memory
-            CopyMemory(buffer, v210_row_ptr, pitch);
+            memcpy(buffer, v210_row_ptr, pitch);
 
             // Unpack the row of 10-bit pixels to 16-bit planes
             ConvertV210RowToPlanar16s(buffer, width, y_row_ptr, u_row_ptr, v_row_ptr);

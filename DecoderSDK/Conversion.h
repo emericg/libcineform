@@ -35,9 +35,6 @@
 #define FOURCC(x)	(int)(((x) >> 24) & 0xFF), (int)(((x) >> 16) & 0xFF), (int)(((x) >> 8) & 0xFF), (int)((x) & 0xFF)
 #endif
 
-// Some pixel formats are not defined in the QuickTime header files
-#define k4444YpCbCrA32RPixelFormat 'r4fl'
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -64,7 +61,7 @@ static bool IsPrintableFourCC(char *fourcc)
     return true;
 }
 
-__inline static const char *CStringFromOSType(unsigned int fourcc)
+inline static const char *CStringFromOSType(unsigned int fourcc)
 {
     //static char string[16];
     static char string[8];

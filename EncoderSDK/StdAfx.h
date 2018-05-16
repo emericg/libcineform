@@ -66,11 +66,6 @@
 
 #define __STDC_LIMIT_MACROS
 #include <stdint.h>
-
-//#if __APPLE__
-//#include "macdefs.h"
-//#endif
-
 #include <stdio.h>
 #include <stdarg.h>
 

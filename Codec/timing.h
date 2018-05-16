@@ -42,7 +42,7 @@
 #define TIMING_CSV_FILENAME "c:/Cedoc/Results/timing.csv"
 
 // The timer is a large integer as used by QueryPerformanceCounter
-typedef __int64 TIMER;
+typedef int64_t TIMER;
 
 // Construct for initializing timers
 #define TIMER_INITIALIZER 0
@@ -85,7 +85,7 @@ typedef uint32_t COUNTER;
 extern "C" {
 #endif
 
-BOOL InitTiming(void);
+bool InitTiming(void);
 void StartTimer(TIMER *timer);
 void StopTimer(TIMER *timer);
 void DoThreadTiming(int startend);

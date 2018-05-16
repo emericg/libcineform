@@ -28,7 +28,6 @@
 *  limitations under the License.
 *
 */
-#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -39,66 +38,24 @@
 #define __STDC_LIMIT_MACROS
 #include <stdint.h>
 
-#if __linux__
-// Use byte swapping functions on Linux
-#include <byteswap.h>
-#else
-#if 0
-#include <ConditionalMacros.h>
-#ifndef _WIN64
-#include <Endian.h>
-#include <ImageCodec.h>
-#endif
-#endif
-#endif
-
 #define ASSERT(x)	assert(x)
 
 #include "CFHDError.h"
 #include "CFHDDecoder.h"
 
 #include "ConvertLib.h"			// Color conversion routines
-//#include "ImageUtilities.h"
 #include "Conversion.h"
-
 
 #include "decoder.h"				// Decoder data structure and entry points
 
 #ifdef _WIN32
-
-#include <stdlib.h>
-
-// Use the byte swapping routines defined in the standard library
-#define SwapInt16(x)	_byteswap_ushort(x)
-#define SwapInt32(x)	_byteswap_ulong(x)
-
-#if _DEBUG && 0
-// The byteswap functions are not defined in the debug DLL runtime libraries
-unsigned short _byteswap_ushort(unsigned short x)
-{
-    int x1 = (x >> 8) & 0xFF;
-    int x2 = (x >> 0) & 0xFF;
-
-    return ((x2 << 8) | x1);
-}
+#define _CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES 1
 #endif
 
-#elif __APPLE__
+#include "swap.h"
 
-#include "CoreFoundation/CoreFoundation.h"
-
-// Use the byte swapping routines from the Core Foundation framework
-#define SwapInt16(x)	_OSSwapInt16(x)
-#define SwapInt32(x)	_OSSwapInt32(x)
-
-#else
-
-// Use the byte swapping functions provided by GCC
-#include <byteswap.h>
-#define SwapInt16(x)	bswap_16(x)
-#define SwapInt32(x)	bswap_32(x)
-
-#endif
+// Some pixel formats are not defined in the QuickTime header files
+#define k4444YpCbCrA32RPixelFormat 'r4fl'
 
 // Convert the input image format to the output format
 CFHD_Error ConvertToOutputBuffer(void *inputBuffer, int inputPitch, int inputFormat,

@@ -127,23 +127,23 @@ static inline uint16_t AspectRatioY(ASPECT_RATIO aspectRatio)
 #define CURVE_LOGC2LIN(i)		logc2lin(i)
 #define CURVE_LIN2LOGC(i)		lin2logc(i)
 
-static __inline float log2lin(float i, float b)
+static inline float log2lin(float i, float b)
 {
     return (float)((pow(b, i) - 1.0) / (b - 1.0));
 }
 
-static __inline float lin2log(float i, float b)
+static inline float lin2log(float i, float b)
 {
     return (float)((i >= 0.0) ? log10(i * (b - 1.0) + 1.0) / log10(b) : -log10(-i * (b - 1.0) + 1.0) / log10(b));
 }
 
-static __inline float gam2lin(double i, double p)
+static inline float gam2lin(double i, double p)
 {
     // New gamma curve has a linear extension in the negative values
     return (float)((i >= 0.0) ? pow(i, p) : i / (100.0 * pow(0.01, (1.0 / p))));
 }
 
-static __inline float lin2gam(double i, double p)
+static inline float lin2gam(double i, double p)
 {
     double exponent = (float)(1.0 / p);
 
@@ -151,7 +151,7 @@ static __inline float lin2gam(double i, double p)
     return (float)((i >= 0.0) ? pow(i, exponent) : i * 100.0 * pow(0.01, exponent));
 }
 
-static __inline float calc_contrast(double i, double cntrst)
+static inline float calc_contrast(double i, double cntrst)
 {
     //TODO: Eliminate compiler warnings about conversion of double to float
     double p = cntrst >= 1.0 ? (cntrst - 1.0) * 3.0 + 1.0 : cntrst; //3x to boost the contrast effect
@@ -170,7 +170,7 @@ static __inline float calc_contrast(double i, double cntrst)
 }
 
 //DAN20080904 -- changed the Display gamma math below.
-static __inline float lin2cineon(double i, float p)
+static inline float lin2cineon(double i, float p)
 {
     double black = (pow(10.0, (95.0 / 1023.0 - 685.0 / 1023.0) * 1023.0 * (p / 1.7) * 0.002 / 0.6));
 
@@ -180,7 +180,7 @@ static __inline float lin2cineon(double i, float p)
     return (float)(685.0 / 1023.0 + (float)(log10(i) / ((p / 1.7) * 0.002 / 0.6)) / 1023.0);
 }
 
-static __inline float cineon2lin(double i, float p)
+static inline float cineon2lin(double i, float p)
 {
     double black = (pow(10.0, (95.0 / 1023.0 - 685.0 / 1023.0) * 1023.0 * (p / 1.7) * 0.002 / 0.6));
 
@@ -190,7 +190,7 @@ static __inline float cineon2lin(double i, float p)
 }
 
 //DAN20080904 -- changed the Display gamma math below.
-static __inline float lin2cine985(double i, float p)
+static inline float lin2cine985(double i, float p)
 {
     double black = (pow(10.0, (95.0 / 1023.0 - 985.0 / 1023.0) * 1023.0 * (p / 1.7) * 0.002 / 0.6));
 
@@ -200,7 +200,7 @@ static __inline float lin2cine985(double i, float p)
     return (float)(985.0 / 1023.0 + (float)(log10(i) / ((p / 1.7) * 0.002 / 0.6)) / 1023.0);
 }
 
-static __inline float cine9852lin(double i, float p)
+static inline float cine9852lin(double i, float p)
 {
     if (i < 0.0) i = 0.0;
 
@@ -208,7 +208,7 @@ static __inline float cine9852lin(double i, float p)
 }
 
 //DAN20081011 - Support for Redspace (gain 202, power 4)
-static __inline float para2lin(float i, int gain, int power)
+static inline float para2lin(float i, int gain, int power)
 {
     // = (1-((1-i)^(1/(power*256))))*gain
     if (i >= 1.0)
@@ -217,13 +217,13 @@ static __inline float para2lin(float i, int gain, int power)
         return (float)(1.0 - (float)pow((1.0 - (double)i), (1.0 / ((double)power * 256.0)))) * (float)gain;
 }
 
-static __inline float lin2para(float i, int gain, int power)
+static inline float lin2para(float i, int gain, int power)
 {
     // = (1-((1-i/gain)^(power*256)))
     return (float)(1.0 - (float)(pow((double)(1.0 - i / (float)gain), (double)(power * 256))));
 }
 
-static __inline float cstyle2lin(float i, int flavor)
+static inline float cstyle2lin(float i, int flavor)
 {
     int maxpoint = 20;
     static float points[] =
@@ -272,7 +272,7 @@ static __inline float cstyle2lin(float i, int flavor)
     }
 }
 
-static __inline float lin2cstyle(float i, int flavor)
+static inline float lin2cstyle(float i, int flavor)
 {
     int maxpoint = 20;
     static float points[] =
@@ -321,14 +321,14 @@ static __inline float lin2cstyle(float i, int flavor)
     }
 }
 
-static __inline float slog2lin(float x)
+static inline float slog2lin(float x)
 {
     //S-Log to Linear
     //Y = Power(10.0, ((i - 0.616596 - 0.03) / 0.432699)) - 0.037584
     return (float)(pow(10.0, ((x - 0.616596 - 0.03) / 0.432699)) - 0.037584);
 }
 
-static __inline float lin2slog(float x)
+static inline float lin2slog(float x)
 {
     //Linear to S-log (input i is 0 to 1, supports up to 10.0)
     //y = (0.432699 * Log(i + 0.037584) + 0.616596) + 0.03
@@ -336,7 +336,7 @@ static __inline float lin2slog(float x)
 }
 
 #define LOGCOFFSET 0.00937677
-static __inline float logc2lin(float x)
+static inline float logc2lin(float x)
 {
     //Alexa LogC to Linear
     if (x > 0.1496582)
@@ -345,7 +345,7 @@ static __inline float logc2lin(float x)
         return (float)((x / 0.9661776 - 0.04378604) * 0.18 - LOGCOFFSET);
 }
 
-static __inline float lin2logc(float x)
+static inline float lin2logc(float x)
 {
     //Alexa Linear to LogC
     if (x > 0.02 - LOGCOFFSET)

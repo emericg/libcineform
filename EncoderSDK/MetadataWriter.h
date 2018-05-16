@@ -31,8 +31,15 @@ class CSampleMetadata;
 
 class CSampleEncodeMetadata
 {
-public:
+    //IMemAlloc *m_allocator;
+    CFHD_ALLOCATOR *m_allocator;
 
+    // The destructor should release the allocator if it is private
+    //bool m_privateAllocatorFlag;
+
+    //TODO: Move the private allocator flag into the allocator class
+
+public:
     CSampleEncodeMetadata() :
         m_allocator(NULL),
         //m_privateAllocatorFlag(false),//(true),
@@ -153,7 +160,6 @@ public:
         return CFHD_ERROR_OKAY;
     }
 
-
     CFHD_Error AddGUID();
     CFHD_Error AddLookFile(METADATA_TYPE type, METADATA_SIZE size, uint32_t *data);
     CFHD_Error AddTimeStamp(const char *date, const char *time);
@@ -179,16 +185,5 @@ public:
     CFHD_Error AttachMetadata(CSampleMetadata *metadata);
 
 protected:
-
     static void ReleaseMetadata(METADATA *metadata);
-
-private:
-
-    //IMemAlloc *m_allocator;
-    CFHD_ALLOCATOR *m_allocator;
-
-    // The destructor should release the allocator if it is private
-    //bool m_privateAllocatorFlag;
-
-    //TODO: Move the private allocator flag into the allocator class
 };

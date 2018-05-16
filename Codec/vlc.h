@@ -24,10 +24,6 @@
 
 #include "bitstream.h"
 
-//#ifndef _FSM
-#define _FSM	1
-//#endif
-
 #ifndef _COMPANDING
 #define _COMPANDING		1
 #define _COMPANDING_MORE	(54) // zero is off, 54 is a good value
@@ -41,9 +37,6 @@
 #define VALUE_TABLE_LENGTH	(1 << VALUE_TABLE_SIZE)
 
 #define	_OLD_FAST_LOOKUP 1		// Use the old fast lookup table algorithms
-
-//TODO: Eliminate use of zero-sized arrays
-//#pragma warning(disable: 4200)
 
 /*
 	The codebook is organized as a vector of variable length code entries

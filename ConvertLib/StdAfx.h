@@ -48,9 +48,4 @@
 #define __STDC_LIMIT_MACROS
 #include <stdint.h>
 
-#if !defined(_WIN32) && !defined(__APPLE__)
-// Use byte swapping functions on Linux
-#include <byteswap.h>
-#endif
-
 #endif

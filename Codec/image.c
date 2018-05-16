@@ -51,15 +51,6 @@
 #define max(x,y)	(((x) > (y)) ? (x) : (y))
 #endif
 
-#ifndef _MAX_PATH
-#define _MAX_PATH 256	// Maximum length of pathname on the Mac
-#endif
-
-//TODO: Replace uses of Windows _MAX_PATH with PATH_MAX
-#ifndef PATH_MAX
-#define PATH_MAX _MAX_PATH
-#endif
-
 // Global Variables
 // Debugging
 
@@ -1733,7 +1724,7 @@ void OutputRGB(unsigned char *outbuffer, IMAGE *waveletY, IMAGE *waveletV, IMAGE
     FILE *file;
     unsigned char *buffer = outbuffer;
 
-    char name[_MAX_PATH];
+    char name[PATH_MAX];
     //int levelshift = 0;
     //int total = 0;
 
@@ -1874,7 +1865,7 @@ void OutputRGB(unsigned char *outbuffer, IMAGE *waveletY, IMAGE *waveletV, IMAGE
                 fwrite(line, 1, output_width * 3, file);
             else
             {
-                //	CopyMemory(buffer, line, output_width*3);
+                //memcpy(buffer, line, output_width*3);
                 buffer += output_width * 3;
             }
 
@@ -1906,7 +1897,7 @@ void DumpPGM(char *label, IMAGE *image, SUBIMAGE *subimage)
     FILE *file;
     int err = 0;
 
-    char name[_MAX_PATH];
+    char name[PATH_MAX];
     int levelshift = 0, min = 40000, max = 0, total = 0;
     float lumashift;
     float lumashift2;
@@ -2037,7 +2028,7 @@ void DumpBandPGM(char *label, IMAGE *wavelet, int band, SUBIMAGE *subimage)
     FILE *file;
     int err = 0;
 
-    char name[_MAX_PATH];
+    char name[PATH_MAX];
     int levelshift = 0;
     int min = PIXEL_MAX;
     int max = PIXEL_MIN;
@@ -2218,7 +2209,7 @@ void DumpBandSignPGM(char *label, IMAGE *wavelet, int band, SUBIMAGE *subimage)
     FILE *file;
     int err = 0;
 
-    char name[_MAX_PATH];
+    char name[PATH_MAX];
     int levelshift = 0;
     int min = PIXEL_MAX;
     int max = PIXEL_MIN;
@@ -3257,7 +3248,7 @@ void DumpWaveletBandsPGM(IMAGE *wavelet, int frame_index, int num_channels)
             static int count = 0;
             if (count < 20)
             {
-                char label[_MAX_PATH];
+                char label[PATH_MAX];
 #ifdef _WIN32
                 sprintf_s(label, sizeof(label), "Frame%dc%db%d-decode-%d-", frame_index, channel, band, count);
 #else

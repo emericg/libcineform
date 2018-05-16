@@ -30,7 +30,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-//#include <atlbase.h> // Required for VS2005 but not 2003
 #elif __APPLE__
 #include <sys/stat.h>		// for _mkdir()
 #include <unistd.h>			// for usleep()
@@ -40,8 +39,6 @@
 #include <unistd.h>			// for usleep()
 #include <xmmintrin.h>
 #endif
-
-#define MAX_PATH	260
 
 #include "codec.h"
 #include "swap.h"
@@ -222,7 +219,7 @@ void GRNREDCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
                + bayerptr[-2] * 1 + bayerptr[0] * 10 + bayerptr[2] * 1
                + bayerptr[+1 * width - 1] * -2 + bayerptr[+1 * width] * 8 + bayerptr[+1 * width + 1] * -2
                + bayerptr[+2 * width] * -2 ) >> 4; //b
-#endif
+#endif // CF_ENHANCE
     }
     *rgbptr++ = SATURATE16(r);
     *rgbptr++ = (g);
@@ -254,7 +251,6 @@ void GRNBLUCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
               + bayerptr[-2] * -2 + bayerptr[-1] * factorB + bayerptr[0] * 10 + bayerptr[1] * factorB + bayerptr[2] * -2
               + bayerptr[+1 * width - 1] * -2 + bayerptr[+1 * width + 1] * -2
               + bayerptr[+2 * width] * 1 ) / (factorB * 2); //b
-
 #else
         r = (( bayerptr[-2 * width] * -2
                + bayerptr[-1 * width - 1] * -2 + bayerptr[-1 * width] * 8 + bayerptr[-1 * width + 1] * -2
@@ -269,7 +265,7 @@ void GRNBLUCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
                + bayerptr[-2] * -2 + bayerptr[-1] * 8 + bayerptr[0] * 10 + bayerptr[1] * 8 + bayerptr[2] * -2
                + bayerptr[+1 * width - 1] * -2 + bayerptr[+1 * width + 1] * -2
                + bayerptr[+2 * width] * 1 ) >> 4; //b
-#endif
+#endif // CF_ENHANCE
     }
 
     *rgbptr++ = SATURATE16(r);
@@ -316,8 +312,7 @@ void BLUCELL(unsigned short *rgbptr, unsigned short *bayerptr, int width)
                + bayerptr[+2 * width] * -1 ) >> 3; //g
 
         b =  bayerptr[0]; //b
-#endif
-
+#endif // CF_ENHANCE
     }
 
     *rgbptr++ = SATURATE16(r);
@@ -434,7 +429,6 @@ void FastVignetteInplaceWP13(DECODER *decoder, int displayWidth, int width, int 
     ypos *= ypos;
     r1 *= r1;
     r2 *= r2;
-
 
 
     xinner = (width / 2) - (int)((float)(width / 2) * r1);

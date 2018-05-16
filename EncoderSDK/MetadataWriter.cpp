@@ -286,8 +286,6 @@ uint32_t ValidateLookGenCRCEnc(char *path)
                 } while (pos < len - 16 && !finished);
             }
 
-
-
             //	printf("len = %d\n", len);
         } while (len > 0 && !finished);
 
@@ -297,11 +295,6 @@ uint32_t ValidateLookGenCRCEnc(char *path)
         {
             // valid 3D LUT
             crc = look_calc_crc((unsigned char *)LUT, entries * 4);
-            //char fullpath[MAX_PATH];
-            //if(0 == ::GetLongPathName(path, fullpath, MAX_PATH))
-            //	strcat(fullpath, path);
-
-            //GenerateLUTfile(crc, LUT, size, fullpath);
         }
 
         free(LUT);
@@ -357,29 +350,6 @@ CFHD_Error CSampleEncodeMetadata::AddLookFile(METADATA_TYPE ctype,
         _splitpath_s((char *)data, drive, _MAX_DRIVE, dir, _MAX_DIR, fname, _MAX_FNAME, ext, _MAX_EXT);
         _makepath_s(filename, sizeof(filename), NULL, NULL, fname, ext);
         filenamelen = strlen(filename);
-
-#elif __APPLE_REMOVE__
-
-        char filename[260] = {0};
-        size_t filenamelen = 0;
-
-        CFStringRef cfPath;
-        CFURLRef url;
-
-        cfPath = CFStringCreateWithCString(kCFAllocatorDefault, (char *)data, kCFStringEncodingASCII);
-        url = CFURLCreateWithString(NULL, cfPath, NULL);
-        if (url)
-        {
-            CFStringRef lastPathComponent = CFURLCopyLastPathComponent(url);
-            if (lastPathComponent)
-            {
-                filenamelen = CFStringGetLength(lastPathComponent);
-                CFStringGetCString(lastPathComponent, filename, filenamelen + 1, kCFStringEncodingASCII);
-                CFRelease(lastPathComponent);
-            }
-            CFRelease(url);
-        }
-
 #else
         char *filename = basename((char *)data);
         size_t filenamelen = strlen(filename);

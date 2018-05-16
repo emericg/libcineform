@@ -86,19 +86,12 @@
 //#define SATURATE8S(x)		SATURATE_8S(x)
 //#define SATURATE(x) (x)
 
-// Enable or disable function inlining
-#if 1	//DEBUG
-#define inline
-#else
-#define inline __forceinline
-#endif
 
 // Pixel size used for computing the compression ratio
 #define BITS_PER_PIXEL 8
 
 // Default processor capabilities
 #define DEFAULT_FEATURES (_CPU_FEATURE_MMX )
-
 
 
 // Macros for the finite state machine decoder

@@ -85,7 +85,7 @@ COUNTER putzerorun_count = COUNTER_INITIALIZER;			// Number of calls to PutZeroR
 #ifdef _WIN32
 // Clock frequency of the high-resolution timer for performance measurements.
 // Zero means that the timers have not been initialized or are not available.
-__int64 frequency = 0;
+int64_t frequency = 0;
 #else
 // Timebase for the absolute timer on the Macintosh
 struct mach_timebase_info timebase = {0, 0};
@@ -95,14 +95,14 @@ struct mach_timebase_info timebase = {0, 0};
 // Counters that are defined elsewhere
 
 
-BOOL InitTiming(void)
+bool InitTiming(void)
 {
 #ifdef _WIN32
     // Get the clock frequency
     if (!QueryPerformanceFrequency((LARGE_INTEGER *)&frequency))
     {
         assert(0);
-        return FALSE;
+        return false;
     }
 #else
     // Get the timebase of the absolute timer
@@ -144,7 +144,7 @@ BOOL InitTiming(void)
     putvlcbyte_count = 0;
     putzerorun_count = 0;
 
-    return TRUE;
+    return true;
 }
 
 void StartTimer(TIMER *timer)

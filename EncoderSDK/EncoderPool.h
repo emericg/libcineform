@@ -29,7 +29,6 @@
 class AsyncEncoderList : public std::vector<CAsyncEncoder *>
 {
 public:
-
     AsyncEncoderList(size_t length, CEncoderPool *pool, CFHD_ALLOCATOR *allocator = NULL)
     {
         for (size_t index = 0; index < length; index++)
@@ -79,13 +78,41 @@ public:
 */
 class CEncoderPool
 {
-protected:
+    //! Most recent error encountered by the encoder pool
+    CFHD_Error error;
 
-    //typedef std::vector<CAsyncEncoder> EncoderPool;
-    //typedef EncoderPool::iterator EncoderPoolIterator;
+    //! Queue of input frames and encoded samples in decode order
+    EncoderJobQueue m_encoderJobQueue;
+
+    //! Pool of asynchronous encoders that can encode samples concurrently
+    //std::vector<CAsyncEncoder> m_encoderPool;
+    //EncoderList m_encoderPool;
+    AsyncEncoderList m_encoderList;
+
+    //! True if the worker threads in the asynchronous encoders are running
+    bool m_encodingStarted;
+
+    //! Index of the next asynchronous encoder in the pool for assigning jobs
+    size_t m_encoderIndex;
+
+    //! Metadata attached to this encoder pool
+    CSampleEncodeMetadata *m_encoderMetadata;
+
+    //! Timebase for converting timecode to frame number
+    int m_timecodeBase;
+
+    //! Frame number corresponding to the timecode of the previous frame
+    int32_t m_timecodeFrame;
+
+    //! Unique frame number for each encoded sample
+    int32_t m_uniqueFrameID;
+
+    // To change the quality of encoding on the fly.
+    CFHD_EncodingQuality m_nextFrameQuality;
+
+    CFHD_ALLOCATOR *m_allocator;
 
 public:
-
     CEncoderPool(size_t encoderThreadCount,
                  size_t encoderJobQueueSize,
                  CFHD_ALLOCATOR *allocator = NULL);
@@ -152,46 +179,12 @@ public:
     }
 
 protected:
-
     //! Prepare the metadata for encoding the next frame
     CSampleEncodeMetadata *PrepareMetadata(CSampleEncodeMetadata *encoderMetadata = NULL);
 
     //! Add the frame metadata requried by every encoded sample
     CFHD_Error UpdateMetadata();
 
-private:
-
-    //! Most recent error encountered by the encoder pool
-    CFHD_Error error;
-
-    //! Queue of input frames and encoded samples in decode order
-    EncoderJobQueue m_encoderJobQueue;
-
-    //! Pool of asynchronous encoders that can encode samples concurrently
-    //std::vector<CAsyncEncoder> m_encoderPool;
-    //EncoderList m_encoderPool;
-    AsyncEncoderList m_encoderList;
-
-    //! True if the worker threads in the asynchronous encoders are running
-    bool m_encodingStarted;
-
-    //! Index of the next asynchronous encoder in the pool for assigning jobs
-    size_t m_encoderIndex;
-
-    //! Metadata attached to this encoder pool
-    CSampleEncodeMetadata *m_encoderMetadata;
-
-    //! Timebase for converting timecode to frame number
-    int m_timecodeBase;
-
-    //! Frame number corresponding to the timecode of the previous frame
-    int32_t m_timecodeFrame;
-
-    //! Unique frame number for each encoded sample
-    int32_t m_uniqueFrameID;
-
-    // To change the quality of encoding on the fly.
-    CFHD_EncodingQuality m_nextFrameQuality;
-
-    CFHD_ALLOCATOR *m_allocator;
+    //typedef std::vector<CAsyncEncoder> EncoderPool;
+    //typedef EncoderPool::iterator EncoderPoolIterator;
 };

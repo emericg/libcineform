@@ -1,40 +1,29 @@
-/*! @file config.h
+/*!
+ * @file config.h
+ * @brief
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-*  @brief
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
-
-#ifndef _CONFIG_H
-#define _CONFIG_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #include <stdlib.h>
 
 #ifdef _WIN32
 #ifndef DEBUG_ALLOCS
 #define DEBUG_ALLOCS	1
-#endif
-
-#ifndef FORCEINLINE
-#define FORCEINLINE __forceinline
-#endif
-#else
-#ifndef FORCEINLINE
-#define FORCEINLINE __inline__
 #endif
 #endif
 
@@ -65,29 +54,12 @@
 #endif
 #endif
 
-// Disable use of Intel Performance Primitives
-#ifndef _IPPLIB
-#define _IPPLIB 0
-#endif
-
 // Run length encode zero runs within the frame transform.
 #define _PACK_RUNS_IN_BAND_16S	0
 
-// Do not use Posix routines by default
-//#ifndef _POSIX
-//#define _POSIX 0
-//#endif
-
-//TODO: Replace Windows datatypes with Standard C datatypes
 #include <stdint.h>
 #include <stdbool.h>
-
-// Use the standard definition for the maximum length of a pathname
-#ifdef _WIN32
-#ifndef PATH_MAX
-#define PATH_MAX _MAX_PATH
-#endif
-#endif
+#include <limits.h>
 
 // Parameters of the default cache line size
 #define _CACHE_LINE_SIZE		64
@@ -248,6 +220,7 @@ static void *malloc22(size_t size, size_t align)
 }
 #endif
 
+#define	BAYER_SUPPORT 1
 
 #ifndef _THREADED
 #define _THREADED	1		// Switch for threading that is implemented on both Windows and Macintosh
@@ -297,5 +270,4 @@ static void *malloc22(size_t size, size_t align)
 #define	_NODITHER	0
 #endif
 
-
-#endif
+#endif // CONFIG_H

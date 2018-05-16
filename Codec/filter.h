@@ -123,7 +123,7 @@ extern "C" {
 #if 0
 
 // Divide a signed number using arithmetic right shift
-static __inline int32_t DivideByShift(int32_t x, int shift)
+static inline int32_t DivideByShift(int32_t x, int shift)
 {
 #if 1
     int quotient;

@@ -39,12 +39,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#elif __APPLE__
-#include "macdefs.h"
-#else
-#ifndef ZeroMemory
-#define ZeroMemory(p,s)		memset(p,0,s)
-#endif
 #endif
 
 #include <stdio.h>
@@ -127,13 +121,6 @@ extern void FastSharpeningBlurVW13A(short *Aptr,
 #define SATURATE8S(x)		(assert(PIXEL8S_MIN <= (x) && (x) <= PIXEL8S_MAX), (x))
 //#define SATURATE8S(x)		SATURATE_8S(x)
 //#define SATURATE(x) (x)
-
-// Enable or disable function inlining
-#if 1	//DEBUG
-#define inline
-#else
-#define inline __forceinline
-#endif
 
 // Pixel size used for computing the compression ratio
 #define BITS_PER_PIXEL 8
@@ -714,7 +701,7 @@ void ClearDecoder(DECODER *decoder)
         // Free all handles used by the worker threads
         for (i = 0; i < THREADS_IN_LAST_WAVELET; i++)
         {
-            WaitForSingleObject(decoder->interlaced_worker.handle[i], INFINITE); //JY20080307
+            WaitForSingleObject(decoder->interlaced_worker.handle[i], UINT32_MAX); //JY20080307
 
             CloseHandle(decoder->interlaced_worker.handle[i]);
             CloseHandle(decoder->interlaced_worker.start_event[i]);
@@ -10419,7 +10406,7 @@ bool DecodeSampleGroup(DECODER *decoder, BITSTREAM *input, uint8_t *output, int 
                     int static count = 0;
                     if (count < 20)
                     {
-                        char label[_MAX_PATH];
+                        char label[PATH_MAX];
                         sprintf(label, "Temporal-decode-%d-", count);
                         DumpBandPGM(label, wavelet, HIGHPASS_BAND, NULL);
                     }
@@ -10493,7 +10480,7 @@ decoding_complete:
 #if (0 && DEBUG)
     if (logfile)
     {
-        char label[_MAX_PATH];
+        char label[PATH_MAX];
         int channel;
 
         for (channel = 0; channel < codec->num_channels; channel++)
@@ -10517,7 +10504,7 @@ decoding_complete:
             }
 
             assert(size > 0);
-            ZeroMemory(data, size);
+            memset(data, 0, size);
         }
     }
 #endif
@@ -10829,7 +10816,7 @@ bool DecodeSampleIntraFrame(DECODER *decoder, BITSTREAM *input, uint8_t *output,
 #if (0 && DEBUG)
                     if (logfile)
                     {
-                        char label[_MAX_PATH];
+                        char label[PATH_MAX];
                         int band;
 
                         sprintf(label, "Channel: %d, index: %d", channel, wavelet_index);
@@ -11253,7 +11240,7 @@ bool DecodeSampleSubband(DECODER *decoder, BITSTREAM *input, int subband)
 #if (0 && DEBUG)
         if (logfile)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             int band;
 
             sprintf(label, "Channel: %d, index: %d", channel, index);
@@ -11965,7 +11952,7 @@ bool DecodeBand16s(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet,
         int static count = 0;
         if (count < 20)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             sprintf(label, "Hightemp-decode-%d-", count);
             DumpBandPGM(label, wavelet, band_index, NULL);
         }
@@ -13184,7 +13171,7 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
 #if (0 && DEBUG)
                             if (logfile)
                             {
-                                char label[_MAX_PATH];
+                                char label[PATH_MAX];
                                 char *format = decoded_format_string[info->format];
                                 sprintf(label, "Output, channel: %d, format: %s", channel, format);
                                 DumpImageStatistics(label, lowpass_images[channel], logfile);
@@ -13195,7 +13182,7 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
                         STOP(tk_inverse);
 
 
-#if 1 //|| BAYER_SUPPORT
+#if BAYER_SUPPORT
                         if (decoder->codec.encoded_format == ENCODED_FORMAT_BAYER)
                         {
 #if _THREADED
@@ -13459,7 +13446,7 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
 #if (0 && DEBUG)
                         if (logfile)
                         {
-                            char label[_MAX_PATH];
+                            char label[PATH_MAX];
                             int width = info->width;
                             int height = info->height;
 
@@ -20588,7 +20575,7 @@ void TransformInverseFrameToYUV(TRANSFORM *transform[], int frame_index, int num
         int static count = 0;
         if (count < 20)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             int i;
 
             sprintf(label, "Frame%d-%d-", frame_index, count);
@@ -20801,7 +20788,7 @@ void TransformInverseFrameSectionToYUV(DECODER *decoder, int thread_index, int f
         int static count = 0;
         if (count < 20)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             int i;
 
             sprintf(label, "Frame%d-%d-", frame_index, count);
@@ -21147,7 +21134,7 @@ void TransformInverseFrameToRow16u(DECODER *decoder, TRANSFORM *transform[], int
         int static count = 0;
         if (count < 20)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             int i;
 
             sprintf(label, "Frame%d-%d-", frame_index, count);
@@ -21223,7 +21210,7 @@ void TransformInverseFrameToRow16u(DECODER *decoder, TRANSFORM *transform[], int
             }
 
             //***DEBUG***
-            //ZeroMemory(temporal_highpass, temporal_row_size);
+            //memset(temporal_highpass, 0, temporal_row_size);
             //FillPixelMemory(temporal_highpass, temporal_row_size/sizeof(PIXEL), 50);
 
             // Advance to the next row in each horizontal band in this channel
@@ -21249,8 +21236,8 @@ void TransformInverseFrameToRow16u(DECODER *decoder, TRANSFORM *transform[], int
                 uint8_t *output4 = (uint8_t *)output3 + planar_pitch[channel];
                 int output_size = output_row_width[channel] * sizeof(PIXEL);
                 int fill_value = (128 << 8);
-                //ZeroMemory(output3, output_size);
-                //ZeroMemory(output4, output_size);
+                //memset(output3, 0, output_size);
+                //memset(output4, 0, output_size);
                 FillPixelMemory((PIXEL *)output3, output_row_width[channel], fill_value);
                 FillPixelMemory((PIXEL *)output4, output_row_width[channel], fill_value);
             }
@@ -21378,7 +21365,7 @@ void TransformInverseFrameSectionToRow16u(DECODER *decoder, int thread_index, in
         int static count = 0;
         if (count < 20)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             int i;
 
             sprintf(label, "Frame%d-%d-", frame_index, count);
@@ -23279,7 +23266,7 @@ void TransformInverseFrameThreadedToYUV(DECODER *decoder, int frame_index, int n
     }
 
     // Wait for both worker threads to finish
-    WaitForMultipleObjects(THREADS_IN_LAST_WAVELET, decoder->interlaced_worker.done_event, true, INFINITE);
+    WaitForMultipleObjects(THREADS_IN_LAST_WAVELET, decoder->interlaced_worker.done_event, true, UINT32_MAX);
 }
 
 void TransformInverseFrameThreadedToRow16u(DECODER *decoder, int frame_index, int num_channels,
@@ -23315,7 +23302,7 @@ void TransformInverseFrameThreadedToRow16u(DECODER *decoder, int frame_index, in
     }
 
     // Wait for both worker threads to finish
-    WaitForMultipleObjects(THREADS_IN_LAST_WAVELET, decoder->interlaced_worker.done_event, true, INFINITE);
+    WaitForMultipleObjects(THREADS_IN_LAST_WAVELET, decoder->interlaced_worker.done_event, true, UINT32_MAX);
 }
 
 
@@ -23366,7 +23353,7 @@ DWORD WINAPI InterlacedWorkerThreadProc(LPVOID lpParam)
     for (;;)
     {
         // Wait for the signal to begin processing a transform
-        dwReturnValue = WaitForMultipleObjects(2, hObjects, false, INFINITE);
+        dwReturnValue = WaitForMultipleObjects(2, hObjects, false, UINT32_MAX);
 
         // Received a signal to begin inverse transform processing?
         if (dwReturnValue == WAIT_OBJECT_0)
@@ -24918,7 +24905,7 @@ CODEC_ERROR ReconstructSampleFrameBayerHalfToBuffer(DECODER *decoder, FRAME_INFO
 #if (0 && DEBUG)
         if (logfile)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             char *format = decoded_format_string[info->format];
             sprintf(label, "Output, channel: %d, format: %s", channel, format);
             DumpImageStatistics(label, lowpass_images[channel], logfile);
@@ -26710,7 +26697,6 @@ uint8_t *GetTupletAddr(uint8_t *data,
 
     do
     {
-        //BOOL optional = FALSE;
         bool optional = false;
         int chunksize = 0;
 
@@ -26725,7 +26711,6 @@ uint8_t *GetTupletAddr(uint8_t *data,
         if (tag < 0)
         {
             tag = NEG(tag);
-            //optional = TRUE;
             optional = true;
         }
 

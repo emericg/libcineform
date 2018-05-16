@@ -26,7 +26,7 @@
 
 #include "ConvertLib.h"
 
-#if _WIN32
+#if _MSVC_VER
 
 #if !defined(_OPENMP)
 // Turn off warnings about the Open MP pragmas
@@ -36,7 +36,7 @@
 //TODO: Eliminate warnings about loss of precision in double to float conversion
 #pragma warning(disable: 4244 4305)
 
-#endif
+#endif // _MSVC_VER
 
 #ifndef NEG
 #define NEG(x)	(-(x))

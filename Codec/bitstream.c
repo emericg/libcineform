@@ -100,7 +100,6 @@ void InitBitstream(BITSTREAM *stream)
     // Assume that the bitstream is four byte aligned within the sample
     stream->alignment = 0;
 
-
     {
         int i;
         for (i = 0; i < NESTING_LEVELS; i++)
@@ -224,7 +223,7 @@ uint8_t  GetWord(BITSTREAM *stream)
         {
 #ifdef _WIN32
             // Read a block from the file
-            BOOL bReadOkay = ReadFile(stream->file, stream->block, stream->dwBlockLength, &stream->nWordsUsed, NULL);
+            bool bReadOkay = ReadFile(stream->file, stream->block, stream->dwBlockLength, &stream->nWordsUsed, NULL);
 
             // Check that the block was read correctly
             assert(bReadOkay && stream->nWordsUsed > 0);

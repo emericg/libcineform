@@ -73,8 +73,8 @@ struct EncoderJob
         frameBuffer(NULL),
         framePitch(0),
         keyFrame(true),
-        sampleBuffer(NULL),
-        encoderMetadata(NULL)
+        encoderMetadata(NULL),
+        sampleBuffer(NULL)
     {
     }
 
@@ -89,10 +89,10 @@ struct EncoderJob
         frameNumber(frameNumber),
         frameBuffer(frameBuffer),
         framePitch(framePitch),
-        frameQuality(frameQuality),
         keyFrame(keyFrame),
-        sampleBuffer(NULL),
-        encoderMetadata(encoderMetadata)
+        frameQuality(frameQuality),
+        encoderMetadata(encoderMetadata),
+        sampleBuffer(NULL)
     {
     }
 
@@ -197,10 +197,10 @@ public:
     int Wait()
     {
         // Wait for the semaphore indefinitely
-        return WaitForSingleObject(handle, INFINITE);
+        return WaitForSingleObject(handle, UINT32_MAX);
     }
 
-    int Release(LONG amount = 1)
+    int Release(long amount = 1)
     {
         ReleaseSemaphore(handle, amount, NULL);
         return 0;
@@ -210,7 +210,7 @@ private:
 
     HANDLE handle;
 
-#else
+#else // _WIN32
 
 public:
 
@@ -272,8 +272,7 @@ private:
     pthread_cond_t cond;
     size_t count;
 
-#endif
-
+#endif // _WIN32
 };
 
 /*!
@@ -282,13 +281,10 @@ private:
 class EncoderJobQueue
 {
 protected:
-
     typedef std::deque<EncoderJob *> JobQueue;
-
     static const size_t DEFAULT_QUEUE_LENGTH = 1024;
 
 public:
-
     EncoderJobQueue(size_t length) :
         available(length)
     {
@@ -487,7 +483,6 @@ public:
     }
 
 private:
-
     EncoderJob *encoderJob;
 };
 

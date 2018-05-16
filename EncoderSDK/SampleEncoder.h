@@ -25,6 +25,71 @@ typedef struct encoder ENCODER;
 
 class CSampleEncoder
 {
+    //IMemAlloc *m_allocator;
+    CFHD_ALLOCATOR *m_allocator;
+
+    // The destructor should release the allocator if it is private
+    //bool m_privateAllocatorFlag;
+
+    FILE *m_logfile;
+    ENCODER *m_encoder;
+
+    TRANSFORM *m_transformArray[TRANSFORM_MAX_CHANNELS];
+
+    int m_inputWidth;					//!< Width of the input frames
+    int m_inputHeight;					//!< Height of the input frames
+    CFHD_PixelFormat m_inputFormat;		//!< Input pixel format
+    CFHD_EncodingFlags m_encodingFlags;	//!< buffer allocation flags
+
+    int m_encodedWidth;					//!< Encoded frame width
+    int m_encodedHeight;				//!< Encoded frame height
+
+    int m_channelCount;					//!< Number of channels
+
+    bool m_interlacedSource;			//!< Interlaced video source?
+
+    bool m_chromaFullRes;				//!< Chroma sampled at full resolution?
+
+    int m_gopLength;					//!< Length of the group of pictures
+
+    //! Quality of the encoding
+    CFHD_EncodingQuality m_encodingQuality;
+
+    //! Encoded bitrate
+    CFHD_EncodingBitrate m_encodingBitrate;
+
+    void *m_scratchBuffer;				//!< Scratch buffer used during encoding
+    size_t m_scratchBufferSize;			//!< Size of the scratch buffer (in bytes)
+
+    float m_frameRate;					//!< Frame rate
+
+    //TODO: Change the frame rate to be a ration of cononical integers
+
+    // The decoded format code as used internally by the codec
+    //DECODED_FORMAT m_decodedFormat;
+
+    // The decoded resolution must match the ratio between the encoded and decoded dimensions
+    //DECODED_RESOLUTION m_decodedResolution;
+
+#if 0
+    void *m_sampleBuffer;
+    size_t m_sampleBufferSize;
+    size_t m_sampleBufferSizeReturned;
+#else
+    CSampleBuffer *m_sampleBuffer;
+#endif
+
+    //uint32_t *m_metadataGlobal;
+    //size_t m_metadataGlobalSize;
+    //uint32_t *m_metadataLocal;
+    //size_t m_metadataLocalSize;
+    METADATA global[5]; // 0-both, 1-left, 2-right, 3-diffLeft, 4-diffRight
+    METADATA local;
+
+    int32_t m_last_unique_frame;
+    int32_t m_last_timecode_base;
+    int32_t m_last_timecode_frame;
+
 public:
     CSampleEncoder() :
         m_allocator(NULL),
@@ -34,6 +99,7 @@ public:
         m_inputWidth(0),
         m_inputHeight(0),
         m_inputFormat(CFHD_PIXEL_FORMAT_UNKNOWN),
+        m_encodingFlags(CFHD_ENCODING_FLAGS_NONE),
         m_encodedWidth(0),
         m_encodedHeight(0),
         m_channelCount(0),
@@ -44,12 +110,12 @@ public:
         m_encodingBitrate(0),
         m_scratchBuffer(NULL),
         m_scratchBufferSize(0),
+        m_frameRate(0.0),
         m_sampleBuffer(NULL),
 #if 0
         m_sampleBufferSize(0),
         m_sampleBufferSizeReturned(0),
 #endif
-        m_frameRate(0.0),
         //m_metadataGlobal(NULL),
         //m_metadataGlobalSize(0),
         //m_metadataLocal(NULL),
@@ -79,6 +145,7 @@ public:
         m_inputWidth(0),
         m_inputHeight(0),
         m_inputFormat(CFHD_PIXEL_FORMAT_UNKNOWN),
+        m_encodingFlags(CFHD_ENCODING_FLAGS_NONE),
         m_encodedWidth(0),
         m_encodedHeight(0),
         m_channelCount(0),
@@ -89,12 +156,12 @@ public:
         m_encodingBitrate(0),
         m_scratchBuffer(NULL),
         m_scratchBufferSize(0),
+        m_frameRate(0.0),
         m_sampleBuffer(NULL),
 #if 0
         m_sampleBufferSize(0),
         m_sampleBufferSizeReturned(0),
 #endif
-        m_frameRate(0.0),
         //m_metadataGlobal(NULL),
         //m_metadataGlobalSize(0),
         //m_metadataLocal(NULL),
@@ -352,72 +419,4 @@ protected:
 
     // Convert the four character code to the color format used by the encoder
     COLOR_FORMAT EncoderColorFormat(CFHD_PixelFormat pixelFormat);
-
-private:
-
-    //IMemAlloc *m_allocator;
-    CFHD_ALLOCATOR *m_allocator;
-
-    // The destructor should release the allocator if it is private
-    //bool m_privateAllocatorFlag;
-
-    FILE *m_logfile;
-    ENCODER *m_encoder;
-
-    TRANSFORM *m_transformArray[TRANSFORM_MAX_CHANNELS];
-
-    int m_inputWidth;					//!< Width of the input frames
-    int m_inputHeight;					//!< Height of the input frames
-    CFHD_PixelFormat m_inputFormat;		//!< Input pixel format
-    CFHD_EncodingFlags m_encodingFlags;	//!< buffer allocation flags
-
-    int m_encodedWidth;					//!< Encoded frame width
-    int m_encodedHeight;				//!< Encoded frame height
-
-    int m_channelCount;					//!< Number of channels
-
-    bool m_interlacedSource;			//!< Interlaced video source?
-
-    bool m_chromaFullRes;				//!< Chroma sampled at full resolution?
-
-    int m_gopLength;					//!< Length of the group of pictures
-
-    //! Quality of the encoding
-    CFHD_EncodingQuality m_encodingQuality;
-
-    //! Encoded bitrate
-    CFHD_EncodingBitrate m_encodingBitrate;
-
-    void *m_scratchBuffer;				//!< Scratch buffer used during encoding
-    size_t m_scratchBufferSize;			//!< Size of the scratch buffer (in bytes)
-
-    float m_frameRate;					//!< Frame rate
-
-    //TODO: Change the frame rate to be a ration of cononical integers
-
-    // The decoded format code as used internally by the codec
-    //DECODED_FORMAT m_decodedFormat;
-
-    // The decoded resolution must match the ratio between the encoded and decoded dimensions
-    //DECODED_RESOLUTION m_decodedResolution;
-
-#if 0
-    void *m_sampleBuffer;
-    size_t m_sampleBufferSize;
-    size_t m_sampleBufferSizeReturned;
-#else
-    CSampleBuffer *m_sampleBuffer;
-#endif
-
-    //uint32_t *m_metadataGlobal;
-    //size_t m_metadataGlobalSize;
-    //uint32_t *m_metadataLocal;
-    //size_t m_metadataLocalSize;
-    METADATA global[5]; // 0-both, 1-left, 2-right, 3-diffLeft, 4-diffRight
-    METADATA local;
-
-
-    int32_t m_last_unique_frame;
-    int32_t m_last_timecode_base;
-    int32_t m_last_timecode_frame;
 };

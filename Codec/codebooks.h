@@ -138,7 +138,7 @@ void PrintFastLookupTable(FILE *logfile, FLCBOOK *fastbook);
 void PrintValueCodebook(FILE *logfile, VALBOOK *codebook);
 
 // Routine for testing a code set
-BOOL TestCodeSet(CODESET *cs);
+bool TestCodeSet(CODESET *cs);
 
 #endif
 

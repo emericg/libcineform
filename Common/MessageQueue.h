@@ -52,7 +52,7 @@ public:
         if (handle)
         {
             // Wait for the semaphore indefinitely
-            DWORD result = WaitForSingleObject(handle, INFINITE);
+            DWORD result = WaitForSingleObject(handle, UINT32_MAX);
             return result == WAIT_OBJECT_0;
         }
         //return WAIT_ABANDONED;
@@ -64,7 +64,7 @@ public:
         if (handle)
         {
             long count;
-            BOOL result = ReleaseSemaphore(handle, 1, &count);
+            bool result = ReleaseSemaphore(handle, 1, &count);
             assert(result);
             return result != 0;
         }

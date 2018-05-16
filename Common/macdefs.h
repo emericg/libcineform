@@ -19,23 +19,8 @@
 *
 */
 
-#ifndef _MACDEFS_H
-#define _MACDEFS_H
-
-
-// Override symbols used in Windows programming
-
-#ifdef WINAPI
-#undef WINAPI
-#endif
-
-#define WINAPI
-
-#ifndef _MAX_PATH
-#define _MAX_PATH	256
-#endif
-
-#define	BAYER_SUPPORT 1
+#ifndef MACDEFS_H
+#define MACDEFS_H
 
 // Define data types used in the codec that are not defined on the Macintosh
 
@@ -45,88 +30,10 @@ typedef unsigned char *LPBYTE;
 
 typedef unsigned short WORD;
 
-typedef long LONG;
 typedef unsigned long DWORD;
 typedef unsigned long ULONG;
 
-typedef void VOID;
 typedef void *HANDLE;
 typedef void *LPVOID;
 
-typedef long long __int64;
-
-typedef char INT8;
-typedef unsigned char UINT8;
-
-typedef short INT16;
-typedef unsigned short UINT16;
-
-typedef long INT32;
-typedef unsigned long UINT32;
-
-typedef unsigned long FOURCC;
-
-#ifndef _OBJC_OBJC_H_
-typedef int BOOL;
-#endif
-
-//enum {FALSE = 0, TRUE = 1};
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#define INFINITE	0xFFFFFFFF		// Infinite timeout
-
-#define CopyMemory(dst, src, length)		memcpy(dst, src, length)
-#define ZeroMemory(dst, length)				memset(dst, 0, length)
-
-#if defined(HRESULT)
-#undef HRESULT
-typedef int32_t HRESULT;
-#endif
-
-#if !defined(FAILED)
-#define FAILED(hr) (((HRESULT)(hr)) < 0)
-#endif
-
-#if !defined(SUCCEEDED)
-#define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
-#endif
-
-#if !defined(_HRESULT_TYPEDEF)
-#define _HRESULT_TYPEDEF_(_sc) ((HRESULT)_sc)
-#endif
-
-#if !defined(E_UNEXPECTED)
-#define E_UNEXPECTED		_HRESULT_TYPEDEF_(0x8000FFFFL)
-#endif
-
-#if !defined(E_INVALIDARG)
-#define E_INVALIDARG		_HRESULT_TYPEDEF_(0x80070057L)
-#endif
-
-#if !defined(E_POINTER)
-#define E_POINTER			_HRESULT_TYPEDEF_(0x80004003L)
-#endif
-
-#if !defined(E_FAIL)
-#define E_FAIL				_HRESULT_TYPEDEF_(0x80004005L)
-#endif
-
-#if !defined(E_OUTOFMEMORY)
-#define E_OUTOFMEMORY		_HRESULT_TYPEDEF_(0x8007000EL)
-#endif
-
-#if !defined(S_OK)
-#define S_OK				((HRESULT) 0L)
-#endif
-
-#if !defined(S_FALSE)
-#define S_FALSE				((HRESULT 1L)
-#endif
-
-#endif
+#endif // MACDEFS_H

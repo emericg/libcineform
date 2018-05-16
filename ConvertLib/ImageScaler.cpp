@@ -39,7 +39,7 @@
 
 #define CONVERT_709_TO_601	1
 
-#if _WIN32
+#if _MSVC_VER
 
 #if !defined(_OPENMP)
 // Turn off warnings about the Open MP pragmas
@@ -49,7 +49,7 @@
 //TODO: Eliminate warnings about loss of precision in double to float conversion
 #pragma warning(disable: 4244 4305)
 
-#endif
+#endif // _MSVC_VER
 
 void CLanczosScaler::ComputeRowScaleFactors(short *scaleFactors, int inputWidth, int outputWidth, int lobes = 3)
 {

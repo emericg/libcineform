@@ -32,7 +32,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
-//#include <emmintrin.h>		// SSE2 intrinsics
 
 #ifdef _WIN32
 #include <windows.h>
@@ -53,8 +52,6 @@
 #endif
 
 #ifdef __cplusplus
-
-//#include <string>
 
 #endif
 

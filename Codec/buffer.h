@@ -1,26 +1,22 @@
-/*! @file buffer.h
+/*!
+ * @file buffer.h
+ *
+ *  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ *  Licensed under either:
+ *  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ *  - MIT license, http://opensource.org/licenses/MIT
+ *  at your option.
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
-*  @brief
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
-
-#ifndef _BUFFER_H
-#define _BUFFER_H
+#ifndef BUFFER_H
+#define BUFFER_H
 
 // Use the same structure packing as the Intel C/C++ compiler
 //#pragma pack(push)
@@ -70,4 +66,4 @@ void AlignScratchSpace(SCRATCH *scratch, int alignment);
 }
 #endif
 
-#endif
+#endif // BUFFER_H

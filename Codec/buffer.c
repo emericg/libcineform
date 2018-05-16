@@ -1,33 +1,29 @@
-/*! @file buffer.c
-
-*  @brief
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
+/*!
+ * @file buffer.c
+ *
+ *  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ *  Licensed under either:
+ *  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ *  - MIT license, http://opensource.org/licenses/MIT
+ *  at your option.
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 
 #include <stddef.h>
 #include <assert.h>
+
 #include "buffer.h"
 #include "image.h"
 #include "config.h"
 
-#include <emmintrin.h>			// Intel aligned malloc and free
-
-#include <memory.h>				// Get definition of memset
+#include <emmintrin.h>
+#include <memory.h>
 
 // Initialize a scratch buffer
 void InitScratchBuffer(SCRATCH *scratch, char *base, size_t size)
@@ -122,9 +118,7 @@ void AllocScratchSpace(SCRATCH *scratch, size_t size, void *allocator)
 
     InitScratchBuffer(scratch, buffer, size);
 }
-#endif
 
-#if 0
 // Free all scratch space used for intermediate results
 void ReleaseScratchSpace(SCRATCH *scratch)
 {
@@ -138,7 +132,6 @@ void ReleaseScratchSpace(SCRATCH *scratch)
     // Clear all fields in the scratch space descriptor
     memset(scratch, 0, sizeof(SCRATCH));
 }
-#endif
 
 // Force alignment of the remaining free space
 void AlignScratchSpace(SCRATCH *scratch, int alignment)
@@ -153,3 +146,4 @@ void AlignScratchSpace(SCRATCH *scratch, int alignment)
     // Check that scratch space is properly aligned
     assert(ISALIGNED(scratch->free_ptr, alignment));
 }
+#endif

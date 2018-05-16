@@ -40,11 +40,19 @@ class CEncoderPool;
 */
 class CAsyncEncoder : public CSampleEncoder
 {
-public:
+    //! Encoder pool that manages this asynchronous encoder
+    CEncoderPool *pool;
 
+    //! Queue of control messages and encoding requests
+    CEncoderMessageQueue queue;
+
+    //! Worker thread for this asynchronous encoder
+    CThread thread;
+
+public:
     CAsyncEncoder(CEncoderPool *encoderPool, CFHD_ALLOCATOR *allocator) :
-        pool(encoderPool),
-        CSampleEncoder(allocator)
+        CSampleEncoder(allocator),
+        pool(encoderPool)
     {
     }
 
@@ -109,15 +117,4 @@ protected:
                             bool keyFrame,
                             CSampleEncodeMetadata *encoderMetadata,
                             CFHD_EncodingQuality frameQuality = CFHD_ENCODING_QUALITY_FIXED);
-
-private:
-
-    //! Encoder pool that manages this asynchronous encoder
-    CEncoderPool *pool;
-
-    //! Queue of control messages and encoding requests
-    CEncoderMessageQueue queue;
-
-    //! Worker thread for this asynchronous encoder
-    CThread thread;
 };

@@ -41,10 +41,6 @@
 #endif
 
 
-// Opaque reference to the thread message
-//class CThreadMessage;
-
-
 class CThread
 {
 #ifdef _WIN32
@@ -91,7 +87,7 @@ public:
     CFHD_Error Wait()
     {
         // Wait for the thread to terminate
-        WaitForSingleObject(handle, INFINITE);
+        WaitForSingleObject(handle, UINT32_MAX);
         running = false;
         return CFHD_ERROR_OKAY;
     }
@@ -272,7 +268,7 @@ public:
         if (m_handle != 0)
         {
             // Wait indefinitely for permission to run concurrently
-            return WaitForSingleObject(m_handle, INFINITE);
+            return WaitForSingleObject(m_handle, UINT32_MAX);
         }
         return 0;
     }

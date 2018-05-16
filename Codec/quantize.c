@@ -1862,7 +1862,7 @@ void QuantizeRow16sTo16s(PIXEL *input, PIXEL *output, int length, int divisor)
 // Quantize a row of 16-bit signed coefficients (overwriting the input row) and then
 // encode the coefficients using run lengths and entropy codes for the final output
 void QuantizeRow16sToCoded(ENCODER *encoder, BITSTREAM *stream, PIXEL *input, int length,
-                           int gap, int divisor, int *zero_count_ptr, BOOL output_runs_flag)
+                           int gap, int divisor, int *zero_count_ptr, bool output_runs_flag)
 {
     short multiplier;
     int column;

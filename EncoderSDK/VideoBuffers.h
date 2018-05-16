@@ -35,8 +35,9 @@
 */
 class CGenericBuffer
 {
-protected:
+    CFHD_ALLOCATOR *m_allocator; //!< Memory allocator for the data buffer
 
+protected:
     CGenericBuffer(CFHD_ALLOCATOR *allocator = NULL,
                    size_t size = 0,
                    size_t alignment = 0) :
@@ -73,9 +74,6 @@ protected:
     size_t m_alignment;				//!< Alignment of the allocated buffer
 
 private:
-
-    CFHD_ALLOCATOR *m_allocator;	//!< Memory allocator for the data buffer
-
     void *UnalignedAlloc(size_t size)
     {
 #if _ALLOCATOR
@@ -152,7 +150,6 @@ private:
         _mm_free(block);
 #endif
     }
-
 };
 
 /*!
@@ -330,24 +327,30 @@ private:
 */
 class CFrameBuffer : public CGenericBuffer
 {
-private:
-
     enum
     {
         // Frame buffers must be aligned to a 512-byte boundary (for R3DSDK)
         FRAME_BUFFER_ALIGNMENT = 512,
     };
 
-public:
+protected:
+    size_t m_width;
+    size_t m_height;
+    size_t m_pitch;
+    CFHD_PixelFormat m_format;
 
+    size_t m_offset;
+
+public:
     CFrameBuffer(CFHD_ALLOCATOR *allocator = NULL) :
         CGenericBuffer(allocator),
-        m_offset(0),
         m_width(0),
         m_height(0),
         m_pitch(0),
-        m_format(CFHD_PIXEL_FORMAT_UNKNOWN)
+        m_format(CFHD_PIXEL_FORMAT_UNKNOWN),
+        m_offset(0)
     {
+        //
     }
 
     CFrameBuffer(int width, int height, CFHD_PixelFormat format, size_t offset = 0) :
@@ -518,7 +521,6 @@ public:
     }
 
 protected:
-
     // Return the pixel size of the specified format (in bytes)
     size_t PixelSize(CFHD_PixelFormat format);
 
@@ -528,16 +530,6 @@ protected:
         const size_t mask = 0x0F;
         return ((size + mask) & ~mask);
     }
-
-    //private:
-protected:
-
-    size_t m_width;
-    size_t m_height;
-    size_t m_pitch;
-    CFHD_PixelFormat m_format;
-
-    size_t m_offset;
 };
 
 #if 0

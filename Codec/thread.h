@@ -73,7 +73,7 @@ typedef enum
 
 // Macro for declaring routines in the threads API
 #define THREAD_API(proc) \
-	static __inline THREAD_ERROR proc
+    static inline THREAD_ERROR proc
 
 // Macro for declaring the thread procedure
 #define THREAD_PROC(proc, data) \
@@ -148,7 +148,7 @@ THREAD_API(ThreadDelete)(THREAD *thread)
 
 THREAD_API(ThreadWait)(THREAD *thread)
 {
-    DWORD dwReturnValue = WaitForSingleObject(thread->handle, INFINITE);
+    DWORD dwReturnValue = WaitForSingleObject(thread->handle, UINT32_MAX);
     if (dwReturnValue != WAIT_OBJECT_0)
     {
         return THREAD_ERROR_WAIT_FAILED;
@@ -179,7 +179,7 @@ THREAD_API(SemaDelete)(SEMAPHORE *semaphore)
 THREAD_API(SemaWait)(SEMAPHORE *semaphore)
 {
     // Wait for the semaphore indefinitely
-    DWORD dwReturnValue = WaitForSingleObject(semaphore->handle, INFINITE);
+    DWORD dwReturnValue = WaitForSingleObject(semaphore->handle, UINT32_MAX);
     if (dwReturnValue != WAIT_OBJECT_0)
     {
         return THREAD_ERROR_WAIT_FAILED;
@@ -243,7 +243,7 @@ THREAD_API(EventDelete)(EVENT *event)
 THREAD_API(EventWait)(EVENT *event)
 {
     // Wait for the event to be signalled
-    DWORD dwReturnValue = WaitForSingleObject(event->handle, INFINITE);
+    DWORD dwReturnValue = WaitForSingleObject(event->handle, UINT32_MAX);
     if (dwReturnValue != WAIT_OBJECT_0)
     {
         return THREAD_ERROR_WAIT_FAILED;

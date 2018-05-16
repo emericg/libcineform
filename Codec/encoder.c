@@ -115,11 +115,6 @@ extern COUNTER progressive_encode_count;
 
 #endif
 
-// Use the standard definition for the maximum number of characters in a pathname
-#ifndef PATH_MAX
-#define PATH_MAX MAX_PATH
-#endif
-
 // Local functions
 void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_transforms, BITSTREAM *output);
 void EncodeQuantizedFrameTransform(ENCODER *encoder, TRANSFORM *transform, BITSTREAM *output, int channel);
@@ -1759,7 +1754,7 @@ void EncodeRelease(ENCODER *encoder, TRANSFORM *transform[], int num_transforms,
         if (encoder->frame_thread[i] != INVALID_HANDLE_VALUE)
         {
             // Wait for the thread to finish
-            WaitForSingleObject(encoder->frame_thread[i], INFINITE);
+            WaitForSingleObject(encoder->frame_thread[i], UINT32_MAX);
 
             // Indicate that the thread is no longer active
             encoder->frame_thread[i] = INVALID_HANDLE_VALUE;
@@ -1776,7 +1771,7 @@ void EncodeRelease(ENCODER *encoder, TRANSFORM *transform[], int num_transforms,
             if (encoder->frame_channel_thread[i][j] != INVALID_HANDLE_VALUE)
             {
                 // Wait for the thread to finish
-                WaitForSingleObject(encoder->frame_channel_thread[i][j], INFINITE);
+                WaitForSingleObject(encoder->frame_channel_thread[i][j], UINT32_MAX);
 
                 // Indicate that the thread is no longer active
                 encoder->frame_channel_thread[i][j] = INVALID_HANDLE_VALUE;
@@ -1791,7 +1786,7 @@ void EncodeRelease(ENCODER *encoder, TRANSFORM *transform[], int num_transforms,
         if (encoder->finish_channel_thread[i] != INVALID_HANDLE_VALUE)
         {
             // Wait for the thread to finish
-            WaitForSingleObject(encoder->finish_channel_thread[i], INFINITE);
+            WaitForSingleObject(encoder->finish_channel_thread[i], UINT32_MAX);
 
             // Indicate that the thread is no longer active
             encoder->finish_channel_thread[i] = INVALID_HANDLE_VALUE;
@@ -2845,7 +2840,7 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
 #if (0 && DEBUG)
                     if (logfile)
                     {
-                        char label[_MAX_PATH];
+                        char label[PATH_MAX];
                         int band;
 
                         sprintf(label, "Frame transform, channel: %d", i);
@@ -2866,7 +2861,7 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
                         int static count = 0;
                         if (count < 20)
                         {
-                            char label[_MAX_PATH];
+                            char label[PATH_MAX];
                             sprintf(label, "Frame%dc%db%d-encode-%d-", j, i, k, count);
                             if (k == 0) DumpPGM(label, wavelet, NULL);
                             else DumpBandPGM(label, wavelet, k, NULL);
@@ -2961,7 +2956,7 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
 #if (0 && DEBUG)
                 if (logfile)
                 {
-                    char label[_MAX_PATH];
+                    char label[PATH_MAX];
                     sprintf(label, "Input");
                     DumpBufferStatistics(label, data, width, height, pitch, logfile);
                 }
@@ -3055,7 +3050,7 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
 #if (0 && DEBUG)
                     if (logfile)
                     {
-                        char label[_MAX_PATH];
+                        char label[PATH_MAX];
                         int channel = i;
                         int band;
 
@@ -4151,7 +4146,7 @@ void EncodeLowPassBand(ENCODER *encoder, BITSTREAM *output, IMAGE *wavelet, int 
 
         if (first)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             sprintf(label, "Low%d-", channel);
             DumpPGM(label, wavelet, NULL);
 
@@ -6380,7 +6375,7 @@ void EncodeQuantizedBand16s(ENCODER *encoder, BITSTREAM *stream, IMAGE *wavelet,
         int static count = 0;
         if (count < 20)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             sprintf(label, "Hightemp-encode-%d-", count);
             DumpBandPGM(label, wavelet, band, NULL);
         }
@@ -8071,7 +8066,7 @@ void FinishFieldPlusTransformQuant(ENCODER *encoder, TRANSFORM *transform, int c
 #if (0 && DEBUG)
     if (logfile)
     {
-        char label[_MAX_PATH];
+        char label[PATH_MAX];
         int band;
 
         for (band = 0; band < temporal->num_bands; band++)
@@ -8110,7 +8105,7 @@ void FinishFieldPlusTransformQuant(ENCODER *encoder, TRANSFORM *transform, int c
 #if (0 && DEBUG)
         if (logfile)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             int band;
 
             sprintf(label, "Highpass spatial, channel: %d", channel);
@@ -8180,7 +8175,7 @@ void FinishFieldPlusTransformQuant(ENCODER *encoder, TRANSFORM *transform, int c
 #if (0 && DEBUG)
     if (logfile)
     {
-        char label[_MAX_PATH];
+        char label[PATH_MAX];
         int band;
 
         sprintf(label, "Lowpass spatial, channel: %d", channel);
@@ -8230,7 +8225,7 @@ void FinishFieldPlusTransformQuant(ENCODER *encoder, TRANSFORM *transform, int c
 #if (0 && DEBUG)
     if (logfile)
     {
-        char label[_MAX_PATH];
+        char label[PATH_MAX];
         int band;
 
         sprintf(label, "Lowpass spatial, channel: %d", channel);
@@ -8340,7 +8335,7 @@ void FinishFrameTransformQuant(ENCODER *encoder, TRANSFORM *transform, int chann
 #if (0 && DEBUG)
         if (logfile)
         {
-            char label[_MAX_PATH];
+            char label[PATH_MAX];
             int band;
 
             sprintf(label, "Spatial transform, channel: %d", channel);
@@ -9179,7 +9174,7 @@ bool EncodeSampleThreaded(ENCODER *encoder, uint8_t *data, int width, int height
 #endif
 
 #if 0
-            WaitForMultipleObjects(6, encoder->frame_channel_thread, true, INFINITE);
+            WaitForMultipleObjects(6, encoder->frame_channel_thread, true, UINT32_MAX);
             ComputeGroupTransformQuant(encoder, transform, num_transforms);
 #else
             ComputeGroupTransformQuantThreaded(encoder, transform, num_transforms);
@@ -11368,7 +11363,7 @@ void TransformForwardSpatialYUVPlanarThreaded(ENCODER *encoder, uint8_t *input, 
 
 #if 1
     // Wait for the transform thread to launch the channel threads
-    WaitForSingleObject(thread, INFINITE);
+    WaitForSingleObject(thread, UINT32_MAX);
     encoder->frame_thread[frame_index] = INVALID_HANDLE_VALUE;
 #else
     // Remember the thread that was created to process this frame

@@ -22,10 +22,6 @@
 #ifndef _BITSTREAM_H
 #define _BITSTREAM_H
 
-#ifdef _POSIX
-#undef _POSIX
-#endif
-
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -266,7 +262,6 @@ int GetWord16s(BITSTREAM *stream);
 bool IsValidSegment(BITSTREAM *stream, TAGVALUE segment, TAGWORD tag);
 
 // Does the tag value pair have the specified tag code and value?
-//BOOL IsTagValue(TAGVALUE segment, enum codec_tag tag, TAGWORD value);
 bool IsTagValue(TAGVALUE segment, int tag, TAGWORD value);
 
 // Insert the specified number of bits into a field

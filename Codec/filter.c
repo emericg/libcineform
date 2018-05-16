@@ -646,7 +646,7 @@ void InvertFrameTo8u(PIXEL *lowlow_band, int lowlow_pitch,
     PIXEL *lowpass = buffer;
     PIXEL *highpass = buffer + (roi.height * frame_pitch);
     int field_pitch = 2 * frame_pitch;
-    //BOOL fastmode = TRUE;
+    //bool fastmode = true;
 
 #if _HIGHPASS_8S
 

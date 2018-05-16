@@ -44,17 +44,6 @@
 
 #include "swap.h"
 
-#if __APPLE__
-#include "macdefs.h"
-#else
-#ifndef ZeroMemory
-#define ZeroMemory(p,s)		memset(p,0,s)
-#endif
-#ifndef CopyMemory
-#define CopyMemory(p,q,s)	memcpy(p,q,s)
-#endif
-#endif
-
 // Performance measurements
 #if _TIMING
 extern TIMER tk_convert;
@@ -2812,7 +2801,7 @@ void ConvertV210RowToPackedYUV(uint8_t *input, uint8_t *output, int length, uint
         assert(ISALIGNED16(buffer));
 
         // Copy the input data into a buffer with aligned memory
-        CopyMemory(buffer, input, row_size);
+        memcpy(buffer, input, row_size);
 
         // Load the input from the buffer
         input_ptr = (uint32_t *)buffer;
@@ -3840,7 +3829,7 @@ void ConvertYUV16ToYUV(uint8_t *input, int width, int height, int input_pitch,
             assert(ISALIGNED16(buffer));
 
             // Copy the input data into a buffer with aligned memory
-            CopyMemory(buffer, input_row_ptr, input_row_size);
+            memcpy(buffer, input_row_ptr, input_row_size);
 
             // Load the input from the buffer
             y_row_ptr = (PIXEL16U *)buffer;
@@ -3904,7 +3893,7 @@ void ConvertYUV16ToV210(uint8_t *input, int width, int height, int input_pitch,
             assert(ISALIGNED16(buffer));
 
             // Copy the input data into a buffer with aligned memory
-            CopyMemory(buffer, input_row_ptr, input_row_size);
+            memcpy(buffer, input_row_ptr, input_row_size);
 
             // Load the input from the buffer
             y_row_ptr = (PIXEL16U *)buffer;
@@ -4655,7 +4644,7 @@ void ConvertRGB24ToV210(uint8_t *data, int width, int height, int pitch, uint8_t
         if ((width % 6) != 0)
         {
             // Pad the output to a multiple of six pixels
-            ZeroMemory(&buffer[2 * width], 12);
+            memset(&buffer[2 * width], 0, 12);
             width += 6 - (width % 6);
         }
 

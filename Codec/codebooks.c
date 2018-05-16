@@ -702,9 +702,9 @@ void FillCodeLookupTable(RLV *codebook, int length, FLC *table, int size)
 // Scan a bit string right justified in the word for a match in the codebook
 int MatchBitPattern(uint32_t  word, int width, RLV *codebook, int length, FLC *match)
 {
-    uint32_t  bits;		// Bits that have been scanned
-    int size = 0;		// Number of bits scanned
-    int i = 0;			// Index into the codebook
+    uint32_t bits = 0;  // Bits that have been scanned
+    int size = 0;       // Number of bits scanned
+    int i = 0;          // Index into the codebook
 
     // A null bit string always fails to match the codebook
     if (width == 0) goto failure;
@@ -768,7 +768,6 @@ int MatchBitPattern(uint32_t  word, int width, RLV *codebook, int length, FLC *m
     }
 
 failure:
-
     // Did not find a matching code in the codebook
     match->count = 0;
     match->value = 0;
@@ -777,7 +776,6 @@ failure:
     return VLC_ERROR_NOTFOUND;
 
 success:
-
     // Found a matching code and already set the output values
     return VLC_ERROR_OKAY;
 }

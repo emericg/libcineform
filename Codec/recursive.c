@@ -41,17 +41,6 @@
 #define DEBUG  (1 && _DEBUG)
 #define TIMING (1 && _TIMING)
 
-#if __APPLE__
-#include "macdefs.h"
-#else
-#ifndef ZeroMemory
-#define ZeroMemory(p,s)		memset(p,0,s)
-#endif
-#ifndef CopyMemory
-#define CopyMemory(p,q,s)	memcpy(p,q,s)
-#endif
-#endif
-
 // Datatype used for computing upper half of product of 16-bit multiplication
 typedef union
 {
@@ -760,7 +749,7 @@ void InitTransformState(TRANSFORM_STATE *state, TRANSFORM *transform)
 #else
 
     // Clear the entire state structure at once
-    ZeroMemory(state, sizeof(TRANSFORM_STATE));
+    memset(state, 0, sizeof(TRANSFORM_STATE));
 
 #endif
 
@@ -1217,7 +1206,7 @@ void InitEncoder(ENCODER *encoder, FILE *logfile, int width, int height, int num
         InitEncoderState(&encoder->state[level], encoder);
     }
 
-    //ZeroMemory(encoder->output, sizeof(encoder->output));
+    //memset(encoder->output, 0, sizeof(encoder->output));
     bufptr = AllocateRecursiveEncoder(encoder, width, height, num_levels, bufptr);
 
     // Allocate buffers for saving the wavelet bands (for debugging)
@@ -1324,7 +1313,7 @@ void FilterSpatialRecursive(TRANSFORM *transform, PIXEL *image, int width, int h
         }
 #endif
 #if 0
-        CopyMemory(transform->row_buffer, rowptr, row_size);
+        memcpy(transform->row_buffer, rowptr, row_size);
         rowptr += pitch;
 
         // Apply the wavelet transform to this row
@@ -1500,7 +1489,7 @@ void StoreWaveletBandRows(TRANSFORM *transform, PIXEL *result[4], int width, int
         else if (level == transform->num_levels)
         {
             size_t row_size = width * sizeof(PIXEL);
-            CopyMemory(transform->rowptr[index][band], result[band], row_size);
+            memcpy(transform->rowptr[index][band], result[band], row_size);
         }
 
         // Record the quantization that was applied to the band
@@ -1551,7 +1540,7 @@ void StoreWaveletHighpassRows(TRANSFORM *transform,
     {
         // Store the lowpass result in the wavelet
         size_t row_size = width * sizeof(PIXEL);
-        CopyMemory(transform->rowptr[index][0], lowlow_result, row_size);
+        memcpy(transform->rowptr[index][0], lowlow_result, row_size);
     }
 
     // Quantize and store the lowhigh band
@@ -1560,7 +1549,7 @@ void StoreWaveletHighpassRows(TRANSFORM *transform,
 #else
     {
         size_t row_size = width * sizeof(PIXEL);
-        CopyMemory(transform->rowptr[index][1], lowhigh_result, row_size);
+        memcpy(transform->rowptr[index][1], lowhigh_result, row_size);
     }
 #endif
 
@@ -1573,7 +1562,7 @@ void StoreWaveletHighpassRows(TRANSFORM *transform,
 #else
     {
         size_t row_size = width * sizeof(PIXEL);
-        CopyMemory(transform->rowptr[index][3], highhigh_result, row_size);
+        memcpy(transform->rowptr[index][3], highhigh_result, row_size);
     }
 #endif
 
