@@ -65,8 +65,6 @@ void StoreWaveletHighpassRows(TRANSFORM *transform,
                               PIXEL *highlow_result, PIXEL *highhigh_result,
                               int width, int level);
 
-//void PrintRecursiveWavelets(ENCODER *encoder);
-
 // Perform the full intra frame transform on a progressive frame using recursive wavelets
 void TransformForwardProgressiveIntraFrameRecursive(ENCODER *encoder, IMAGE *image,
         TRANSFORM *transform, int channel,

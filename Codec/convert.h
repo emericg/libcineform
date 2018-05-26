@@ -228,10 +228,6 @@ void ConvertRGB2YUVStripPlanarToPacked(uint8_t *planar_output[], int planar_pitc
 
 void ConvertRGB2RG30StripPlanarToPacked(uint8_t *planar_output[], int planar_pitch[], ROI strip,
                                         uint8_t *output, int output_pitch, int frame_width);
-#if 0
-void ConvertBAYER_3DLUT_YUVStripPlanarToPacked(DECODER *decoder, uint8_t *planar_output[], int planar_pitch[], ROI strip,
-        uint8_t *output, int output_pitch, int frame_width, int format);
-#endif
 
 void ConvertYUVStripPlanar16uToPacked(PIXEL16U *planar_output[], int planar_pitch[], ROI strip,
                                       PIXEL16U *output, int output_pitch, int frame_width, int format);

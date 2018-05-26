@@ -127,13 +127,6 @@ CFHD_Error ConvertToOutputBuffer(void *inputBuffer, int inputPitch, int inputFor
             case CFHD_PIXEL_FORMAT_BGRA:
             case CFHD_PIXEL_FORMAT_BGRa:
                 assert(0);
-                //DANREMOVED  ConvertRGB32ToQuickTime((unsigned char *)inputBuffer, inputPitch,
-                //									(unsigned char *)outputBuffer, outputPitch,
-                //									width, height, 0
-                //#ifndef _WIN32
-                //									, 0, NULL
-                //#endif
-                //									);
                 break;
 
             default:
@@ -169,9 +162,6 @@ CFHD_Error ConvertToOutputBuffer(void *inputBuffer, int inputPitch, int inputFor
         {
             // Invert the rows of RGBA and swap red and blue components
             ASSERT(0);
-            //DANREMOVED  ConvertQuickTimeARGB64ToBGRA((unsigned char *)inputBuffer, inputPitch,
-            //							 (unsigned char *)outputBuffer, outputPitch,
-            //							 width, height);
         }
         else
         {

@@ -225,8 +225,7 @@ CFHD_EncodeSample(CFHD_EncoderRef encoderRef,
     }
 
     error = encoder->HandleMetadata();
-    error = encoder->EncodeSample(frameBuffer,
-                                  framePitch);
+    error = encoder->EncodeSample(frameBuffer, framePitch);
     errorFree = encoder->FreeLocalMetadata();	// 20090610 CMD - Do not clear encode error result
     if (error == CFHD_ERROR_OKAY)
     {

@@ -161,19 +161,6 @@ typedef struct metadata_tuple
 
 } METADATA_TUPLE;
 
-typedef struct metadata_control_point_header
-{
-    uint32_t cptype;			// Four character code that identifies the control point type
-    uint32_t reserved;			// zero for now
-    METADATA_TAG position_type;	// nearly always TAG_UNIQUE_FRAMENUM (UFRM), but it can be TAG_TIMECODE (TIMC)
-    uint32_t tsize;				// type_size of UFRM/TIMC
-    union
-    {
-        uint32_t keyframe;		// key frame as a UFRM
-        char keyframeTC[12];	// key frame as a timecode "xx:xx:xx:xx"
-    };
-} METADATA_CP_HDR;
-
 
 typedef enum MetadataTag
 {
@@ -328,7 +315,7 @@ typedef enum MetadataTag
     TAG_DISPLAY_TITLE_SAFE	= MAKETAG('D', 'T', 'S', 'F'),		//Draw Title safe markers		DTSF	f	2 floats for width and height % range 0 to 0.5, e.g. 0.1,0.1
     TAG_DISPLAY_OVERLAY_SAFE = MAKETAG('D', 'O', 'S', 'F'),		//Overlay safe region			DOSF	f	2 floats for width and height % range 0 to 0.5, e.g. 0.1,0.1
 
-    //many of the TAG_DISPLAY_xxx types can in used outside of a DSPm for a global default
+    // many of the TAG_DISPLAY_xxx types can in used outside of a DSPm for a global default
     TAG_DISPLAY_TAG			= MAKETAG('D', 'T', 'A', 'G'),		//TAG to display				DTAG	T	4 bytes, FOURCC value of the tag to display
     TAG_DISPLAY_FREEFORM	= MAKETAG('D', 'F', 'F', 'M'),		//freeform to display			DFFM	c	x bytes, string name / value metadata
     TAG_DISPLAY_FONT		= MAKETAG('D', 'F', 'N', 'T'),		//Font to use					DFMT	c	x bytes, name of font to load
@@ -361,7 +348,6 @@ typedef enum MetadataTag
     TAG_SPI_PARALLAX		= MAKETAG('S', 'P', 'I', 'P'),		//SPI Parallax					SPIP	l	pixel parallax, neative is in front of the screen plane.
 
     // Values added to support Avid ALE metadata
-
     TAG_AUX_INK_END			= MAKETAG('A', 'N', 'K', 'E'),	 //Aux Ink out point for clip    ANKE    c	x chars - depends on format of aux ink
     TAG_AUX_INK_FILM_TYPE	= MAKETAG('A', 'N', 'K', 'F'),		//Aux Ink film type				ANKF	c	x chars - defines counting format of aux ink
     TAG_AUX_INK_EDGE		= MAKETAG('A', 'N', 'K', 'G'),		//Aux ink edge type				ANKG	c	x chars - defines how Aux Ink number displayed

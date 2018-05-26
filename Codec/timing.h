@@ -22,6 +22,13 @@
 #ifndef _TIMING_H
 #define _TIMING_H
 
+#include "stdint.h"
+
+// The counter is a large integer
+typedef int64_t COUNTER;
+#define COUNTER_INITIALIZER (0)
+
+
 // Enable timing by default if in debug mode
 #ifdef _WIN32
 #ifndef _TIMING

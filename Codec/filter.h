@@ -120,145 +120,9 @@
 extern "C" {
 #endif
 
-#if 0
-
-// Divide a signed number using arithmetic right shift
-static inline int32_t DivideByShift(int32_t x, int shift)
-{
-#if 1
-    int quotient;
-
-    if (x < 0)
-        quotient = -((- x) >> shift);
-    else
-        quotient = (x >> shift);
-
-#else
-    int32_t quotient;
-#if 1
-    if (x < 0)
-    {
-        // Signed division is a special case
-#if 1
-        int32_t mask = (1 << shift) - 1;
-        int32_t adjustment = (x & mask) ? 1 : 0;
-
-        quotient = (x >> shift) + adjustment;
-#else
-        quotient = x / (1 << shift);
-#endif
-    }
-    else
-    {
-        quotient = (x >> shift);
-    }
-
-    //quotient = SATURATE(quotient);
-#else
-    quotient = x / (1 << shift);
-#endif
-#endif
-    return quotient;
-}
-
-#else
-
-//#define DivideByShift(x, s)		((x) < 0) ? NEG(NEG(x) >> (s)) : ((x) >> (s))
-
-//DAN20050914 -- all DivideByShift that use sign aren't reversible in wavelet transforms
-//#define DivideByShift(x, s)		((x)>>=(s))
 
 // Fix compiler warnings about undefined operation
 #define DivideByShift(x, s)		((x) >> (s))
-
-#endif
-
-#if 0
-// The temporal filter declarations have been moved to temporal.h
-
-// Apply the temporal transform between two images
-void FilterTemporal(PIXEL *field1, int pitch1, PIXEL *field2, int pitch2,
-                    PIXEL *lowpass, int lowpass_pitch, PIXEL *highpass, int highpass_pitch,
-                    ROI roi);
-
-// Apply the temporal transform between two bands of 16-bit signed pixels
-void FilterTemporal16s(PIXEL *field1, int pitch1, PIXEL *field2, int pitch2,
-                       PIXEL *lowpass, int lowpass_pitch, PIXEL *highpass, int highpass_pitch,
-                       ROI roi);
-
-// Perform the temporal transform on a pair of rows producing 16-bit coefficients
-void FilterTemporalRow8uTo16s(PIXEL8U *row1, PIXEL8U *row2, int length,
-                              PIXEL16S *lowpass, PIXEL16S *highpass,
-                              int offset);
-
-// Apply the temporal transform to a row of packed YUV pixels
-void FilterTemporalRowYUVTo16s(BYTE *row1, BYTE *row2, int frame_width,
-                               PIXEL *lowpass[], PIXEL *highpass[], int num_channels);
-
-// Apply the temporal transform to one channel in the even and odd rows
-void FilterTemporalRowYUYVChannelTo16s(BYTE *row1, BYTE *row2, int frame_width,
-                                       int channel, PIXEL *lowpass, PIXEL *highpass,
-                                       int offset, int precision, int limit_yuv);
-
-void FilterTemporalRowUYVYChannelTo16s(BYTE *row1, BYTE *row2, int frame_width,
-                                       int channel, PIXEL *lowpass, PIXEL *highpass,
-                                       int offset, int precision, int limit_yuv);
-
-// Apply the inverse temporal transform to reconstruct two fields of 16-bit signed pixels
-void InvertTemporal16s(PIXEL *lowpass, int lowpass_pitch, PIXEL *highpass, int highpass_pitch,
-                       PIXEL *field1, int pitch1, PIXEL *field2, int pitch2, ROI roi);
-
-void InvertTemporal16s8sTo16s(PIXEL *lowpass, int lowpass_quantization, int lowpass_pitch,
-                              PIXEL8S *highpass, int highpass_quantization, int highpass_pitch,
-                              PIXEL *field1, int pitch1, PIXEL *field2, int pitch2, ROI roi);
-
-void InvertTemporalQuant16s(PIXEL *lowpass, int lowpass_quantization, int lowpass_pitch,
-                            PIXEL *highpass, int highpass_quantization, int highpass_pitch,
-                            PIXEL *field1, int pitch1, PIXEL *field2, int pitch2, ROI roi,
-                            PIXEL *buffer, size_t buffer_size);
-
-void InvertTemporalQuant16s8sTo16s(PIXEL *lowpass, int lowpass_quantization, int lowpass_pitch,
-                                   PIXEL8S *highpass, int highpass_quantization, int highpass_pitch,
-                                   PIXEL *field1, int pitch1, PIXEL *field2, int pitch2, ROI roi,
-                                   PIXEL *buffer, size_t buffer_size);
-
-void InvertTemporalRow16s(PIXEL *lowpass, PIXEL *highpass,
-                          PIXEL *even, PIXEL *odd, int width);
-
-// Apply temporal filter between the even and odd fields of a frame
-// Computation can be done in place by passing the even and odd fields as outputs
-void FilterInterlaced(PIXEL *frame, int frame_pitch,
-                      PIXEL *lowpass, int lowpass_pitch,
-                      PIXEL *highpass, int highpass_pitch,
-                      ROI roi);
-
-// Apply inverse temporal transform to reconstruct two fields
-void InvertInterlaced16s(PIXEL *lowpass, int lowpass_pitch,
-                         PIXEL *highpass, int highpass_pitch,
-                         PIXEL *even, int even_pitch,
-                         PIXEL *odd, int odd_pitch,
-                         ROI roi);
-
-void InvertInterlaced16sTo8u(PIXEL16S *lowpass, int lowpass_pitch,
-                             PIXEL16S *highpass, int highpass_pitch,
-                             PIXEL8U *even_field, int even_pitch,
-                             PIXEL8U *odd_field, int odd_pitch, ROI roi);
-
-// Apply the inverse temporal transform to reconstruct an interlaced
-// color frame of packed YUV planes from 16-bit signed coefficients
-void InvertInterlaced16sToYUV(PIXEL16S *y_lowpass, int y_lowpass_pitch,
-                              PIXEL16S *y_highpass, int y_highpass_pitch,
-                              PIXEL16S *u_lowpass, int u_lowpass_pitch,
-                              PIXEL16S *u_highpass, int u_highpass_pitch,
-                              PIXEL16S *v_lowpass, int v_lowpass_pitch,
-                              PIXEL16S *v_highpass, int v_highpass_pitch,
-                              PIXEL8U *output, int output_pitch, ROI roi);
-
-// Invert the temporal bands from all channels and pack output pixels
-void InvertInterlacedRow16sToYUV(PIXEL *lowpass[], PIXEL *highpass[], int num_channels,
-                                 BYTE *output, int pitch, int output_width, int frame_width,
-                                 int chroma_offset, int format);
-#endif
 
 
 /***** Declarations for the filters that implement the frame transforms *****/
@@ -294,8 +158,6 @@ void InvertFrameTo8u(PIXEL *lowlow_band, int lowlow_pitch,
                      PIXEL *highlow_band, int highlow_pitch,
                      PIXEL *highhigh_band, int highhigh_pitch,
                      PIXEL8U *frame, int frame_pitch, PIXEL *buffer, ROI roi);
-
-//void DequantizeBandRow(PIXEL8S *input, int width, int quantization, PIXEL *output);
 
 void FilterHorizontalDelta(PIXEL *data, int width, int height, int pitch);
 double BandEnergy(PIXEL *data, int width, int height, int pitch, int band, int subband);

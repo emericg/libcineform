@@ -117,7 +117,6 @@ CSampleEncoder::PrepareToEncode(int inputWidth,
 
     FILE *logfile = NULL;
     bool progressive = true;
-    //bool chromaFullRes = FALSE;
 
     CFHD_EncodingBitrate fixedBitrate = 0;
     int gopLength = 1;
@@ -456,8 +455,6 @@ CSampleEncoder::EncodeSample(void *frameBuffer,
                              int framePitch,
                              CFHD_EncodingQuality frameQuality)
 {
-    //CFHD_Error errorCode = CFHD_ERROR_OKAY;
-    //unsigned long decoding_flags;
     bool result;
 
     CFHD_EncodingQuality fixedQuality = m_encodingQuality;
@@ -540,7 +537,6 @@ CSampleEncoder::EncodeSample(void *frameBuffer,
 
     try
     {
-
         //fprintf(stderr, "Call EncodeSample inw: %d inh: %d framePitch: %d colorFmt: %d channels: %d inFormat %08X:\n",
         //		m_inputWidth, m_inputHeight, framePitch, colorFormat, m_channelCount, m_inputFormat);
         // Call the routine in the codec library to encode the sample
@@ -560,9 +556,6 @@ CSampleEncoder::EncodeSample(void *frameBuffer,
     //fprintf(stderr, "Back from encode, result: %d error %d size %d\n",result,m_encoder->error,bitstream.nWordsUsed);
     if (!result)
     {
-        //assert(0);
-        //return (CFHD_Error)m_encoder->error;
-        //return CFHD_ERROR_CODEC_ERROR;
         return CFHD_CODEC_ERROR(m_encoder->error);
     }
 

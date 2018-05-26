@@ -344,13 +344,6 @@ pthread_t GetCurrentThread(void);
 void SetThreadAffinityMask(pthread_t thread, uint32_t *thread_affinity_mask);
 #endif
 
-#if 0	// Unnamed semaphores are not supported on the Macintosh
-typedef struct
-{
-    sem_t sema;
-}
-SEMAPHORE;
-#endif
 
 typedef struct
 {
@@ -439,75 +432,6 @@ THREAD_API(ThreadWait)(THREAD *thread)
 
     return THREAD_ERROR_OKAY;
 }
-
-
-#if 0	// Unnamed semaphores are not supported on the Macintosh
-
-THREAD_API(SemaCreate)(SEMAPHORE *semaphore,
-                       int32_t initial_count,
-                       int32_t max_count)
-{
-    int result = sem_init(&semaphore->sema, 0, initial_count);
-    if (result != 0)
-    {
-        return THREAD_ERROR_CREATE_FAILED;
-    }
-
-    return THREAD_ERROR_OKAY;
-}
-
-THREAD_API(SemaDelete)(SEMAPHORE *semaphore)
-{
-    sem_destroy(&semaphore->sema);
-    semaphore->sema = 0;
-    return THREAD_ERROR_OKAY;
-}
-
-THREAD_API(SemaWait)(SEMAPHORE *semaphore)
-{
-    // Wait for the semaphore indefinitely
-    int result = sem_wait(&semaphore->sema);
-    if (result != 0)
-    {
-        return THREAD_ERROR_WAIT_FAILED;
-    }
-
-    return THREAD_ERROR_OKAY;
-}
-
-THREAD_API(SemaTimedWait)(SEMAPHORE *semaphore, TIMEOUT timeout)
-{
-}
-
-THREAD_API(SemaTryWait)(SEMAPHORE *semaphore)
-{
-    // Test the semaphore without waiting
-    int result = sem_trywait(&semaphore->sema);
-    if (result != 0)
-    {
-        return THREAD_ERROR_WAIT_FAILED;
-    }
-
-    return THREAD_ERROR_OKAY;
-}
-
-THREAD_API(SemaPost)(SEMAPHORE *semaphore)
-{
-    sem_post(&semaphore->sema);
-    return THREAD_ERROR_OKAY;
-}
-
-THREAD_API(SemaIncrement)(SEMAPHORE *semaphore, int32_t count)
-{
-    for (; count > 0; count--)
-    {
-        sem_post(&semaphore->sema);
-    }
-
-    return THREAD_ERROR_OKAY;
-}
-
-#endif
 
 
 // Use a condition variable to implement a manual reset event

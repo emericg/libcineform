@@ -34,49 +34,6 @@
 #include "color.h"
 #include "dither.h"
 
-#if 0
-
-//TODO: Need to finish the dithering routine
-
-// Color conversion coefficients (floating point)
-
-static float YUVFromRGB_CS709[3][4] =
-{
-    0.183,  0.614,  0.062, 16.0 / 255.0,
-    -0.101, -0.338,  0.439, 128.0 / 255.0,
-    0.439, -0.399, -0.040, 128.0 / 255.0,
-};
-
-// Compute the floating-point color matrix for computer system 709
-void ComputeColorMatrix(COLOR_SPACE color_space, COLOR_MATRIX *color_matrix)
-{
-
-    switch (color_space & COLORSPACE_MASK)
-    {
-        case COLOR_SPACE_CG_601:
-        case COLOR_SPACE_VS_601:
-            //TODO: Need to implement the other cases
-            assert(0);
-            break;
-
-        default:
-            assert(0);
-        case COLOR_SPACE_CG_709:
-            memcpy(color_matrix->array, YUVFromRGB_CS709, sizeof(color_matrix->array));
-            color_matrix->scale = 256.0;
-            color_matrix->color_space = color_space;
-            break;
-
-        case COLOR_SPACE_VS_709:
-            //TODO: Need to implement the other cases
-            assert(0);
-            break;
-    }
-}
-
-#endif
-
-
 // Compute the RGB to YUV color conversion coefficients as integers
 void ComputeColorCoefficientsRGBToYUV(COLOR_CONVERSION *conversion,
                                       int color_space)

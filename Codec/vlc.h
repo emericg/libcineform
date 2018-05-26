@@ -163,17 +163,7 @@ typedef struct run
 // value and the count field is used to store the relative column.
 // The new algorithm assumes that only zeros are run length encoded.
 
-#if 0
 // Entry in the lookup table for fast decoding
-typedef struct lookup
-{
-    int count;			// Run length or column (zero if no entry)
-    int32_t value;			// Run value (signed if using new algorithm)
-    int shift;			// Number of bits to skip in bitstream
-    //int step;			// Number of columns to skip in the decoded row
-    //int skip;			// Number of additional columns to skip
-} FLC;
-#else
 // Smaller version so more of the table can fit in the cache
 typedef struct lookup
 {
@@ -183,7 +173,6 @@ typedef struct lookup
     //unsigned char step;		// Number of columns to skip in the decoded row
     //unsigned char skip;		// Number of additional columns to skip
 } FLC;
-#endif
 
 // NOTE: The step and skip fields are currently not used but one of them
 // will be used to improve fast decoding by recording the number of columns

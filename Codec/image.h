@@ -487,9 +487,6 @@ IMAGE *CreateImageFromPlanes(uint8_t *data, int width, int height, int pitch, in
 IMAGE *CreateImageFromPacked(uint8_t *data, int width, int height, int pitch, int format);
 #endif
 
-// Adjust the size of an image to the specified dimensions
-void ResizeImage(IMAGE *image, int width, int height);
-
 // Allocate space for an new band
 #if _ALLOCATOR
 void AllocateBand(ALLOCATOR *allocator, IMAGE *image, int band_index);

@@ -1903,30 +1903,6 @@ void TransformForwardRecursiveUYVY(ENCODER *encoder, BYTE *frame, int width, int
 
 #if _DEBUG
 
-#if 0
-void PrintRecursiveWavelets(ENCODER *encoder)
-{
-    FILE *logfile = encoder->logfile;
-    int width = encoder->input.width;
-    int height = encoder->input.height;
-    int level;
-
-    // Print the wavelet bands at each level
-    for (level = 0; level < encoder->num_levels; level++)
-    {
-        int band;
-
-        width /= 2;
-        height /= 2;
-
-        for (band = 0; band < NUM_WAVELET_BANDS; band++)
-        {
-            PrintArray(logfile, encoder->output[level][band], width, height);
-        }
-    }
-}
-#endif
-
 #endif
 
 #endif

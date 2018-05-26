@@ -144,27 +144,6 @@ void QuantizeRow16sToCoded(struct encoder *encoder, BITSTREAM *stream, PIXEL *in
 void DequantizeBandRow(PIXEL8S *input, int width, int quantization, PIXEL *output);
 void DequantizeBandRow16s(PIXEL16S *input, int width, int quantization, PIXEL16S *output);
 
-#if 0
-
-// Fill a quantization vector with entries from an encoder quant table
-// Assume that the transform is a fieldplus transform
-void SetWaveletQuantization(ENCODER *encoder, int channel,
-                            IMAGE *wavelet, int index,
-                            int quantization[IMAGE_NUM_BANDS]);
-
-// Fill a quantization vector for a frame transform with entries from the
-// encoder quant table.  Assume that the transform is a fieldplus transform.
-void SetFrameTransformQuantization(ENCODER *encoder, int channel,
-                                   IMAGE *wavelet, int index,
-                                   int quantization[IMAGE_NUM_BANDS]);
-
-// Fill a quantization vector for a spatial transform with entries from the
-// encoder quant table.  Assume that the transform is a fieldplus transform.
-void SetSpatialTransformQuantization(ENCODER *encoder, int channel,
-                                     IMAGE *wavelet, int index,
-                                     int quantization[IMAGE_NUM_BANDS]);
-#endif
-
 #if (_DEBUG || _TIMING)
 
 // Print the values in a quantizer
@@ -188,8 +167,6 @@ int32_t TestQuantizeRow(unsigned int seed, FILE *logfile);
 
 // Test quantization and run length compression of a row of coefficients
 int32_t TestQuantizeRow16sToRuns(unsigned int seed, FILE *logfile);
-
-//void DumpEncoderQuant(ENCODER *encoder, int channel);
 
 #endif
 

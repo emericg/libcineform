@@ -152,9 +152,6 @@ typedef enum decoded_resolution
 
 } DECODED_RESOLUTION;
 
-// Encoded samples must be aligned on a four byte boundary
-#define ENCODED_SAMPLE_ALIGNMENT	4
-
 typedef struct sample_header
 {
     // Errors code for parsing the sample header
@@ -276,26 +273,6 @@ bool SetDecoderColorFlags(DECODER *decoder, uint32_t color_flags);
 void SetDecoderFlags(DECODER *decoder, uint32_t flags);
 bool ResizeDecoderBuffer(DECODER *decoder, int width, int height, int format);
 
-IMAGE *DecodeNextFrame(DECODER *decoder, BITSTREAM *input);
-bool DecodeSequence(DECODER *decoder, BITSTREAM *input);
-bool DecodeGroup(DECODER *decoder, BITSTREAM *input, int sample_type, ColorParam *colorparams);
-bool DecodeGroupTransform(DECODER *decoder, BITSTREAM *input, int sample_type, ColorParam *colorparams);
-bool DecodeHighPassBand8s(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet, int index, int band, int subband, int channel, ColorParam *colorparams);
-bool SkipHighPassBand(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet, int index, int band, int subband, int channel, ColorParam *colorparams);
-bool DecodeHighPassBand(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet, int index, int band, int subband, int channel, ColorParam *colorparams);
-bool SkipHighPassBands(DECODER *decoder, BITSTREAM *stream);
-bool DecodeEmptyHighPassBand(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet, int index, int band, int subband, int channel, ColorParam *colorparams);
-bool DecodeBandCodes(DECODER *ecoder, BITSTREAM *stream, IMAGE *wavelet,
-                     int band_index, int width, int height, int quantization);
-bool DecodeBandRuns(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet,
-                    int band_index, int width, int height, int quantization);
-
-// Decode the highpass band in a temporal transform, then perform dequantization
-// and compute the inverse temporal transform in one pass for reduced memory usage.
-bool DecodeTemporalBand8s(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet, IMAGE *lowpass[],
-                          int index, int band, int subband, int channel,
-                          PIXEL *buffer, size_t buffer_size, ColorParam *colorparams);
-
 // Optimized decoding routine
 bool DecodeFastRuns(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet,
                     int band_index, int width, int height, int quantization);
@@ -338,15 +315,10 @@ void ReconstructFrameToBuffer(DECODER *decoder, TRANSFORM *transform[],
                               int frame, uint8_t *output, int pitch);
 
 // Invert the wavelet to reconstruct the lower wavelet in the transform
-#if 0
-void ReconstructWaveletBand(TRANSFORM *transform, int channel, IMAGE *wavelet, int index,
-                            int precision, PIXEL *buffer, size_t buffer_size);
-#else
 void ReconstructWaveletBand(DECODER *decoder, TRANSFORM *transform, int channel,
                             IMAGE *wavelet, int index,
                             int precision, const SCRATCH *scratch,
                             int allocations_only /* for queued work */);
-#endif
 
 // Apply the inverse horizontal-temporal transform and pack the output into a buffer
 void TransformInverseFrameToYUV(TRANSFORM *transform[], int frame, int num_channels,
@@ -360,16 +332,9 @@ void TransformInverseFrameToRow16u(DECODER *decoder, TRANSFORM *transform[], int
                                    int precision);
 
 // Apply the inverse horizontal-temporal transform and pack the output into a buffer
-#if 0
-void TransformInverseFrameToBuffer(TRANSFORM *transform[], int frame_index, int num_channels,
-                                   uint8_t *output, int output_pitch, FRAME_INFO *frame,
-                                   char *buffer, size_t buffer_size, int chroma_offset,
-                                   int precision);
-#else
 void TransformInverseFrameToBuffer(TRANSFORM *transform[], int frame_index, int num_channels,
                                    uint8_t *output, int output_pitch, FRAME_INFO *frame,
                                    const SCRATCH *scratch, int chroma_offset, int precision);
-#endif
 
 // Routines that perform color conversion and pack the pixels in the output buffer
 

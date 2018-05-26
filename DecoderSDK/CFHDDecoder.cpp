@@ -809,7 +809,6 @@ CFHD_CloseDecoder(CFHD_DecoderRef decoderRef)
 #include "../Codec/metadata.h"
 
 
-#define BUFSIZE	1024
 /* Table of CRCs of all 8-bit messages. */
 uint32_t crc_table[256];
 

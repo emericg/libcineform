@@ -53,15 +53,6 @@ char *AllocScratchBuffer(SCRATCH *scratch, size_t request);
 // Aligned allocation of a scratch buffer
 char *AllocAlignedBuffer(SCRATCH *scratch, size_t request, int alignment);
 
-// Allocate scratch space for intermediate results
-void AllocScratchSpace(SCRATCH *scratch, size_t size, void *allocator);
-
-// Free all scratch space used for intermediate results
-void ReleaseScratchSpace(SCRATCH *scratch);
-
-// Force alignment of the remaining free space
-void AlignScratchSpace(SCRATCH *scratch, int alignment);
-
 #ifdef __cplusplus
 }
 #endif

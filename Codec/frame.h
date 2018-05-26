@@ -31,20 +31,9 @@
 
 #define FRAME_MAX_CHANNELS	4 //DAN070202004
 
-// Monochrome converts color to gray
-#ifndef _MONOCHROME
-#define _MONOCHROME 0
-#endif
-
 // Can have YUV 4:2:2 format (alternating u and v) or YUV 4:4:4 format
 #ifndef _YUV422
 #define _YUV422 1
-#endif
-
-#if _MONOCHROME
-#define FRAME_FORMAT_DEFAULT FRAME_FORMAT_GRAY
-#else
-#define FRAME_FORMAT_DEFAULT FRAME_FORMAT_YUV
 #endif
 
 typedef enum frame_sampling

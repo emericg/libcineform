@@ -32,7 +32,7 @@
 #endif
 
 // Export the metadata interface
-#define METADATADLL_EXPORTS	1
+#define METADATADLL_EXPORTS 1
 
 #include "CFHDMetadata.h"
 #include "SampleMetadata.h"
@@ -40,7 +40,6 @@
 #include "../Codec/lutpath.h"
 
 
-#define BUFSIZE	1024
 /* Table of CRCs of all 8-bit messages. */
 static uint32_t crc_table[256];
 
@@ -357,34 +356,6 @@ void *LeftRightDelta(CSampleMetadata *metadata,
     return ldata;
 }
 
-#if _WIN32
-uint32_t GetLastWriteTime(char *name)
-{
-    HANDLE hFile;
-    FILETIME ftCreate, ftAccess, ftWrite;
-    uint32_t ret = 0;
-
-    hFile = CreateFile(name, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
-    if (hFile == INVALID_HANDLE_VALUE)
-    {
-        return 0;
-    }
-
-    // Retrieve the file times for the file.
-    if (!GetFileTime(hFile, &ftCreate, &ftAccess, &ftWrite))
-    {
-        CloseHandle(hFile);
-        return 0;
-    }
-
-    ret = ftWrite.dwLowDateTime;
-
-    CloseHandle(hFile);
-
-    return ret;
-}
-#endif
-
 
 //TODO: Needs upgrade for stereo, col2, colb and global overrides.
 bool CSampleMetadata::GetClipDatabase()
@@ -437,19 +408,7 @@ bool CSampleMetadata::GetClipDatabase()
                   m_currentClipGUID.Data4[5],
                   m_currentClipGUID.Data4[6],
                   m_currentClipGUID.Data4[7]);
-
-#if _WIN32
-        uint32_t write_time = GetLastWriteTime(filenameGUID);
-        //char t[100];
-        //sprintf(t,"last_write_time %d %s", last_write_time,filenameGUID);
-        //OutputDebugString(t);
-        if (write_time != last_write_time || m_databaseSize == 0)
-        {
-            last_write_time = write_time;
-            checkdiskinfo = true;
-        }
-#else
-        //TODO -- something like the above for Mac/Linux
+/*
         clock_t process_time = clock();
         time_t now = time(NULL);
         uint32_t diff = (uint32_t)process_time - (uint32_t)last_process_time;
@@ -461,8 +420,7 @@ bool CSampleMetadata::GetClipDatabase()
             last_now_time = now;
             checkdiskinfo = true;
         }
-#endif
-
+*/
         if (checkdiskinfo)
         {
             FILE *fp;
@@ -507,156 +465,12 @@ bool CSampleMetadata::GetClipDatabase()
                 fclose(fp);
             }
         }
-
-        /*	DAN20120104 -- stop loading very old .COL1 and .COL2 files.
-
-        	if(m_databaseSize && m_databaseData)
-        	{
-        		namelen = (int)strlen(filenameGUID);
-
-        		// left eye delta
-        		filenameGUID[namelen-1] = '1';
-        		fp = fopen(filenameGUID,"rb");
-        		if (fp != NULL)
-        		{
-        			int len = 0;
-        			fseek (fp, 0, SEEK_END);
-        			len = ftell(fp);
-
-        			m_databaseDataL = (unsigned char *)Alloc(len);
-
-        			if(m_databaseDataL)
-        			{
-        				fseek (fp, 0, SEEK_SET);
-        				fread(m_databaseDataL,1,len,fp);
-
-        				m_databaseSizeL = ValidMetadataLength(m_databaseDataL, len);
-        			}
-        			else
-        			{
-        				m_databaseSizeL = 0;
-        			}
-
-        			fclose(fp);
-        		}
-
-
-        		// left eye delta
-        		filenameGUID[namelen-1] = '2';
-        		fp = fopen(filenameGUID,"rb");
-        		if (fp != NULL)
-        		{
-        			int len = 0;
-        			fseek (fp, 0, SEEK_END);
-        			len = ftell(fp);
-
-        			m_databaseDataR = (unsigned char *)Alloc(len);
-
-        			if(m_databaseDataR)
-        			{
-        				fseek (fp, 0, SEEK_SET);
-        				fread(m_databaseDataR,1,len,fp);
-
-        				m_databaseSizeR = ValidMetadataLength(m_databaseDataR, len);
-        			}
-        			else
-        			{
-        				m_databaseSizeR = 0;
-        			}
-
-        			fclose(fp);
-        		}
-        	}
-        */
     }
 
     if (m_databaseSize && m_databaseData)
         return true;
     else
         return false;
-}
-
-
-/* -- not include in Doxygen
- @function CFHD_ReadMetadataFromSample
-
- @brief OBSOLETE use CFHD_ReadMetadata(). Returns the buffer of metadata from the current sample..
-
- @description After a call to @ref CFHD_InitSampleMetadata the next call to
- this function returns all the metadata from all metadata blocks in the sample.
-
- @param metadataRef Reference to a metadata interface returned by a call
- to @ref CFHD_OpenMetadata.
-
- @param data Pointer to the variable to receive the address of the metadata.
-
- @param size Pointer to the variable to receive the size of the metadata
- array in bytes.
-
- @return Returns the CFHD error code CFHD_ERROR_METADATA_END if no more
- metadata was not found in the sample; otherwise, the CFHD error code
- CFHD_ERROR_OKAY is returned if the operation succeeded.
- */
-CFHDMETADATA_API CFHD_Error
-CFHD_ReadMetadataFromSample(CFHD_MetadataRef metadataRef,
-                            void **data_out,
-                            size_t *size_out)
-{
-    CFHD_Error error = CFHD_ERROR_OKAY;
-    unsigned char *ptr;
-
-    // Check the input arguments
-    if (metadataRef == NULL)
-    {
-        return CFHD_ERROR_INVALID_ARGUMENT;
-    }
-
-    if (data_out == NULL || size_out == NULL)
-    {
-        return CFHD_ERROR_INVALID_ARGUMENT;
-    }
-
-    CSampleMetadata *metadata = (CSampleMetadata *)metadataRef;
-
-    // Total size of the collection of metadata (in bytes)
-    size_t total_size = 0;
-
-    // Attributes of the first metadata item in the collection
-    METADATA_TAG tag;
-    METADATA_SIZE size;
-    METADATA_TYPE type;
-
-    // note: total_size only contains the size of the first metadata block
-    metadata->m_metadataStart = MetaDataFindFirst(metadata->m_sampleData, metadata->m_sampleSize,
-                                &total_size, &tag, &size, &type);
-    if (metadata->m_metadataStart)
-    {
-        *data_out = (void *)((intptr_t)(metadata->m_metadataStart) - 8);
-        *size_out = total_size;
-        metadata->m_lastMetadata = metadata->m_metadataStart;
-    }
-    else
-    {
-        return CFHD_ERROR_METADATA_END;
-    }
-
-    // Keep looking for additional metadata blocks. The assumption is that all metadata blocks
-    // are adjacent. Additional metadata blocks are defined by
-    // 0xbf 0xfe sz1 sz0
-    // where "0xbf 0xfe" is a tag, sz1 is the most-significant byte of the size, and sz0 is
-    // the least significant byte of the size. The size is the number of 4-byte words in the
-    // tag.
-
-    ptr = (unsigned char *)(*data_out) + *size_out;
-
-    while (ptr[0] == 0xbf && ptr[1] == 0xfe && ptr < metadata->m_sampleData + metadata->m_sampleSize)
-    {
-        unsigned short words = (ptr[2] << 8) + ptr[3];
-        *size_out += words * 4;
-        ptr = (unsigned char *)(*data_out) + *size_out;
-    }
-
-    return error;
 }
 
 /*!

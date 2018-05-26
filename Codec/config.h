@@ -66,9 +66,6 @@
 #define _CACHE_LINE_MASK		0x3F
 #define _CACHE_LINE_SHIFT		6
 
-// Default memory alignment
-#define _MEMORY_ALIGNMENT		16
-
 #if 1
 
 // Control compilation of code for different processors

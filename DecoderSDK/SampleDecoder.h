@@ -145,19 +145,6 @@ public:
                            int decodedResolution);
 
 protected:
-#if 0
-    CFHD_Error PrepareToDecodeBayer(int outputWidth,
-                                    int outputHeight,
-                                    CFHD_PixelFormat outputFormat,
-                                    int decodedResolution,
-                                    CFHD_DecodingFlags decodingFlags,
-                                    void *samplePtr,
-                                    size_t sampleSize,
-                                    int *actualWidthOut,
-                                    int *actualHeightOut,
-                                    CFHD_PixelFormat *actualFormatOut);
-#endif
-
     static ENCODED_FORMAT GetEncodedFormat(void *samplePtr,
                                            size_t sampleSize);
 

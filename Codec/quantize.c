@@ -53,16 +53,6 @@ typedef union
 } LONGWORD;
 
 
-// Switch that can be used to disable quantization for debugging
-#ifndef _QUANT
-#define _QUANT 1
-#endif
-
-// Quantization change made by David Newman 9/3/2002
-//#ifndef _QUANTIZE_PATCH_1
-#define _QUANTIZE_PATCH_1	0
-//#endif
-
 #ifndef FIXED_DATA_RATE
 #define FIXED_DATA_RATE		1
 #endif
@@ -105,15 +95,10 @@ typedef union
 
 
 // Quantization tables indexed by quality level and subband
-
 static const int quantScaleFactor = QUANT_SCALE_FACTOR;
 static const int LumaQuality[NUM_QUANT_LEVELS][NUM_QUANT_SUBBANDS] = LUMA_QUALITY_INITIALIZER;
 static const int ChromaQuality[NUM_QUANT_LEVELS][NUM_QUANT_SUBBANDS] = CHROMA_QUALITY_INITIALIZER;
 static const int quantLimit[NUM_QUANT_LEVELS] = QUANT_LIMITS;
-
-
-// Global data structure for quantization
-//static QUANTIZER q = QUANTIZER_INITIALIZER;
 
 
 // Performance measurements
@@ -156,24 +141,6 @@ void DumpText(char *txt, int hex)
     fclose(fp);
 }
 #endif
-
-#if 0
-void DumpEncoderQuant(ENCODER *encoder, int channel)
-{
-    //int num_channels = encoder->num_quant_channels;
-    int num_subbands = encoder->num_quant_subbands;
-    //int channel;
-    int subband;
-    FILE *logfile = encoder->logfile;
-
-    fprintf(logfile, "Quant channel: %d, subbands: %d\n", channel, num_subbands);
-    for (subband = 0; subband < num_subbands; subband++)
-        fprintf(logfile, "%5d", encoder->quant[channel][subband]);
-    fprintf(logfile, "\n");
-}
-#endif
-
-#define QUANT_TABLES_FILENAME "c:\\cedoc\\quant.txt"
 
 /*static*/ int g_midpoint_prequant = 2;
 

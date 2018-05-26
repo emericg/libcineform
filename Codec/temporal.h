@@ -33,12 +33,6 @@ void FilterTemporal16s(PIXEL *field1, int pitch1, PIXEL *field2, int pitch2,
                        PIXEL *lowpass, int lowpass_pitch, PIXEL *highpass, int highpass_pitch,
                        ROI roi);
 
-#if 0
-void FilterTemporalQuant16s(PIXEL *field1, int pitch1, PIXEL *field2, int pitch2,
-                            PIXEL *lowpass, int lowpass_pitch, PIXEL *highpass, int highpass_pitch,
-                            ROI roi, PIXEL *buffer, size_t buffer_size, int quantization);
-#endif
-
 // Perform the temporal transform on a pair of rows producing 16-bit coefficients
 void FilterTemporalRow8uTo16s(PIXEL8U *row1, PIXEL8U *row2, int length,
                               PIXEL16S *lowpass, PIXEL16S *highpass,

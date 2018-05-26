@@ -630,23 +630,6 @@ void TransformInverseSpatialQuantLowpass(IMAGE *input, IMAGE *output, const SCRA
 
 void TransformInverseSpatialQuantHighpass(IMAGE *input, IMAGE *output, PIXEL *buffer, size_t buffer_size, int scale);
 
-// Compute the wavelet transform of the input image
-//void TransformWavelet(IMAGE *input, IMAGE *output, IMAGE *even, IMAGE *odd);
-void TransformForwardWaveletQuad(IMAGE *input, int band, IMAGE *output, PIXEL *buffer, size_t size, int prescale);
-void TransformForwardWaveletStack(IMAGE *input, int band, IMAGE *output,
-                                  PIXEL *buffer, size_t size, int prescale,
-                                  int quantization[4]);
-
-// Compute the inverse wavelet transform (old version)
-void TransformInverseWavelet(IMAGE *input, IMAGE *output, IMAGE *lowpass, IMAGE *highpass);
-
-
-// Wavelet transforms for image fields (interlaced frames)
-
-// Compute the field (temporal and horizontal) wavelet transform between two image fields
-IMAGE *TransformForwardField(IMAGE *fields, int even_band, int odd_band, PIXEL *buffer);
-
-// Wavelet transforms for the temporal-horizontal transform applied to interlaced frames
 
 // Apply the temporal-horizontal wavelet transform to an interlaced frame
 void TransformForwardFrame(IMAGE *frame, IMAGE *wavelet, PIXEL *buffer, size_t buffer_size,
@@ -658,25 +641,6 @@ void TransformForwardFrameYUV(uint8_t *output, int output_pitch, FRAME_INFO *fra
                               char *buffer, size_t buffer_size, int chroma_offset, int precision, int limit_yuv, int conv601_709);
 
 // Routines that work with collections of wavelets in the transform data structure
-
-// Compute spatio-temporal transform (all levels) of a group of frames in field format
-void TransformGroupFields(TRANSFORM *transform,
-                          IMAGE **group, int group_length,
-                          int num_spatial, PIXEL *buffer);
-
-void TransformFrames(TRANSFORM *transform,
-                     FRAME *frame[], int group_length,
-                     int num_spatial, PIXEL *buffer);
-
-// Optimized to transform interlaced fields within frames
-void TransformGroupFrames(FRAME **group, int group_length,
-                          TRANSFORM *transform[], int num_transforms,
-                          int num_spatial, PIXEL *buffer, size_t buffer_size);
-
-// Compute the wavelet transform for the specified channel in the group of frames
-void TransformGroupChannel(FRAME **group, int group_length, int channel,
-                           TRANSFORM *transform, int num_spatial,
-                           PIXEL *buffer, size_t buffer_size);
 
 // Compute the upper levels of the wavelet transform for a group of frames
 #if _ALLOCATOR
@@ -706,20 +670,6 @@ void FinishFieldPlusTransform(TRANSFORM *transform, int group_length,
 
 // Compute the scale factors needed for correct display
 void SetTransformScale(TRANSFORM *transform);
-
-// Reconstruct the transform from the data decoded from a group of frames
-bool ReconstructGroupTransform(TRANSFORM *transform, int width, int height, int num_frames,
-                               int channel, PIXEL *buffer, size_t buffer_size);
-bool ReconstructQuantTransform(TRANSFORM *transform, int width, int num_frames,
-                               int channel, PIXEL *buffer, size_t buffer_size);
-
-// Reconstruct the group transform for a single channel
-bool ReconstructGroupImages(TRANSFORM *transform, IMAGE *frame[], int num_frames, int background, int prescale);
-
-// Compute a pyramid of wavelet images and return the root image
-IMAGE *CreateWaveletPyramid(IMAGE *input, int num_levels, PIXEL *buffer, size_t size);
-
-void ReconstructImagePyramid(IMAGE *wavelet);
 
 // Convert wavelet coefficients to 16-bit signed
 void ConvertGroupTransform(TRANSFORM *transform);
