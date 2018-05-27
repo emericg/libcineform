@@ -282,9 +282,6 @@ CSampleEncoder::PrepareToEncode(int inputWidth,
             goto bail;
         }
 
-        // Assume video systems 601 color space
-        //SetDecoderColorFlags(m_decoder, COLOR_SPACE_VS_RGB);
-
         // Remember the dimensions and format used for initializing the decoder
         m_encodedWidth = encodedWidth;
         m_encodedHeight = encodedHeight;

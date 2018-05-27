@@ -86,13 +86,8 @@ void InitBitstream(BITSTREAM *stream)
     stream->cntBits = 0;
 
     // Indicate that we are not writing to a file
-#if _POSIX
-    stream->file = NULL;
-    stream->access = BITSTREAM_ACCESS_NONE;
-#else
     stream->file = BITSTREAM_FILE_INVALID;
     stream->access = BITSTREAM_ACCESS_NONE;
-#endif
 
     // No error (refer to error codes in vlc.h)
     stream->error = 0;
@@ -717,158 +712,6 @@ uint8_t GetByte(BITSTREAM *stream)
     return dwOutput;
 }
 
-#if 0
-void PutWord(BITSTREAM *stream, uint8_t  word)
-{
-    assert(stream != NULL);
-    if (stream == NULL) return;
-
-    // Is the output block of words full?
-    if (stream->nWordsUsed == stream->dwBlockLength)
-    {
-        // Is the bitstream attached to a file?
-        if (stream->file != BITSTREAM_FILE_INVALID &&
-                stream->access == BITSTREAM_ACCESS_WRITE)
-        {
-            DWORD dwByteCount = stream->nWordsUsed * sizeof(uint8_t );
-            DWORD dwBytesWritten;
-#ifdef _WIN32
-            // Write the block to the output file
-            bool bWriteOkay = WriteFile(stream->file, stream->block, dwByteCount, &dwBytesWritten, NULL);
-
-            // Check that the block was written correctly
-            assert(bWriteOkay && dwByteCount == dwBytesWritten);
-            if (!bWriteOkay || dwByteCount != dwBytesWritten)
-            {
-                // Signal an error but reset the buffer and continue processing
-                // so that more of the program behavior can be seen for debugging
-                stream->error = BITSTREAM_ERROR_WRITE;
-            }
-#else
-            // Write the blobk to the output file
-            size_t write_count = fwrite(stream->block, dwByteCount, 1, stream->file);
-
-            // Check that the block was written correctly
-            assert(write_count > 0);
-            if (! (write_count > 0))
-            {
-                // Signal an error but reset the buffer and continue processing
-                // so that more of the program behavior can be seen for debugging
-                stream->error = BITSTREAM_ERROR_WRITE;
-            }
-#endif
-            // Reset buffer pointers to the beginning of the buffer
-            ResetBitstream(stream);
-        }
-    }
-
-    // Check that there is room in the block for the new word
-    assert(stream->nWordsUsed < stream->dwBlockLength);
-    if (stream->nWordsUsed < stream->dwBlockLength)
-    {
-        *(stream->lpCurrentWord++) = word;
-        stream->nWordsUsed++;
-    }
-    else
-    {
-        stream->error = BITSTREAM_ERROR_OVERFLOW;
-    }
-}
-#endif
-
-#if 0
-
-// Write bits to a bitstream
-void PutBits(BITSTREAM *stream, uint32_t  wBits, int nBits)
-{
-    uint8_t  wBuffer;
-    int nBitsFree;
-    int nBitsUsed;
-
-    //_RPT2(_CRT_WARN, "PutBits(0x%X, %d)\n", wBits, nBits);
-
-    // Can pass a null stream to indicate that the bits should be discarded
-    if (stream == NULL) return;
-
-    if (nBits == 0) return;
-
-    //START(tk_putbits);
-
-    //#if _TIMING
-    // Count the number of bits written to the bitstream
-    //	stream->cntBits += nBits;
-    //#endif
-
-    // Force leading bits to be zero
-    if (nBits < BITSTREAM_LONG_SIZE)
-        wBits &= ((1 << nBits) - 1);
-
-    // Get the current word
-    wBuffer = stream->wBuffer;
-
-    // Number of bits remaining in the current word
-    nBitsFree = stream->nBitsFree;
-
-    // Insert the current word into the buffer if it is full
-    if (nBitsFree == 0)
-    {
-        PutWord(stream, wBuffer);
-        assert(stream->error == BITSTREAM_ERROR_OKAY);
-        nBitsFree = BITSTREAM_WORD_SIZE;
-    }
-
-    // Insert bits into the current word until the remaining bits fit in one word
-    while (nBits >= nBitsFree)
-    {
-        // Fill the rest of the current word
-        if (nBitsFree < BITSTREAM_WORD_SIZE)
-        {
-            wBuffer <<= nBitsFree;
-        }
-
-        // Reduce the number of bits left to insert into the buffer
-        nBits -= nBitsFree;
-
-        // Insert bits into the current buffer
-        if (nBits > 0)
-            wBuffer |= (wBits >> nBits) & BITMASK(nBitsFree);
-        else
-            wBuffer |= wBits & BITMASK(nBitsFree);
-
-        // Insert the full word into the bitstream block
-        PutWord(stream, wBuffer);
-        assert(stream->error == BITSTREAM_ERROR_OKAY);
-
-        // Reset the number of bits available in the current word
-        nBitsFree = BITSTREAM_WORD_SIZE;
-        wBuffer = 0;
-    }
-
-    // Check that there is room in the current buffer
-    assert(nBits < nBitsFree);
-
-    // Are there more bits to place into the current word?
-    if (nBits > 0)
-    {
-        // Insert the bits into the current word
-        wBuffer <<= nBits;
-        wBuffer |= wBits & BITMASK(nBits);
-
-        // Reduce the number of bits available
-        nBitsFree -= nBits;
-    }
-
-    // Save the new current word and bit count in the stream
-    nBitsUsed = BITSTREAM_WORD_SIZE - nBitsFree;
-    stream->wBuffer = (uint8_t )(wBuffer & BITMASK(nBitsUsed));
-    stream->nBitsFree = nBitsFree;
-
-    //STOP(tk_putbits);
-}
-
-#else
-
-
 #if _PROCESSOR_DISPATCH
 
 __declspec(cpu_dispatch(Pentium_4, Generic))
@@ -877,7 +720,7 @@ void PutLong(BITSTREAM *stream, uint32_t  word)
 {
     // Stub routine for processor specific dispatch
 }
-#endif
+#endif // _PROCESSOR_DISPATCH
 
 
 #if _PROCESSOR_GENERIC
@@ -908,7 +751,7 @@ void PutLong(BITSTREAM *stream, uint32_t  word)
     }
 }
 
-#endif
+#endif // _PROCESSOR_GENERIC
 
 
 #if _PROCESSOR_PENTIUM_4
@@ -943,8 +786,6 @@ void PutLong(BITSTREAM *stream, uint32_t  word)
         stream->error = BITSTREAM_ERROR_OVERFLOW;
     }
 }
-
-#endif
 
 
 #if _BITSTREAM_BUFFER_BYTE
@@ -1682,250 +1523,6 @@ int LeftMostOne(unsigned int word)
 
     return lmo;
 }
-
-#if 0
-#if _ALLOCATOR
-
-BITSTREAM *CreateBitstream(ALLOCATOR *allocator, const char *filename, uint32_t access)
-{
-    BITSTREAM *stream = (BITSTREAM *)Alloc(allocator, sizeof(BITSTREAM));
-    if (stream == NULL) return NULL;
-
-    InitBitstream(stream);
-    OpenBitstream(stream, filename, access);
-
-    return stream;
-}
-#else
-
-BITSTREAM *CreateBitstream(const char *filename, int access)
-{
-    BITSTREAM *stream = (BITSTREAM *)MEMORY_ALLOC(sizeof(BITSTREAM));
-    if (stream == NULL)
-    {
-        return NULL;
-    }
-
-    InitBitstream(stream);
-    OpenBitstream(stream, filename, access);
-
-    return stream;
-}
-
-#endif
-#endif
-
-#if 0
-void DeleteBitstream(BITSTREAM *stream)
-{
-    if (stream != NULL)
-    {
-        if (stream->file != BITSTREAM_FILE_INVALID)
-            CloseBitstream(stream);
-
-
-#if _ALLOCATOR
-        Free(allocator, stream);
-#else
-        MEMORY_FREE(stream);
-#endif
-    }
-}
-#endif
-
-#if 0
-void OpenBitstream(BITSTREAM *stream, const char *filename, uint32_t access)
-{
-#if _POSIX
-
-    assert(stream != NULL);
-    if (stream != NULL)
-    {
-        // Initialize the bitstream
-        InitBitstream(stream);
-
-        // Open the file for binary stream
-        switch (access)
-        {
-            case BITSTREAM_ACCESS_WRITE:
-                stream->file = fopen(filename, "wb");
-                break;
-
-            case BITSTREAM_ACCESS_READ:
-                stream->file = fopen(filename, "rb");
-                break;
-
-            default:
-                assert(0);
-                stream->error = BITSTREAM_ERROR_ACCESS;
-                break;
-        }
-
-        // Need to remember how the stream is accessed
-        stream->access = access;
-
-        // Set the size of the buffer for reading and writing
-        stream->dwBlockLength = BITSTREAM_BLOCK_LENGTH;
-    }
-
-#else
-
-    assert(stream != NULL);
-    if (stream != NULL)
-    {
-        // Initialize the bitstream
-        InitBitstream(stream);
-
-        // Open the file for binary stream
-        switch (access)
-        {
-            case BITSTREAM_ACCESS_WRITE:
-                stream->file = CreateFile(filename, GENERIC_WRITE, 0, NULL,
-                                          CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-                break;
-
-            case BITSTREAM_ACCESS_READ:
-                stream->file = CreateFile(filename, GENERIC_READ, 0, NULL,
-                                          OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-                break;
-
-            default:
-                stream->error = BITSTREAM_ERROR_ACCESS;
-                assert(0);
-                break;
-        }
-
-        // Need to remember how the stream is accessed
-        stream->access = access;
-
-        // Set the size of the buffer for reading and writing
-        stream->dwBlockLength = BITSTREAM_BLOCK_LENGTH;
-    }
-
-#endif
-}
-#endif
-
-#if 0
-void CloseBitstream(BITSTREAM *stream)
-{
-#if _POSIX
-
-    assert(stream != NULL);
-    if (stream != NULL)
-    {
-        // Write any bits in the current word to the output buffer
-        FlushStream(stream);
-
-        if (stream->file != BITSTREAM_FILE_INVALID)
-        {
-            size_t byte_count = stream->nWordsUsed * sizeof(uint8_t );
-
-            // Write the block to the output file
-            fwrite(stream->block, byte_count, 1, stream->file);
-
-            // Close the file
-            fclose(stream->file);
-
-            // Indicate that the file is closed
-            stream->file = BITSTREAM_FILE_INVALID;
-            stream->access = BITSTREAM_ACCESS_NONE;
-            stream->dwBlockLength = 0;
-        }
-    }
-
-#else
-
-    assert(stream != NULL);
-    if (stream != NULL)
-    {
-        // Write any bits in the current word to the output buffer
-        FlushStream(stream);
-
-        if (stream->file != BITSTREAM_FILE_INVALID)
-        {
-            DWORD nBytesToWrite = stream->nWordsUsed * sizeof(uint8_t );
-            DWORD nBytesWritten;
-#ifdef _WIN32
-            // Write the block to the output file
-            WriteFile(stream->file, stream->block, nBytesToWrite, &nBytesWritten, NULL);
-            assert(nBytesToWrite == nBytesWritten);
-#else
-            // Write the block to the output file
-            size_t write_count = fwrite(stream->block, nBytesToWrite, 1, stream->file);
-            assert(write_count > 0);
-#endif
-            // Close the file
-            CloseHandle(stream->file);
-
-            // Indicate that the file is closed
-            stream->file = BITSTREAM_FILE_INVALID;
-            stream->access = BITSTREAM_ACCESS_NONE;
-            stream->dwBlockLength = 0;
-        }
-    }
-
-#endif
-}
-#endif
-
-#if 0
-#if _POSIX && 0
-#warning Posix support not implemented
-#else
-
-void AttachBitstreamFile(BITSTREAM *stream, HANDLE file, uint32_t access)
-{
-    // Stream must exist and not have a file already attached
-    assert(stream != NULL && stream->file == BITSTREAM_FILE_INVALID);
-    if (stream != NULL && stream->file == BITSTREAM_FILE_INVALID)
-    {
-        stream->file = file;
-        stream->access = access;
-    }
-}
-
-#endif
-#endif
-
-#if 0
-void DetachBitstreamFile(BITSTREAM *stream)
-{
-#if _POSIX && 0
-#warning Posix support not implemented
-#else
-
-    // Stream must exist
-    assert(stream != NULL);
-    if (stream != NULL)
-    {
-        // Write any bits in the current word to the output buffer
-        FlushStream(stream);
-
-        if (stream->file != BITSTREAM_FILE_INVALID &&
-                stream->access == BITSTREAM_ACCESS_WRITE)
-        {
-            DWORD nBytesToWrite = stream->nWordsUsed * sizeof(uint8_t );
-            DWORD nBytesWritten;
-#ifdef _WIN32
-            // Write the block to the output file
-            WriteFile(stream->file, stream->block, nBytesToWrite, &nBytesWritten, NULL);
-            assert(nBytesToWrite == nBytesWritten);
-#else
-            // Write the block to the output file
-            size_t write_count = fwrite(stream->block, nBytesToWrite, 1, stream->file);
-            assert(write_count > 0);
-#endif
-            // Do not close the file
-
-            // Indicate that the stream no longer has an attached file
-            stream->file = BITSTREAM_FILE_INVALID;
-            stream->access = BITSTREAM_ACCESS_NONE;
-        }
-    }
-#endif
-}
-#endif
 
 void SetBitstreamBuffer(BITSTREAM *stream, uint8_t  *buffer, size_t length, uint32_t access)
 {

@@ -27,11 +27,6 @@
 #endif
 #endif
 
-// Enable or disable use of the new state machine decoder
-#ifndef _NEW_DECODER
-#define _NEW_DECODER 1
-#endif
-
 // Enable use of multimedia instructions for code optimization
 #ifndef _XMMOPT
 #define _XMMOPT 1
@@ -239,10 +234,6 @@ static void *malloc22(size_t size, size_t align)
 #else
 #define _INTERLACED_WORKER_THREADS 0
 #endif
-#endif
-
-#ifndef _ENTROPY_THREADS
-#define _ENTROPY_THREADS (_THREADED_DECODER)		// Use worker threads for the last transform?
 #endif
 
 #ifndef _DELAY_THREAD_START

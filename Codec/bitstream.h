@@ -24,12 +24,6 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#else
-// Force the use of POSIX on Macintosh and Linux
-#define _POSIX	1
-#ifdef  __APPLE__
-#include "macdefs.h"
-#endif
 #endif
 
 #include <stdio.h>
@@ -101,12 +95,17 @@ typedef union tagvalue			// Bitstream tag and value pair
 
 } TAGVALUE;
 
+#if _WIN32
 
-#if _POSIX
+// Windows definitions
+#define BITSTREAM_FILE_INVALID		INVALID_HANDLE_VALUE
+#define BITSTREAM_ACCESS_READ		GENERIC_READ
+#define BITSTREAM_ACCESS_WRITE		GENERIC_WRITE
+#define BITSTREAM_ACCESS_NONE		0
 
-// POSIX definitions
+#else
+
 #define BITSTREAM_FILE_INVALID		NULL
-
 typedef enum
 {
     BITSTREAM_ACCESS_NONE = 0,		// ""
@@ -114,14 +113,6 @@ typedef enum
     BITSTREAM_ACCESS_WRITE			// "wb"
 
 } BITSTREAM_ACCESS;
-
-#else
-
-// Windows definitions
-#define BITSTREAM_FILE_INVALID		INVALID_HANDLE_VALUE
-#define BITSTREAM_ACCESS_READ		GENERIC_READ
-#define BITSTREAM_ACCESS_WRITE		GENERIC_WRITE
-#define BITSTREAM_ACCESS_NONE		0
 
 #endif
 
@@ -168,19 +159,14 @@ typedef struct bitstream
 
     BITCOUNT cntBits;			// Number of bits written to the bitstream
 
-    // Change this so more blocks are allocated on demand
-#if 0
-    uint8_t  block[BITSTREAM_BLOCK_LENGTH];		// was used form some very old debug code -- causes DECODER to grow hugely
-#endif
 
     // File handle for writing the bitstream to an output file
-#if _POSIX
-    FILE *file;
-    //char *access;
-    BITSTREAM_ACCESS access;
-#else
+#ifdef _WIN32
     HANDLE file;
     DWORD access;
+#else
+    FILE *file;
+    BITSTREAM_ACCESS access;
 #endif
 
     // Alignment of the bitstream within the sample

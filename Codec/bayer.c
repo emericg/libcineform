@@ -12079,6 +12079,7 @@ void Row16uFull2OutputFormat(DECODER *decoder, FRAME_INFO *info, int thread_inde
             switch (decoder->codec.encoded_format)
             {
                 case ENCODED_FORMAT_RGBA_4444:		// Four plane with alpha
+                {
                     if (ALPHAOUTPUT(info->format))
                     {
                         // already 444 RGB
@@ -12134,8 +12135,10 @@ void Row16uFull2OutputFormat(DECODER *decoder, FRAME_INFO *info, int thread_inde
                                                          newline, pitch, info->format, whitebitdepth, flags);
                             }
                         }
-                        break;
                     }
+                }
+                break;
+
                 case ENCODED_FORMAT_RGB_444:		// Three planes of RGB 4:4:4
                 {
                     // already 444 RGB
@@ -12267,8 +12270,6 @@ void Row16uFull2OutputFormat(DECODER *decoder, FRAME_INFO *info, int thread_inde
                     }
                     else // convert to 444 RGB
                     {
-
-
                         if (decoder->frame.generate_look)
                         {
                             DrawBlankLUT(scanline, info->width, y, 1);

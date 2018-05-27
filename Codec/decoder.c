@@ -126,9 +126,6 @@ extern void FastSharpeningBlurVW13A(short *Aptr,
 // Pixel size used for computing the compression ratio
 #define BITS_PER_PIXEL 8
 
-// Default processor capabilities
-#define DEFAULT_FEATURES (_CPU_FEATURE_MMX )
-
 #define DEMOSAIC_DELAYLINES	4
 
 // Forward references
@@ -1564,22 +1561,10 @@ bool DecodeSampleChannelHeader(DECODER *decoder, BITSTREAM *input);
 // Apply the inverse horizontal-temporal transform to reconstruct the output frame
 void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output, int pitch);
 
-#if 0
-// Reconstruct the frame to quarter resolution at full frame rate
-void ReconstructQuarterFrame(DECODER *decoder, int num_channels,
-                             uint8_t *frame1, uint8_t *frame2, int output_pitch,
-                             FRAME_INFO *info, char *buffer, size_t buffer_size);
-#else
 // Reconstruct the frame to quarter resolution at full frame rate
 void ReconstructQuarterFrame(DECODER *decoder, int num_channels,
                              int frame_index, uint8_t *output, int output_pitch,
                              FRAME_INFO *info, const SCRATCH *scratch, int precision);
-#endif
-
-// Copy the quarter resolution lowpass channels from the spatial transform
-void CopyQuarterFrameToBuffer(TRANSFORM **transform_array, int num_channels,
-                              uint8_t *output, int output_pitch,
-                              FRAME_INFO *info, int precision);
 
 // Convert the quarter resolution lowpass channels to the specified output format
 void ConvertQuarterFrameToBuffer(DECODER *decoder, TRANSFORM **transform_array, int num_channels,
@@ -9855,27 +9840,6 @@ decoding_complete:
         // Return the first frame in the group
         if (!decoder->no_output)
         {
-#if 0
-            // Decoding to quarter frame resolution at full frame rate?
-            if (resolution == DECODED_RESOLUTION_QUARTER)
-            {
-                int num_channels = codec->num_channels;
-                FRAME_INFO *info = &decoder->frame;
-                char *buffer = decoder->buffer;
-                size_t buffer_size = decoder->buffer_size;
-
-                uint8_t *frame1 = output;
-                uint8_t *frame2 = decoder->output2;
-                assert(frame2 != NULL);
-
-                // Reconstruct two frames at quarter resolution
-                ReconstructQuarterFrame(decoder, num_channels,
-                                        frame1, frame2, pitch,
-                                        info, buffer, buffer_size);
-            }
-            else
-#endif
-
                 // Finish computing the output frame
                 ReconstructSampleFrameToBuffer(decoder, 0, output, pitch);
         }
@@ -13378,7 +13342,6 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
                                             //	#pragma omp parallel for
                                             for (y = 0; y < info->height; y++)
                                             {
-
                                                 uint8_t *line = output;
                                                 PIXEL *bayerptr = (PIXEL *)decoder->RawBayer16;
 
@@ -13456,7 +13419,6 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
                                                         b_128 = _mm_adds_epi16(b_128, limiter);
                                                         b_128 = _mm_subs_epu16(b_128, limiter);
 
-
                                                         _mm_store_si128(outR_128++, r_128);
                                                         _mm_store_si128(outG1_128++, g1_128);
                                                         _mm_store_si128(outG2_128++, g2_128);
@@ -13472,7 +13434,6 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
                                                     outG1 = (PIXEL16U *)outG1_128;
                                                     outG2 = (PIXEL16U *)outG2_128;
                                                     outB = (PIXEL16U *)outB_128;
-
                                                 }
 #endif
 
@@ -13611,7 +13572,6 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
                                                     if (bayer_format == BAYER_FORMAT_GRN_RED || bayer_format == BAYER_FORMAT_RED_GRN)
                                                         line -= pitch;
 
-
                                                     {
                                                         int offset = pitch >> 1;
                                                         outA16 = (PIXEL16U *)line;
@@ -13625,8 +13585,6 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
                                                         //point to green pixel with *outA16
                                                         if (bayer_format == BAYER_FORMAT_GRN_RED || bayer_format == BAYER_FORMAT_GRN_BLU)
                                                             outA16++;
-
-
 
                                                         for (x = 2; x < info->width - 2; x++)
                                                         {
@@ -14558,7 +14516,6 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
                                                                     &decoder->scratch, chroma_offset, precision);
 #endif
 
-
                                     if (format == DECODED_FORMAT_YUYV)
                                     {
                                         line = output;
@@ -14940,85 +14897,13 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
 #if (0 && DEBUG && _WIN32)
     _CrtCheckMemory();
 #endif
-
 }
-
-
-
-#if 0
-
-// Reconstruct the frame to quarter resolution at full frame rate
-void ReconstructQuarterFrame(DECODER *decoder, int num_channels,
-                             uint8_t *frame1, uint8_t *frame2, int output_pitch,
-                             FRAME_INFO *info, char *buffer, size_t buffer_size)
-{
-
-    TRANSFORM **transform_array = decoder->transform;
-    int output_width = info->width;
-    int output_height = info->height;
-    PIXEL *low_row_ptr[CODEC_MAX_CHANNELS];
-    PIXEL *high_row_ptr[CODEC_MAX_CHANNELS];
-    PIXEL *out1_row_ptr[CODEC_MAX_CHANNELS];
-    PIXEL *out2_row_ptr[CODEC_MAX_CHANNELS];
-    PIXEL *bufptr = (PIXEL *)buffer;
-    uint8_t *output_row_ptr = output;
-    int low_pitch[CODEC_MAX_CHANNELS];
-    int high_pitch[CODEC_MAX_CHANNELS];
-    int channel;
-    int row;
-
-    // Check that there is enough space for the intermediate results from each channel
-    assert(output_width * sizeof(PIXEL) < buffer_size);
-
-    // Get pointers into the wavelets for each channel
-    for (channel = 0; channel < num_channels; channel++)
-    {
-        // Get the lowpass bands from the two wavelets for the two halves of the temporal wavelet
-        IMAGE *low_wavelet = transform_array[channel]->wavelet[3];
-        IMAGE *high_wavelet = transform_array[channel]->wavelet[2];
-
-        // Get the pointers to the first row in each lowpass band
-        low_row_ptr[channel] = low_wavelet->band[0];
-        high_row_ptr[channel] = high_wavelet->band[0];
-
-        low_pitch[channel] = low_wavelet->pitch / sizeof(PIXEL);
-        high_pitch[channel] = high_wavelet->pitch / sizeof(PIXEL);
-
-        // Allocate space for one row of results for this channel
-        channel_row_ptr[channel] = bufptr;
-        bufptr += low_wavelet->width;
-    }
-
-    for (row = 0; row < output_height; row++)
-    {
-        char *bufptr = buffer;
-
-        for (channel = 0; channel < num_channels; channel++)
-        {
-            // Invert the temporal transform at quarter resolution
-            InvertTemporalQuarterRow16s(low_row_ptr[channel], high_row_ptr[channel], channel_row_ptr[channel]);
-
-            // Advance to the next row in each band for the temporal transform
-            low_row_ptr[channel] += low_pitch[channel];
-            high_row_ptr[channel] += high_pitch[channel];
-        }
-
-        // Pack the intermediate results into the output row
-        ConvertUnpacked16sRowToPacked8u(channel_row_ptr, num_channels, output_row_ptr, output_width);
-
-        // Advance the output row pointer
-        output_row_ptr += output_pitch;
-    }
-}
-
-#else
 
 // Reconstruct the frame to quarter resolution at full frame rate
 void ReconstructQuarterFrame(DECODER *decoder, int num_channels,
                              int frame_index, uint8_t *output, int output_pitch,
                              FRAME_INFO *info, const SCRATCH *scratch, int precision)
 {
-
 #if (1 && DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
@@ -15338,51 +15223,6 @@ void ReconstructQuarterFrame(DECODER *decoder, int num_channels,
         output_row_ptr += output_pitch;
     }
 }
-
-#endif
-
-#if 0
-// Copy the quarter resolution lowpass channels from the spatial transform
-void CopyQuarterFrameToBuffer(TRANSFORM **transform_array, int num_channels,
-                              uint8_t *output, int output_pitch,
-                              FRAME_INFO *info, int precision)
-{
-    int output_width = info->width;
-    int output_height = info->height;
-    PIXEL *input_row_ptr[CODEC_MAX_CHANNELS];
-    uint8_t *output_row_ptr = output;
-    int input_pitch[CODEC_MAX_CHANNELS];
-    int channel;
-    int row;
-
-    // Get pointers into the wavelets for each channel
-    for (channel = 0; channel < num_channels; channel++)
-    {
-        // Get the lowpass bands from the two wavelets for the two halves of the temporal wavelet
-        IMAGE *wavelet = transform_array[channel]->wavelet[1];
-
-        // Get the pointers to the first row in each lowpass band
-        input_row_ptr[channel] = wavelet->band[0];
-        input_pitch[channel] = wavelet->pitch / sizeof(PIXEL);
-    }
-
-    for (row = 0; row < output_height; row++)
-    {
-        // Descale and pack the pixels in each output row
-        CopyQuarterRowToBuffer(input_row_ptr, num_channels, output_row_ptr, output_width, precision);
-
-        // Advance the input row pointers
-        for (channel = 0; channel < num_channels; channel++)
-        {
-            input_row_ptr[channel] += input_pitch[channel];
-        }
-
-        // Advance the output row pointer
-        output_row_ptr += output_pitch;
-    }
-}
-#endif
-
 
 // Convert the quarter resolution lowpass channels to the specified output format
 void ConvertQuarterFrameToBuffer(DECODER *decoder, TRANSFORM **transform_array, int num_channels,
@@ -15763,10 +15603,12 @@ void SetDecoderCapabilities(DECODER *decoder)
 
     decoder->thread_cntrl.capabilities |= (processor_count << 16);
 }
+
 int GetDecoderCapabilities(DECODER *decoder)
 {
     return decoder->thread_cntrl.capabilities;
 }
+
 bool SetDecoderColorFlags(DECODER *decoder, uint32_t color_flags)
 {
     if (/*MIN_DECODED_COLOR_SPACE <= color_flags && */color_flags <= MAX_DECODED_COLOR_SPACE)
@@ -18476,62 +18318,6 @@ void TransformInverseFrameSectionToRow16u(DECODER *decoder, int thread_index, in
     }
 #endif
 }
-
-#endif
-
-
-#if 0
-
-DWORD WINAPI TransformInverseFrameToRow16utopThread(LPVOID param)
-{
-    struct data
-    {
-        TRANSFORM *transform[3];
-        int frame_index;
-        int num_channels;
-        uint8_t *output;
-        int output_pitch;
-        FRAME_INFO *info;
-        SCRATCH *scratch;
-        int chroma_offset;
-        int precision;
-    } *dptr;
-
-    dptr = (struct data *)param;
-
-
-    TransformInverseFrameToRow16utop(dptr->transform, dptr->frame_index, dptr->num_channels,
-                                     (PIXEL16U *)dptr->output, dptr->output_pitch, dptr->info,
-                                     dptr->scratch, dptr->chroma_offset, dptr->precision);
-
-    return 0;
-}
-
-DWORD WINAPI TransformInverseFrameToRow16ubottomThread(LPVOID param)
-{
-    struct data
-    {
-        TRANSFORM *transform[3];
-        int frame_index;
-        int num_channels;
-        uint8_t *output;
-        int output_pitch;
-        FRAME_INFO *info;
-        SCRATCH *scratch;
-        int chroma_offset;
-        int precision;
-    } *dptr;
-
-    dptr = (struct data *)param;
-
-
-    TransformInverseFrameToRow16ubottom(dptr->transform, dptr->frame_index, dptr->num_channels,
-                                        (PIXEL16U *)dptr->output, dptr->output_pitch, dptr->info,
-                                        dptr->scratch, dptr->chroma_offset, dptr->precision);
-
-    return 0;
-}
-
 #endif
 
 

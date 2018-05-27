@@ -1616,6 +1616,7 @@ CFHD_Error CSampleDecoder::CopyToOutputBuffer(void *decodedBuffer, int decodedPi
                                    outputBuffer, m_outputWidth, m_outputHeight, outputPitch, m_outputFormat,
                                    byte_swap_flag);
     }
+
 }
 
 CFHD_Error

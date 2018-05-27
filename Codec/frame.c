@@ -300,17 +300,6 @@ FRAME *CreateFrameFromFrame(FRAME *frame)
     return new_frame;
 }
 
-#if 0
-// Create an image data structure from planar video frame data
-FRAME *CreateFrameFromPlanes(ALLOCATOR *allocator, LPBYTE data, int width, int height, int pitch, int format)
-{
-    // To be written
-    assert(0);
-
-    return NULL;
-}
-#endif
-
 void ConvertPackedToFrame(uint8_t *data, int width, int height, int pitch, FRAME *frame)
 {
     IMAGE *image = frame->channel[0];

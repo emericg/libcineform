@@ -287,8 +287,6 @@ void OverrideCFHDDATA(DECODER *decoder, unsigned char *lpCurrentBuffer, int nWor
             decoder->ghost_bust_left = 0;
             decoder->ghost_bust_right = 0;
             decoder->preformatted_3D_type = 0;
-            memset(&decoder->Keyframes, 0, sizeof(decoder->Keyframes));
-            //decoder->codec.unique_framenumber = -1;
             decoder->codec.unique_framenumber = UINT32_MAX;
             CopyMetadataChunks(decoder, NULL);
 
@@ -479,8 +477,6 @@ void OverrideCFHDDATAUsingParent(struct decoder *decoder, struct decoder *parent
             decoder->ghost_bust_right = 0;
             decoder->preformatted_3D_type = 0;
             decoder->cdl_sat = 0;
-            memset(&decoder->Keyframes, 0, sizeof(decoder->Keyframes));
-            //decoder->codec.unique_framenumber = -1;
             decoder->codec.unique_framenumber = UINT32_MAX;
         }
     }

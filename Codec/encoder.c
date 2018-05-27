@@ -93,11 +93,7 @@
 #include "swap.h"
 
 #ifndef _FRAME_TRANSFORM
-#if _NEW_DECODER
 #define _FRAME_TRANSFORM	1		// Use the frame transform for the level one wavelets
-#else
-#define _FRAME_TRANSFORM	1		// Use the frame transform for the level one wavelets
-#endif
 #endif
 
 #define FAST_BYR3		1
@@ -1842,7 +1838,7 @@ void MoveInterleavedLine(uint8_t *data, uint8_t *t1, uint8_t *t2, uint8_t *done,
 // Encode one frame of video
 
 #if _RECURSIVE
-bool EncodeSampleOld(ENCODER *encoder, LPBYTE data, int width, int height, int pitch, int format,
+bool EncodeSampleOld(ENCODER *encoder, uint8_t *data, int width, int height, int pitch, int format,
                      TRANSFORM *transform[], int num_transforms, BITSTREAM *output,
                      PIXEL *buffer, size_t buffer_size, int i_fixedquality, int fixedbitrate,
                      uint8_t *pPreviewBuffer, float framerate, custom_quant *custom)
@@ -2797,10 +2793,8 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
         {
             int frame_index = j;
 
-#if _NEW_DECODER
             // Interlaced frame encoding (implemented using the frame transform)
             codec->progressive = 0;
-#endif
 
 #if (0 && DEBUG)
             if (logfile)
@@ -2877,10 +2871,8 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
         {
             int frame_index = j;
 
-#if _NEW_DECODER
             // Progressive frame transform (implemented using the spatial transform)
             codec->progressive = 1;
-#endif
 
 #if (0 && DEBUG)
             if (logfile)
@@ -8657,7 +8649,7 @@ bool EncodeSampleThreaded(ENCODER *encoder, uint8_t *data, int width, int height
             ConvertRGB32to10bitYUVFrame(data, pitch, frame, (uint8_t *)buffer, buffer_size, encoder->input.color_space, encoder->codec.precision, false, 0);
 #else
             // Convert the RGB24 to V210 for testing
-            ConvertRGB24ToV210(data, width, height, pitch, (PBYTE)buffer);
+            ConvertRGB24ToV210(data, width, height, pitch, (uint8_t *)buffer);
             ConvertV210ToFrame8u(data, pitch, frame, (uint8_t *)buffer);
             format = COLOR_FORMAT_V210;
 #endif
@@ -8776,10 +8768,8 @@ bool EncodeSampleThreaded(ENCODER *encoder, uint8_t *data, int width, int height
     {
         int frame_index = j;
 
-#if _NEW_DECODER
         // Interlaced frame encoding (implemented using the frame transform)
         codec->progressive = 0;
-#endif
 
 #if (0 && DEBUG)
         if (logfile)
@@ -8860,10 +8850,8 @@ bool EncodeSampleThreaded(ENCODER *encoder, uint8_t *data, int width, int height
     {
         int frame_index = j;
 
-#if _NEW_DECODER
         // Progressive frame transform (implemented using the spatial transform)
         codec->progressive = 1;
-#endif
 
 #if (0 && DEBUG)
         if (logfile)
@@ -10516,10 +10504,8 @@ bool EncodeChannelsThreaded(ENCODER *encoder, uint8_t *data, int width, int heig
     {
         int frame_index = j;
 
-#if _NEW_DECODER
         // Interlaced frame encoding (implemented using the frame transform)
         codec->progressive = 0;
-#endif
 
 #if (0 && DEBUG)
         if (logfile)
@@ -10572,10 +10558,8 @@ bool EncodeChannelsThreaded(ENCODER *encoder, uint8_t *data, int width, int heig
     {
         int frame_index = j;
 
-#if _NEW_DECODER
         // Progressive frame transform (implemented using the spatial transform)
         codec->progressive = 1;
-#endif
 
 #if (0 && DEBUG)
         if (logfile)

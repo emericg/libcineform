@@ -1155,71 +1155,6 @@ typedef struct MetadataDisplayParameters
     int fadeoutframes;
 } MDParams;
 
-typedef struct ItemSubtitle
-{
-    struct ItemSubtitle *prev;
-    struct ItemSubtitle *next;
-    char png_name[256];
-    char startTimecode[16];
-    char endTimecode[16];
-    int startFrame;
-    int endFrame;
-    int Width;
-    int Height;
-    int TopLeftX;
-    int TopLeftY;
-    int plt; //always �0� [Not used]
-    int frcd; // yes = 1, no = 0; �yes� if it is forced subtitle, otherwise set �no� [Always flag as �no�]
-    int fdup;// Number of frames for fade-in (fade-up)
-    int fddn;// Number of frames for fade-out (fade-down)
-    int tifplt;//always �0� [Not used]
-    char text[256];// Comment text
-
-} Subtitle;
-
-typedef struct MetadataSubtitlingParameters
-{
-    char *spi_file_buffer;
-    int spi_error;
-    unsigned char spi_error_msg[64];
-    char spi_path[PNG_PATH_MAXSIZE];
-    char tcoffset[16];
-    int frameoffset;
-    int FormatRes; //480/720/1080
-    int FormatRate; // 23/24/25/29/50/59
-    char imageDir[PNG_PATH_MAXSIZE];
-    int DropFrame; //0 or 1
-    int subcount;
-    int parallax;
-    Subtitle *firstTitle;
-} Subtitling;
-
-#define KEYFRAME_PAYLOAD_MAX	256
-typedef struct ItemKeyframePair
-{
-    uint32_t control_point_type;	//FOURCC of the keygframe group, CP3D or CPPR -- (3D or primiaries)
-    uint32_t control_point_flags;	//unused, spaces for spline, hold and linear control
-    uint32_t trigger_frame_prev;	//UFRM or converted TIMECODE
-    uint32_t trigger_frame_in;		//UFRM or converted TIMECODE
-    uint32_t trigger_frame_out;		//UFRM or converted TIMECODE
-    uint32_t trigger_frame_next;	//UFRM or converted TIMECODE
-    uint32_t payload_size;
-    unsigned char frame_prev_payload[KEYFRAME_PAYLOAD_MAX];
-    unsigned char frame_in_payload[KEYFRAME_PAYLOAD_MAX];
-    unsigned char frame_out_payload[KEYFRAME_PAYLOAD_MAX];
-    unsigned char frame_next_payload[KEYFRAME_PAYLOAD_MAX];
-    float computed_fraction;		// used to limit excusive reprocessing.
-} KeyframePair;
-
-#define MAX_CONTROL_POINT_PAIRS		8
-typedef struct KeyframingParameters
-{
-    int keyframetypecount;
-    KeyframePair KeyframePairs[MAX_CONTROL_POINT_PAIRS];
-} Keyframing;
-
-// Cast an encoder or decoder to the common data type (the superclass)
-#define CODEC_TYPE(p)	((CODEC *)(p))
 
 typedef struct ToolsHandle
 {
@@ -1635,10 +1570,6 @@ typedef struct decoder		// Decoder state (derived from codec)
     int pixel_aspect_y;			// Denominator of the pixel aspect ratio
 
     int useAlphaMixDown[2]; // check colors
-
-    Subtitling Subtitles;
-
-    Keyframing Keyframes;
 
 } DECODER;
 

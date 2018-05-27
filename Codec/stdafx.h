@@ -42,13 +42,7 @@
 #endif
 #elif __APPLE__
 #include <string.h>
-#include <sys/stat.h>		// for _mkdir()
-#include <unistd.h>			// for usleep()
 #include <CoreFoundation/CoreFoundation.h>		// for propertylist/preferences
-#else
-#include <sys/stat.h>		// for _mkdir()
-#include <unistd.h>			// for usleep()
-#include <ctype.h>			// for isalpha()
 #endif
 
 #ifdef __cplusplus

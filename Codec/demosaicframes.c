@@ -31,12 +31,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #elif __APPLE__
-#include <sys/stat.h>		// for _mkdir()
-#include <unistd.h>			// for usleep()
 #include <CoreFoundation/CoreFoundation.h>		// for propertylist/preferences
 #else
-#include <sys/stat.h>		// for _mkdir()
-#include <unistd.h>			// for usleep()
 #include <xmmintrin.h>
 #endif
 

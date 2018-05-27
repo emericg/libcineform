@@ -25,13 +25,8 @@
 // Define data types used in the codec that are not defined on the Macintosh
 
 typedef unsigned char BYTE;
-typedef unsigned char *PBYTE;
-typedef unsigned char *LPBYTE;
-
-typedef unsigned short WORD;
 
 typedef unsigned long DWORD;
-typedef unsigned long ULONG;
 
 typedef void *HANDLE;
 typedef void *LPVOID;
