@@ -16,7 +16,7 @@ if (WIN32)
     else ()
         set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--allow-multiple-definition")
     endif ()
-    SET(ADDITIONAL_LIBS "")
+    set(ADDITIONAL_LIBS "")
 endif (WIN32)
 
 if (UNIX)
@@ -61,7 +61,7 @@ if (BUILD_SHARED_LIBS)
 endif (BUILD_SHARED_LIBS)
 
 # pkg-config integration
-set(PROJECT_VERSION "0.1")
+set(PROJECT_VERSION "0.2")
 set(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")
 set(EXEC_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE PATH "Installation prefix for executables and object code libraries" FORCE)
 set(BIN_INSTALL_DIR ${EXEC_INSTALL_PREFIX}/bin CACHE PATH "Installation prefix for user executables" FORCE)
