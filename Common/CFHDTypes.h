@@ -24,10 +24,12 @@
 #include <stdbool.h>
 #include <string.h>
 
-// Convert the four character code to the correct byte order
-#ifndef CFHD_FCC
+
+//! Convert the four character code to the correct byte order
 #define CFHD_FCC(a,b,c,d) (((d&0xff)<<0)|((c&0xff)<<8)|((b&0xff)<<16)|((a&0xff)<<24))
-#endif
+
+#define CFHD_THUMBNAILSIZE(w,h)  ((((w)+7)/8)*(((h)+7)/8)*4)
+
 
 //! Pixel formats are specified using four character codes
 typedef enum CFHD_PixelFormat
@@ -89,6 +91,7 @@ typedef enum CFHD_SampleInfoTag
     CFHD_SAMPLE_ENCODED_FORMAT,// With early SDKs return 1 for YUV (rather than 0)
     CFHD_SAMPLE_SDK_VERSION,
     CFHD_SAMPLE_ENCODE_VERSION,
+
 } CFHD_SampleInfoTag;
 
 //! Encoding quality settings (adapted from Encoder2).
@@ -131,9 +134,9 @@ typedef enum CFHD_EncodedFormat
 
 } CFHD_EncodedFormat;
 
-#define THUMBNAILSIZE(w,h)  ((((w)+7)/8)*(((h)+7)/8)*4)
+typedef uint32_t CFHD_EncodingFlags;
 
-//! Flags that provide additional information about the video format.
+//! Definitions for CFHD_EncodingFlags, that provide additional information about the video format.
 enum
 {
     CFHD_ENCODING_FLAGS_NONE				= 0,
@@ -154,7 +157,7 @@ enum
 
     // For Compressed DPX encoding (produces a 10-bit RGB 32-bit packed Thumbnail.)
     // thumbnail is appended to the end of the sample, so can be written directly into a compressed DPX file.  The image offset for the DPX header pointes
-    // ((width+7)/8)*((height+7)/8)*4 bytes or THUMBNAILSIZE(width,height) from the end of the sample.
+    // ((width+7)/8)*((height+7)/8)*4 bytes or CFHD_THUMBNAILSIZE(width,height) from the end of the sample.
     CFHD_ENCODING_FLAGS_APPEND_THUMBNAIL	= 1 << 9,  // Auto generate a 1/8th size thumbnail, size (width+7)/8, (height+7)/8, 1920x1080 gives 240x135
     CFHD_ENCODING_FLAGS_WATERMARK_THUMBNAIL	= 1 << 10, // Auto generate a 1/8th size thumbnail with compressed DPX watermark
 
@@ -162,8 +165,6 @@ enum
     // The output buffer is typically 1:1 to the source frame size, for 3D the output can
     // be bigger than one fraem size (as there are two frames encoded.)
 };
-
-typedef uint32_t CFHD_EncodingFlags;
 
 //! Organization of the video fields (progressive versus interlaced)
 typedef enum CFHD_FieldType
@@ -177,13 +178,11 @@ typedef enum CFHD_FieldType
 
 } CFHD_FieldType;
 
-
 //! Four character code for the metadata tag
 typedef uint32_t CFHD_MetadataTag;
 
 //! Size of a single item of metadata
 typedef int32_t CFHD_MetadataSize;
-
 
 typedef enum CFHD_MetadataType
 {
@@ -212,6 +211,7 @@ typedef enum CFHD_BayerFormat
     CFHD_BAYER_FORMAT_GRN_RED = 1,
     CFHD_BAYER_FORMAT_GRN_BLU = 2,
     CFHD_BAYER_FORMAT_BLU_GRN = 3,
+
 } CFHD_BayerFormat;
 
 //! Use with TAG_DEMOSAIC_TYPE to control which demosaic
@@ -269,11 +269,9 @@ enum
     CFHD_CURVE_LOG_13_STOP =	CFHD_CURVE_TYPE_EXT(1, 900)
 };
 
-
 typedef float CFHD_WhiteBalance[4];
 
 typedef float CFHD_ColorMatrix[3][4];
-
 
 #define METADATAFLAG_FILTERED   1   // Data filtered by the users active decoder preference.
 // If the operater wasn't displaying corrected whitebalance, whilebalance will be returned as zero.
@@ -291,6 +289,7 @@ typedef enum CFHD_MetadataTrack
     METADATATYPE_MODIFIED_RIGHT_FILTERED = METADATAFLAG_RIGHT_EYE | METADATAFLAG_MODIFIED | METADATAFLAG_FILTERED,
     METADATATYPE_MODIFIED_LEFT = METADATAFLAG_LEFT_EYE | METADATAFLAG_MODIFIED,
     METADATATYPE_MODIFIED_LEFT_FILTERED = METADATAFLAG_LEFT_EYE | METADATAFLAG_MODIFIED | METADATAFLAG_FILTERED
+
 } CFHD_MetadataTrack;
 
 typedef enum CFHD_VideoSelect
@@ -299,6 +298,7 @@ typedef enum CFHD_VideoSelect
     VIDEO_SELECT_LEFT_EYE = 1,
     VIDEO_SELECT_RIGHT_EYE = 2,
     VIDEO_SELECT_BOTH_EYES = 3,
+
 } CFHD_VideoSelect;
 
 typedef enum CFHD_Stereo3DType
@@ -317,14 +317,15 @@ typedef enum CFHD_Stereo3DType
     STEREO3D_TYPE_ANAGLYPH_GRN_MGTA = 20,
     STEREO3D_TYPE_ANAGLYPH_GRN_MGTA_BW = 21,
     STEREO3D_TYPE_ANAGLYPH_OPTIMIZED = 22,
-} CFHD_Stereo3DType;
 
+} CFHD_Stereo3DType;
 
 typedef enum CFHD_StereoFlags
 {
     STEREO_FLAGS_DEFAULT = 0,
     STEREO_FLAGS_SWAP_EYES = 1,
     STEREO_FLAGS_SPEED_3D = 2, // use half res wavelet decode, even if full res output is request (so scale.)
+
 } CFHD_StereoFlags;
 
 typedef enum CFHD_DecodedResolution
@@ -339,7 +340,9 @@ typedef enum CFHD_DecodedResolution
 
 } CFHD_DecodedResolution;
 
-//! Definitions of the flags for CFHD_DecodingFlags (see below)
+typedef uint32_t CFHD_DecodingFlags;
+
+//! Definitions for CFHD_DecodingFlags
 enum
 {
     CFHD_DECODING_FLAGS_NONE            = 0,
@@ -348,7 +351,5 @@ enum
     CFHD_DECODING_FLAGS_USE_RESOLUTION  = (1 << 2),
     CFHD_DECODING_FLAGS_INTERNAL_ONLY   = (1 << 3),
 };
-
-typedef uint32_t CFHD_DecodingFlags;
 
 #endif // CFHD_TYPES_H

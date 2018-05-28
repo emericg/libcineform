@@ -20,10 +20,10 @@
 #define CFHD_SAMPLE_HEADER_H
 
 /*!
- * @brief Information obtained by parsing the sample header
- * @todo Add more fields from the sample header to this class as
- * private data and define public get and set methods to access the data.
-*/
+ * \brief Information obtained by parsing the sample header
+ * \todo Add more fields from the sample header to this class as private data
+ *       and define public get and set methods to access the data.
+ */
 class CFHD_SampleHeader
 {
     CFHD_EncodedFormat m_encodedFormat = CFHD_ENCODED_FORMAT_YUV_422;

@@ -1,30 +1,27 @@
-/*! @file CFHDEncoderPool.cpp
-
-*  @brief This module implements the C functions for the asynchronous encoder API.
-*
-*  The asynchronous encoder uses a pool of asynchronous encoders for encoding samples
-*  concurrently.  The encoder pool contains a queue of encoding jobs in the order in
-*  which the encoded samples should be decoded and displayed.  All of the encoding jobs
-*  in a GOP are sent in order to the same asynchronous encoder.  When encoding is done,
-*  the encoding job is marked as done.  Encoded samples are removed from the queue of
-*  encoding jobs in the order in which the input frames were placed in the queue.
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
+/*!
+ * @file CFHDEncoderPool.cpp
+ * @brief This module implements the C functions for the asynchronous encoder API.
+ *
+ * The asynchronous encoder uses a pool of asynchronous encoders for encoding samples
+ * concurrently.  The encoder pool contains a queue of encoding jobs in the order in
+ * which the encoded samples should be decoded and displayed.  All of the encoding jobs
+ * in a GOP are sent in order to the same asynchronous encoder.  When encoding is done,
+ * the encoding job is marked as done.  Encoded samples are removed from the queue of
+ * encoding jobs in the order in which the input frames were placed in the queue.
+ **
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "StdAfx.h"
 #include "Interface.h"
@@ -90,7 +87,6 @@ static CSampleEncodeMetadata *GetEncoderMetadata(CFHD_MetadataRef metadataRef)
     }
     return metadata;
 }
-
 
 /*!
 	@brief Create an encoder pool for asynchronous encoding

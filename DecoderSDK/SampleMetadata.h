@@ -25,14 +25,14 @@
 
 
 #pragma once
-#define MAX_OVERRIDE_SIZE	16384
+#define MAX_OVERRIDE_SIZE 16384
+
 #include "CFHDError.h"
 #include "../Common/AVIExtendedHeader.h"
 
 class CSampleMetadata
 {
 public:
-
     //TODO: Initialize other parameters to default values in the constructor
     CSampleMetadata() :
         m_sampleData(NULL),

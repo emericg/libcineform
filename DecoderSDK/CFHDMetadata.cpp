@@ -28,7 +28,7 @@
 #endif
 
 #ifndef _WIN32
-#include  <mm_malloc.h>
+#include <mm_malloc.h>
 #endif
 
 // Export the metadata interface
@@ -39,14 +39,13 @@
 #include "../Codec/metadata.h"
 #include "../Codec/lutpath.h"
 
-
-/* Table of CRCs of all 8-bit messages. */
+//! Table of CRCs of all 8-bit messages.
 static uint32_t crc_table[256];
 
-/* Flag: has the table been computed? Initially false. */
+//! Flag: has the table been computed? Initially false.
 static int crc_table_computed = 0;
 
-/* Make the table for a fast CRC. */
+//! Make the table for a fast CRC.
 static void make_crc_table(void)
 {
     uint32_t c;
@@ -67,45 +66,31 @@ static void make_crc_table(void)
     crc_table_computed = 1;
 }
 
-/* Update a running CRC with the bytes buf[0..len-1]--the CRC
-  should be initialized to all 1's, and the transmitted value
-  is the 1's complement of the final running CRC (see the
-  crc() routine below)). */
-
-static uint32_t update_crc(uint32_t crc, unsigned char *buf,
-                           int len)
+/*!
+ * Update a running CRC with the bytes buf[0..len-1]--the CRC should be initialized
+ * to all 1's, and the transmitted value is the 1's complement of the final running
+ * CRC (see the crc() routine below)).
+ */
+static uint32_t update_crc(uint32_t crc, unsigned char *buf, int len)
 {
     uint32_t c = crc;
-    int n;
 
     if (!crc_table_computed)
         make_crc_table();
-    for (n = 0; n < len; n++)
+    for (int n = 0; n < len; n++)
     {
         c = crc_table[(c ^ buf[n]) & 0xff] ^ (c >> 8);
     }
+
     return c;
 }
 
-/* Return the CRC of the bytes buf[0..len-1]. */
+//! Return the CRC of the bytes buf[0..len-1].
 static uint32_t calccrc(unsigned char *buf, int len)
 {
     return update_crc(0xffffffffL, buf, len) ^ 0xffffffffL;
 }
 
-
-
-/*!
-	@function CFHD_OpenMetadata
-
-	@brief Creates an interface to CineForm HD metadata.
-
-	@description This function creates a interface that can be used to
-	read CineForm HD metadata.  A reference to the metadata interface
-	is returned if the call was successful.
-
-	@return Returns a CFHD error code.
-*/
 CFHDMETADATA_API CFHD_Error
 CFHD_OpenMetadata(CFHD_MetadataRef *metadataRefOut)
 {
@@ -128,28 +113,6 @@ CFHD_OpenMetadata(CFHD_MetadataRef *metadataRefOut)
     return CFHD_ERROR_OKAY;
 }
 
-
-/*!
-	@function CFHD_InitSampleMetadata
-
-	@brief Opens an interface to CineForm HD metadata in the specified sample.
-
-	@description This function intializes metadata from a sample of CineForm HD
-	encoded video. This is call on each new sample before retrieve any metadata
-	from the sample
-
-	@param metadataRef Reference to a metadata interface returned by a call
-	to @ref CFHD_OpenMetadata.
-
-	@param track set the type of metadata to be extracted, camera original, user
-	changes, and/or filtered against active decoding elements.
-
-	@param sampleData Pointer to a sample of CineForm HD encoded video.
-
-	@param sampleSize Size of the encoded sample in bytes.
-
-	@return Returns a CFHD error code.
-*/
 CFHDMETADATA_API CFHD_Error
 CFHD_InitSampleMetadata(CFHD_MetadataRef metadataRef,
                         CFHD_MetadataTrack track,
@@ -181,7 +144,6 @@ CFHD_InitSampleMetadata(CFHD_MetadataRef metadataRef,
 
     return errorCode;
 }
-
 
 static void FilterData(CFHD_MetadataTag tag, void *data, CFHD_MetadataSize *size)
 {
@@ -356,13 +318,12 @@ void *LeftRightDelta(CSampleMetadata *metadata,
     return ldata;
 }
 
-
 //TODO: Needs upgrade for stereo, col2, colb and global overrides.
 bool CSampleMetadata::GetClipDatabase()
 {
-    if (	m_currentClipGUID.Data1 == 0 &&
-            m_currentClipGUID.Data2 == 0 &&
-            m_currentClipGUID.Data3 == 0)
+    if (m_currentClipGUID.Data1 == 0 &&
+        m_currentClipGUID.Data2 == 0 &&
+        m_currentClipGUID.Data3 == 0)
     {
         void *data;
         METADATA_SIZE size;
@@ -473,34 +434,6 @@ bool CSampleMetadata::GetClipDatabase()
         return false;
 }
 
-/*!
-	@function CFHD_ReadMetadata
-
-	@brief Returns the next available metadata entry. Calling recursively will
-	retrieve all the samples metadata until CFHD_ERROR_METADATA_END is returned.
-
-	@description After a call to @ref CFHD_InitSampleMetadata the next call to
-	this function returns the first metadata tag/size/value group.  The next call
-	returns the next metadata group and so on until all the data is extracted.
-
-	@param metadataRef Reference to a metadata interface returned by a call
-	to @ref CFHD_OpenMetadata.
-
-	@param tag Pointer to the variable to receive the FOURCC metadata tag.
-
-	@param type Pointer to the variable to receive the CFHD_MetadataType.  This
-	specify the type of data returned, such as METADATATYPE_STRING,
-	METADATATYPE_UINT32 or METADATATYPE_FLOAT.
-
-	@param data Pointer to the variable to receive the address of the metadata.
-
-	@param size Pointer to the variable to receive the size of the metadata
-	array in bytes.
-
-	@return Returns the CFHD error code CFHD_ERROR_METADATA_END if no more
-	metadata was not found in the sample; otherwise, the CFHD error code
-	CFHD_ERROR_OKAY is returned if the operation succeeded.
-*/
 CFHDMETADATA_API CFHD_Error
 CFHD_ReadMetadata(CFHD_MetadataRef metadataRef,
                   CFHD_MetadataTag *tag,
@@ -710,8 +643,6 @@ CFHD_ReadMetadata(CFHD_MetadataRef metadataRef,
     return errorCode;
 }
 
-
-
 typedef struct metadataCheck
 {
     uint32_t tag;
@@ -754,7 +685,6 @@ metadataCheck unityMD[] =
     {0x4b53414d, 0x00000008, {0x00000000, 0x00000000, 0x00000000, 0x00000000}}, //MASK
     {0x00000000, 0x00000000, {0x00000000, 0x00000000, 0x00000000, 0x00000000}}, // terminator
 };
-
 
 static uint32_t ScanForAMChanges(void *mdData, size_t sampleSize)
 {
@@ -806,32 +736,6 @@ static uint32_t ScanForAMChanges(void *mdData, size_t sampleSize)
     return ret;
 }
 
-/*!
-	@function CFHD_FindMetadata
-
-	@brief Returns the data for a particular metadata entry.
-
-	@description After a call to @ref CFHD_InitSampleMetadata the next call to
-	this function returns the data for an particular metadata entry.
-
-	@param metadataRef Reference to a metadata interface returned by a call
-	to @ref CFHD_OpenMetadata.
-
-	@param tag is the FOURCC for the requested data.
-
-	@param type Pointer to the variable to receive the CFHD_MetadataType.  This
-	specify the type of data returned, such as METADATATYPE_STRING,
-	METADATATYPE_UINT32 or METADATATYPE_FLOAT.
-
-	@param data Pointer to the variable to receive the address of the metadata.
-
-	@param size Pointer to the variable to receive the size of the metadata
-	array in bytes.
-
-	@return Returns the CFHD error code CFHD_ERROR_METADATA_END if no more
-	metadata was not found in the sample; otherwise, the CFHD error code
-	CFHD_ERROR_OKAY is returned if the operation succeeded.
-*/
 CFHDMETADATA_API CFHD_Error
 CFHD_FindMetadata(CFHD_MetadataRef metadataRef,
                   CFHD_MetadataTag tag,
@@ -842,6 +746,7 @@ CFHD_FindMetadata(CFHD_MetadataRef metadataRef,
     CFHD_Error errorCode = CFHD_ERROR_OKAY;
     uint32_t smart_render_ok = 1;
     //fprintf(stdout,"Findmetadata\n");
+
     // Check the input arguments
     if (metadataRef == NULL)
     {
@@ -852,9 +757,6 @@ CFHD_FindMetadata(CFHD_MetadataRef metadataRef,
         return CFHD_ERROR_INVALID_ARGUMENT;
     }
 
-    //clock_t process_time = clock();
-
-
     CSampleMetadata *metadata = (CSampleMetadata *)metadataRef;
 
     {
@@ -862,7 +764,7 @@ CFHD_FindMetadata(CFHD_MetadataRef metadataRef,
 
         if (metadata->m_active_mask == 0)
         {
-            if (	metadata->m_metadataTrack & METADATAFLAG_FILTERED)
+            if (metadata->m_metadataTrack & METADATAFLAG_FILTERED)
             {
                 void *data = NULL;
                 METADATA_TYPE type;
@@ -963,8 +865,6 @@ CFHD_FindMetadata(CFHD_MetadataRef metadataRef,
             //fprintf(stdout, "Metadata is at %08x\n",*data);
         }
 
-
-
         if (metadata->m_metadataTrack & METADATAFLAG_MODIFIED)
         {
             //Get any changes from the database
@@ -974,7 +874,6 @@ CFHD_FindMetadata(CFHD_MetadataRef metadataRef,
                 void *ldata = NULL;
                 METADATA_SIZE lsize;
                 METADATA_TYPE lctype;
-
 
                 if ( tag == TAG_SMART_RENDER_OK && metadata->m_databaseSize && smart_render_ok == 1)
                 {
@@ -1022,10 +921,6 @@ CFHD_FindMetadata(CFHD_MetadataRef metadataRef,
 
                             if (metadata->m_overrideSize)
                             {
-                                //void *ldata;
-                                //METADATA_SIZE lsize;
-                                //METADATA_TYPE lctype;
-
                                 data = MetadataFind(metadata->m_overrideData, metadata->m_overrideSize,
                                                     TAG_UNIQUE_FRAMENUM, &size, &type);
 
@@ -1073,7 +968,6 @@ CFHD_FindMetadata(CFHD_MetadataRef metadataRef,
             void *ldata;
             METADATA_SIZE lsize;
             METADATA_TYPE lctype;
-
 
             if ( tag == TAG_SMART_RENDER_OK && metadata->m_overrideSize && smart_render_ok == 1)
             {
@@ -1129,29 +1023,9 @@ CFHD_FindMetadata(CFHD_MetadataRef metadataRef,
     return errorCode;
 }
 
-
-
-/*!
-	@function CFHD_CloseMetadata
-
-	@brief Releases an interface to CineForm HD metadata.
-
-	@description This function releases an interface to CineForm HD metadata
-	created by calls to routines that obtain the metadata from various sources,
-	such as @ref CFHD_ReadMetadata.  All resources allocated by the
-	metadata interface are released.  It is a serious error to call any functions
-	in the metadata API after the interface has been released.
-
-	@param metadataRef Reference to a metadata interface returned by a call
-	to @ref CFHD_OpenMetadata.
-
-	@return Returns a CFHD error code.
-*/
 CFHDMETADATA_API CFHD_Error
 CFHD_CloseMetadata(CFHD_MetadataRef metadataRef)
 {
-    //CFHD_Error errorCode = CFHD_ERROR_OKAY;
-
     // Check the input arguments
     if (metadataRef == NULL)
     {
@@ -1166,13 +1040,6 @@ CFHD_CloseMetadata(CFHD_MetadataRef metadataRef)
     return CFHD_ERROR_OKAY;
 }
 
-
-
-
-
-
-
-
 /*-- not include in Doxygen
  *	@brief Add a new metadata tuple to the block of metadata
  *	@param maxsize added as an int parameter by CMD 20090605 and changed to size_t by BGS.
@@ -1186,7 +1053,6 @@ bool CSampleMetadata::AddMetaData(uint32_t Tag, unsigned int typesizebytes, void
     if (pData && size && (m_overrideSize + allocsize < MAX_OVERRIDE_SIZE))
     {
         int found = 0;
-
         {
             // If TAG pairs or Freespace or last char or FOURCC is lower, don't check of existing tag duplicates.
             if ((Tag >> 24) < 'a' && Tag != TAG_FREESPACE && Tag != TAG_REGISTRY_NAME && Tag != TAG_REGISTRY_VALUE && Tag != TAG_NAME && Tag != TAG_VALUE)
@@ -1199,7 +1065,6 @@ bool CSampleMetadata::AddMetaData(uint32_t Tag, unsigned int typesizebytes, void
                 int pos = 0, longs = offset >> 2;
                 newdata += offset;
                 Lnewdata = (uint32_t *)newdata;
-
 
                 while (pos < longs)
                 {
@@ -1262,7 +1127,6 @@ bool CSampleMetadata::AddMetaData(uint32_t Tag, unsigned int typesizebytes, void
             newdata += offset;
             Lnewdata = (uint32_t *)newdata;
 
-
             while (pos < longs)
             {
                 int datalen;
@@ -1312,10 +1176,8 @@ bool CSampleMetadata::AddMetaData(uint32_t Tag, unsigned int typesizebytes, void
                 }
             }
 
-
             if (!found)
             {
-
                 offset = m_overrideSize;
                 *Lnewdata++ = Tag;
                 *Lnewdata++ = typesizebytes;
@@ -1338,10 +1200,9 @@ bool CSampleMetadata::AddMetaData(uint32_t Tag, unsigned int typesizebytes, void
             return false;
         }
     }
+
     return false;
 }
-
-
 
 /*-- not include in Doxygen
  *	@brief Add a new metadata tuple to the block of metadata
@@ -1369,7 +1230,6 @@ bool CSampleMetadata::AddMetaDataWorkspace(uint32_t Tag, unsigned int typesizeby
                 int pos = 0, longs = offset >> 2;
                 newdata += offset;
                 Lnewdata = (uint32_t *)newdata;
-
 
                 while (pos < longs)
                 {
@@ -1431,7 +1291,6 @@ bool CSampleMetadata::AddMetaDataWorkspace(uint32_t Tag, unsigned int typesizeby
             int pos = 0, longs = offset >> 2;
             newdata += offset;
             Lnewdata = (uint32_t *)newdata;
-
 
             while (pos < longs)
             {
@@ -1508,11 +1367,9 @@ bool CSampleMetadata::AddMetaDataWorkspace(uint32_t Tag, unsigned int typesizeby
             return false;
         }
     }
+
     return false;
 }
-
-
-
 
 /*-- not include in Doxygen
  *	@brief Add a new metadata tuple to the block of metadata
@@ -1560,7 +1417,6 @@ void CSampleMetadata::MakeLeftRightDelta(uint32_t Tag, unsigned int typesizebyte
                 }
                 break;
         }
-
     }
     else
     {
@@ -1603,9 +1459,6 @@ void CSampleMetadata::MakeLeftRightDelta(uint32_t Tag, unsigned int typesizebyte
         }
     }
 }
-
-
-
 
 /*-- not include in Doxygen
  *	@brief Add a new metadata tuple to the block of metadata

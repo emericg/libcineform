@@ -59,180 +59,50 @@ extern "C" {
 #endif
 
 
-#if DYNAMICALLY_LINK
-
-
-// Open an instance of the CineForm HD ENCODER
-CFHD_Error CFHD_OpenEncoderStub(CFHD_EncoderRef *encoderRefOut,
-                                CFHD_ALLOCATOR *allocator);
-
-// Return a list of input formats in decreasing order of preference
-CFHD_Error CFHD_GetInputFormatsStub(CFHD_EncoderRef encoderRef,
-                                    CFHD_PixelFormat *inputFormatArray,
-                                    int inputFormatArrayLength,
-                                    int *actualInputFormatCountOut);
-
-// Initialize for encoding frames with the specified dimensions and format
-CFHD_Error CFHD_PrepareToEncodeStub(CFHD_EncoderRef encoderRef,
-                                    int frameWidth,
-                                    int frameHeight,
-                                    CFHD_PixelFormat pixelFormat,
-                                    CFHD_EncodedFormat encodedFormat,
-                                    CFHD_EncodingFlags encodingFlags,
-                                    CFHD_EncodingQuality encodingQuality);
-
-// Encode one sample of CineForm HD
-CFHD_Error CFHD_EncodeSampleStub(CFHD_EncoderRef encoderRef,
-                                 void *frameBuffer,
-                                 int framePitch);
-
-// Get the sample data and size of the encoded sample
-CFHD_Error CFHD_GetSampleDataStub(CFHD_EncoderRef encoderRef,
-                                  void **sampleDataOut,
-                                  size_t *sampleSizeOut);
-
-// Close an instance of the CineForm HD decoder
-CFHD_Error CFHD_CloseEncoderStub(CFHD_EncoderRef encoderRef);
-
-CFHD_Error CFHD_GetEncodeThumbnailStub(CFHD_EncoderRef encoderRef,
-                                       void *samplePtr,
-                                       size_t sampleSize,
-                                       void *outputBuffer,
-                                       size_t outputBufferSize,
-                                       uint32_t flags,
-                                       size_t *retWidth,
-                                       size_t *retHeight,
-                                       size_t *retSize);
-
-CFHD_Error CFHD_MetadataOpenStub(CFHD_MetadataRef *metadataRefOut);
-
-CFHD_Error CFHD_MetadataAddStub(CFHD_MetadataRef metadataRef,
-                                uint32_t tag,
-                                CFHD_MetadataType type,
-                                size_t size,
-                                uint32_t *data,
-                                bool temporary);
-
-CFHD_Error CFHD_MetadataAttachStub(CFHD_EncoderRef encoderRef, CFHD_MetadataRef metadataRef);
-
-CFHD_Error CFHD_MetadataCloseStub(CFHD_MetadataRef metadataRef);
-
-// Create an encoder pool for asynchronous encoding
-CFHD_Error CFHD_CreateEncoderPoolStub(CFHD_EncoderPoolRef *encoderPoolRefOut,
-                                      int encoderThreadCount,
-                                      int jobQueueLength,
-                                      CFHD_ALLOCATOR *allocator);
-
-// Return a list of input formats in decreasing order of preference
-CFHD_Error CFHD_GetAsyncInputFormatsStub(CFHD_EncoderPoolRef encoderPoolRef,
-        CFHD_PixelFormat *inputFormatArray,
-        int inputFormatArrayLength,
-        int *actualInputFormatCountOut);
-
-// Prepare the asynchronous encoders in a pool for encoding
-CFHD_Error CFHD_PrepareEncoderPoolStub(CFHD_EncoderPoolRef encoderPoolRef,
-                                       uint_least16_t frameWidth,
-                                       uint_least16_t frameHeight,
-                                       CFHD_PixelFormat pixelFormat,
-                                       CFHD_EncodedFormat encodedFormat,
-                                       CFHD_EncodingFlags encodingFlags,
-                                       CFHD_EncodingQuality encodingQuality);
-
-// Attach metadata to all of the encoders in the pool
-CFHD_Error CFHD_AttachEncoderPoolMetadataStub(CFHD_EncoderPoolRef encoderPoolRef,
-        CFHD_MetadataRef metadataRef);
-
-// Start the asynchronous encoders
-CFHD_Error CFHD_StartEncoderPoolStub(CFHD_EncoderPoolRef encoderPoolRef);
-
-// Stop the asynchronous encoders
-CFHD_Error CFHD_StopEncoderPoolStub(CFHD_EncoderPoolRef encoderPoolRef);
-
-// Submit a frame for asynchronous encoding
-CFHD_Error CFHD_EncodeAsyncSampleStub(CFHD_EncoderPoolRef encoderPoolRef,
-                                      uint32_t frameNumber,
-                                      void *frameBuffer,
-                                      intptr_t framePitch,
-                                      CFHD_MetadataRef metadataRef);
-
-// Wait until the next encoded sample is ready
-CFHD_Error CFHD_WaitForSampleStub(CFHD_EncoderPoolRef encoderPoolRef,
-                                  uint32_t *frameNumberOut,
-                                  CFHD_SampleBufferRef *sampleBufferRefOut);
-
-// Test whether the next encoded sample is ready
-CFHD_Error CFHD_TestForSampleStub(CFHD_EncoderPoolRef encoderPoolRef,
-                                  uint32_t *frameNumberOut,
-                                  CFHD_SampleBufferRef *sampleBufferRefOut);
-
-// Get the size and address of an encoded sample
-CFHD_Error CFHD_GetEncodedSampleStub(CFHD_SampleBufferRef sampleBufferRef,
-                                     void **sampleDataOut,
-                                     size_t *sampleSizeOut);
-
-// Get the thumbnail image from an encoded sample
-CFHD_Error CFHD_GetSampleThumbnailStub(CFHD_SampleBufferRef sampleBufferRef,
-                                       void *thumbnailBuffer,
-                                       size_t bufferSize,
-                                       uint32_t flags,
-                                       uint_least16_t *actualWidthOut,
-                                       uint_least16_t *actualHeightOut,
-                                       CFHD_PixelFormat *pixelFormatOut,
-                                       size_t *actualSizeOut);
-
-// Release the sample buffer
-CFHD_Error CFHD_ReleaseSampleBufferStub(CFHD_EncoderPoolRef encoderPoolRef,
-                                        CFHD_SampleBufferRef sampleBufferRef);
-
-// Release the encoder pool
-CFHD_Error CFHD_ReleaseEncoderPoolStub(CFHD_EncoderPoolRef encoderPoolRef);
-
-
-#define CFHD_OpenEncoder                  CFHD_OpenEncoderStub
-#define CFHD_GetInputFormats			  CFHD_GetInputFormatsStub
-#define CFHD_PrepareToEncode			  CFHD_PrepareToEncodeStub
-#define CFHD_EncodeSample				  CFHD_EncodeSampleStub
-#define CFHD_GetSampleData				  CFHD_GetSampleDataStub
-#define CFHD_CloseEncoder				  CFHD_CloseEncoderStub
-#define CFHD_GetEncodeThumbnail			  CFHD_GetEncodeThumbnailStub
-#define CFHD_MetadataOpen				  CFHD_MetadataOpenStub
-#define CFHD_MetadataAdd				  CFHD_MetadataAddStub
-#define CFHD_MetadataAttach				  CFHD_MetadataAttachStub
-#define CFHD_MetadataClose				  CFHD_MetadataCloseStub
-#define CFHD_CreateEncoderPool			  CFHD_CreateEncoderPoolStub
-#define CFHD_GetAsyncInputFormats		  CFHD_GetAsyncInputFormatsStub
-#define CFHD_PrepareEncoderPool			  CFHD_PrepareEncoderPoolStub
-#define CFHD_SetEncoderPoolLicense		  CFHD_SetEncoderPoolLicenseStub
-#define CFHD_AttachEncoderPoolMetadata	  CFHD_AttachEncoderPoolMetadataStub
-#define CFHD_StartEncoderPool			  CFHD_StartEncoderPoolStub
-#define CFHD_StopEncoderPool			  CFHD_StopEncoderPoolStub
-#define CFHD_EncodeAsyncSample			  CFHD_EncodeAsyncSampleStub
-#define CFHD_WaitForSample				  CFHD_WaitForSampleStub
-#define CFHD_TestForSample				  CFHD_TestForSampleStub
-#define CFHD_GetEncodedSample			  CFHD_GetEncodedSampleStub
-#define CFHD_GetSampleThumbnail			  CFHD_GetSampleThumbnailStub
-#define CFHD_ReleaseSampleBuffer		  CFHD_ReleaseSampleBufferStub
-#define CFHD_ReleaseEncoderPool			  CFHD_ReleaseEncoderPoolStub
-#define CFHD_SetEncodeLicense2			  CFHD_SetEncodeLicense2Stub
-#define CFHD_SetEncoderPoolLicense2		  CFHD_SetEncoderPoolLicense2Stub
-
-
-#else // DYNAMICALLY_LINK
-
-
-// Open an instance of the CineForm HD ENCODER
+/*!
+ * \brief Open an instance of the CineForm HD encoder and return a reference.
+    to the encoder through the pointer provided as the first argument.
+ * \param encoderRefOut: Pointer to the variable that will receive the encoder reference.
+ * \param allocator: CFHD_ALLOCATOR structure, for those was wishing to control memory allocations. Pass NULL if not used.
+ * \return Returns a CFHD error code.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_OpenEncoder(CFHD_EncoderRef *encoderRefOut,
                  CFHD_ALLOCATOR *allocator);
 
-// Return a list of input formats in decreasing order of preference
+/*!
+ * \brief Return a list of pixel formats (in decreasing order of preference)
+ *  that can be used for the input frames passed to the encoder.
+ * \param encoderRef: Reference to an encoder created by a call to @ref CFHD_OpenEncoder.
+ * \param inputFormatArray: CFHD pixel format array that will receive the list of pixel formats.
+ * \param inputFormatArrayLength: Maximum number of pixel formats in the input format array.
+ * \param actualInputFormatCountOut: Return count of the actual number of pixel formats copied into the input format array.
+ * \return Returns a CFHD error code.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_GetInputFormats(CFHD_EncoderRef encoderRef,
                      CFHD_PixelFormat *inputFormatArray,
                      int inputFormatArrayLength,
                      int *actualInputFormatCountOut);
 
-// Initialize for encoding frames with the specified dimensions and format
+/*!
+ * \brief Initialize an encoder instance for encoding.
+ * \param encoderRef: Reference to an encoder created by a call to @ref CFHD_OpenEncoder.
+ * \param inputWidth: Width of each input frame in pixels.
+ * \param inputHeight: Number of lines in each input frame.
+ * \param inputFormat: Format of the pixels in the input frames.
+ * \param encodedFormat: Encoding format used internally by the codec.
+ *  Video can be encoded as three channels of RGB with 4:4:4 sampling,
+ *  three channels of YUV with 4:2:2 sampling, or other formats.
+ *  See the formats listed in CFHD_EncodedFormat.
+ * \param encodingFlags: Flags that provide further information about the video format.
+ *  See the flags defined in CFHD_EncodingFlags.
+ * \param encodingQuality: Quality to use for encoding.  Corresponds to the setting in the export
+ *  dialog boxes. 0=Fixed, 1=Low, 2=Medium, 3=High, 4=FilmScan1, 5=FilmScan2
+ * \return Returns a CFHD error code.
+ *
+ * Initialize for encoding frames with the specified dimensions and format.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_PrepareToEncode(CFHD_EncoderRef encoderRef,
                      int frameWidth,
@@ -242,23 +112,69 @@ CFHD_PrepareToEncode(CFHD_EncoderRef encoderRef,
                      CFHD_EncodingFlags encodingFlags,
                      CFHD_EncodingQuality encodingQuality);
 
-// Encode one sample of CineForm HD
+/*!
+ * \brief Encode one frame of CineForm HD video.
+ * \param encoderRef: Reference to an encoder created by a call to @ref CFHD_OpenEncoder.
+ * \param frameBuffer: Pointer to the frame to encode.
+ * \param framePitch: Number of bytes between rows in the frame.
+ * \return Returns a CFHD error code.
+ *
+ * The encoder must have been initialized by a call to @ref CFHD_PrepareToEncode
+ * before attempting to encode frames.
+ * The width and height of the frame and the pixel format must be the same as
+ * declared in the call to @ref CFHD_PrepareToEncode.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_EncodeSample(CFHD_EncoderRef encoderRef,
                   void *frameBuffer,
                   int framePitch);
 
-// Get the sample data and size of the encoded sample
+/*!
+ * \brief Get the data and size of the most recent video sample encoded by a call to @ref CFHD_EncodeSample.
+ * \param encoderRef: Reference to an encoder created by a call to @ref CFHD_OpenEncoder
+ *  and initialized by a call to @ref CFHD_PrepareToEncode.
+ * \param sampleDataOut: Pointer to a variable to receive the address of the encoded sample.
+ * \param sampleSizeOut: Pointer to a variable to receive the size of the encoded sample in bytes.
+ * \return Returns a CFHD error code.
+ *
+ * Separating the operation of obtaining the encoded sample from the operation
+ * of creating the encoded sample allows the encoder to manage memory more efficiently.
+ * For example, it can reallocate the sample buffer if the size of the encoded
+ * sample is larger than expected.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_GetSampleData(CFHD_EncoderRef encoderRef,
                    void **sampleDataOut,
                    size_t *sampleSizeOut);
 
-// Close an instance of the CineForm HD decoder
+/*!
+ * \brief Close an instance of the CineForm HD encoder and release any resources allocated.
+ * \param encoderRef: Reference to an encoder created by a call to @ref CFHD_OpenEncoder
+ *  and initialized by a call to @ref CFHD_PrepareToEncode.
+ * \return Returns a CFHD error code.
+ *
+ * Do not attempt to use an encoder reference after the encoded has been closed
+ * by a call to this function.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_CloseEncoder(CFHD_EncoderRef encoderRef);
 
-
+/*!
+ * @brief The generate a thumbnail
+ * @param encoderRef: Reference to an encoder engine created by a call
+ *  to @ref CFHD_MetadataOpen that the current metadata should be attached.
+ * \param samplePtr: Pointer to a sample containing one frame of encoded video in the CineForm HD format.
+ * \param sampleSize: Size of the encoded sample.
+ * \param outputBuffer: Buffer that will receive the thumbnail of size 1/8 x 1/8 the original frame.
+ * \param outputBufferSize: Size must be at least ((w+7)/8) * ((h+7)/8) * 4 for 10-bit RGB format.
+ * \param flags: future usage.
+ * \param retWidth: If successful contains thumbnail width.
+ * \param retHeight: If successful contains thumbnail Height.
+ * \param retSize: If successful contains thumbnail size in bytes.
+ * \return Returns a CFHD error code.
+ *
+ * Extract the base wavelet into a using image thumbnail without decompressing the sample
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_GetEncodeThumbnail(CFHD_EncoderRef encoderRef,
                         void *samplePtr,
@@ -270,9 +186,49 @@ CFHD_GetEncodeThumbnail(CFHD_EncoderRef encoderRef,
                         size_t *retHeight,
                         size_t *retSize);
 
+/*!
+ * \brief Opens a handle for attaching metadata.
+ * \param metadataRefOut: Pointer to the variable that will receive the metadata reference.
+ * \return Returns a CFHD error code.
+ *
+ * Opens a handle for attaching metadata is one of two class: global and local.
+ * Global is for metadata that should appear in every frame, and is likely not changing.
+ * Local is for metadata that only attached sometimes or is change often.  Something changing
+ * every frame can use either class. If an item frames every ten frame, global will store the
+ * last value for the non changing frame, whereas local on store data on the frames impacted.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_MetadataOpen(CFHD_MetadataRef *metadataRefOut);
 
+/*!
+ * \brief Adds metadata for later attachment to the encoded bitstream.
+ * \param metadataRef: Reference to an metadata engine created by a call to @ref CFHD_MetadataOpen.
+ * \param tag: FOURCC code for the tag to add.
+ * \param type: CFHD_MetadataType of the data with this tag.
+ * \param size: number of byte of data within the tag.
+ * \param data:data for the tag.
+ * \param local:If the local flag is set, the metadata is will be local and only
+ *  placed in the next frame to be encoded.  Otherwise, the metadata will be used for all frames.
+ * \return Returns a CFHD error code.
+ *
+ * \todo Change the metadata size to size_t and the data pointer to void * to eliminate
+ * unnecessary compiler warnings.
+ *
+ * The CineForm metadata can be in two classes, global and local.
+ * Global is the most common, adding the same fields to every frame, whether
+ * the fields are changing of not.  Local only places the metadata in the current
+ * frame that is about to be encoded.  If you want only local metadata, set the
+ * local flag.  Examples, director, DP and timecode is global, closed captioning
+ * is local. CFHD_MetadataAdd requires a call to @ref CFHD_MetadataAdd to bind the
+ * metadata to the encoded frame -- separating these function helps with threading.
+ *
+ * While CFHD_MetadataAdd is thread safe, it should not be threaded with
+ * multiple encoders like CFHD_MetadataAttach can with one metadataRef pointwe.
+ * If you wish to control metadata on a per-frame basis, you should have a separate
+ * metadataRefs for each thread. Non-frame accurate global data could have it own
+ * metadataRef, calling CFHD_MetadataAttach one with each thread, then use the threaded
+ * metadataRefs for frame accurate local metadata.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_MetadataAdd(CFHD_MetadataRef metadataRef,
                  uint32_t tag,
@@ -281,27 +237,47 @@ CFHD_MetadataAdd(CFHD_MetadataRef metadataRef,
                  uint32_t *data,
                  bool temporary);
 
+/*!
+ * \brief Attaches metadata to the encoded bitstream.
+ * \param encoderRef:Reference to an encoder engine created by a call
+ *  to @ref CFHD_MetadataOpen that the current metadata should be attached.
+ * \param metadataRef: Reference to an metadata engine created by a call to @ref CFHD_MetadataOpen..
+ * \return Returns a CFHD error code.
+ *
+ * Attaches all data allocated with @ref CFHD_MetadataAdd to the next encoded frame.
+ * CFHD_MetadataAttach can be used concurrently by threaded instances of the encoder.
+ * Note that @ref CFHD_MetadataAdd is not thread safe.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_MetadataAttach(CFHD_EncoderRef encoderRef, CFHD_MetadataRef metadataRef);
 
+/*!
+ * \brief Release any resources allocated to the CFHD_MetadataOpen.
+ * \param metadataRef: Reference to an metadata engine created by a call
+ *  to @ref CFHD_MetadataOpen and initialized by a calls to @ref CFHD_MetadataAdd.
+ * \return Returns a CFHD error code.
+ *
+ * Do not attempt to use an metadata reference after being closed by a call to
+ * this function.
+ */
 CFHDENCODER_API CFHD_Error
 CFHD_MetadataClose(CFHD_MetadataRef metadataRef);
 
-// Create an encoder pool for asynchronous encoding
+//! Create an encoder pool for asynchronous encoding
 CFHDENCODER_API CFHD_Error
 CFHD_CreateEncoderPool(CFHD_EncoderPoolRef *encoderPoolRefOut,
                        int encoderThreadCount,
                        int jobQueueLength,
                        CFHD_ALLOCATOR *allocator);
 
-// Return a list of input formats in decreasing order of preference
+//! Return a list of input formats in decreasing order of preference
 CFHDENCODER_API CFHD_Error
 CFHD_GetAsyncInputFormats(CFHD_EncoderPoolRef encoderPoolRef,
                           CFHD_PixelFormat *inputFormatArray,
                           int inputFormatArrayLength,
                           int *actualInputFormatCountOut);
 
-// Prepare the asynchronous encoders in a pool for encoding
+//! Prepare the asynchronous encoders in a pool for encoding
 CFHDENCODER_API CFHD_Error
 CFHD_PrepareEncoderPool(CFHD_EncoderPoolRef encoderPoolRef,
                         uint_least16_t frameWidth,
@@ -311,20 +287,20 @@ CFHD_PrepareEncoderPool(CFHD_EncoderPoolRef encoderPoolRef,
                         CFHD_EncodingFlags encodingFlags,
                         CFHD_EncodingQuality encodingQuality);
 
-// Attach metadata to all of the encoders in the pool
+//! Attach metadata to all of the encoders in the pool
 CFHDENCODER_API CFHD_Error
 CFHD_AttachEncoderPoolMetadata(CFHD_EncoderPoolRef encoderPoolRef,
                                CFHD_MetadataRef metadataRef);
 
-// Start the asynchronous encoders
+//! Start the asynchronous encoders
 CFHDENCODER_API CFHD_Error
 CFHD_StartEncoderPool(CFHD_EncoderPoolRef encoderPoolRef);
 
-// Stop the asynchronous encoders
+//! Stop the asynchronous encoders
 CFHDENCODER_API CFHD_Error
 CFHD_StopEncoderPool(CFHD_EncoderPoolRef encoderPoolRef);
 
-// Submit a frame for asynchronous encoding
+//! Submit a frame for asynchronous encoding
 CFHDENCODER_API CFHD_Error
 CFHD_EncodeAsyncSample(CFHD_EncoderPoolRef encoderPoolRef,
                        uint32_t frameNumber,
@@ -332,25 +308,25 @@ CFHD_EncodeAsyncSample(CFHD_EncoderPoolRef encoderPoolRef,
                        intptr_t framePitch,
                        CFHD_MetadataRef metadataRef);
 
-// Wait until the next encoded sample is ready
+//! Wait until the next encoded sample is ready
 CFHDENCODER_API CFHD_Error
 CFHD_WaitForSample(CFHD_EncoderPoolRef encoderPoolRef,
                    uint32_t *frameNumberOut,
                    CFHD_SampleBufferRef *sampleBufferRefOut);
 
-// Test whether the next encoded sample is ready
+//! Test whether the next encoded sample is ready
 CFHDENCODER_API CFHD_Error
 CFHD_TestForSample(CFHD_EncoderPoolRef encoderPoolRef,
                    uint32_t *frameNumberOut,
                    CFHD_SampleBufferRef *sampleBufferRefOut);
 
-// Get the size and address of an encoded sample
+//! Get the size and address of an encoded sample
 CFHDENCODER_API CFHD_Error
 CFHD_GetEncodedSample(CFHD_SampleBufferRef sampleBufferRef,
                       void **sampleDataOut,
                       size_t *sampleSizeOut);
 
-// Get the thumbnail image from an encoded sample
+//! Get the thumbnail image from an encoded sample
 CFHDENCODER_API CFHD_Error
 CFHD_GetSampleThumbnail(CFHD_SampleBufferRef sampleBufferRef,
                         void *thumbnailBuffer,
@@ -361,17 +337,14 @@ CFHD_GetSampleThumbnail(CFHD_SampleBufferRef sampleBufferRef,
                         CFHD_PixelFormat *pixelFormatOut,
                         size_t *actualSizeOut);
 
-// Release the sample buffer
+//! Release the sample buffer
 CFHDENCODER_API CFHD_Error
 CFHD_ReleaseSampleBuffer(CFHD_EncoderPoolRef encoderPoolRef,
                          CFHD_SampleBufferRef sampleBufferRef);
 
-// Release the encoder pool
+//! Release the encoder pool
 CFHDENCODER_API CFHD_Error
 CFHD_ReleaseEncoderPool(CFHD_EncoderPoolRef encoderPoolRef);
-
-
-#endif // DYNAMICALLY_LINK
 
 
 #ifdef __cplusplus
