@@ -5815,7 +5815,7 @@ void ConvertRGBA64ToFrame16s(uint8_t *data, int pitch, FRAME *frame, uint8_t *bu
                 {
                     a >>= shift;
                     // This help preserve the encoding of alpha channel extremes 0 and 1.  Alpha encoding curve
-                    if (a > 0 && a < (255 << 4))
+                    if (a > 0 && a < 4095)
                     {
                         // step function 0 = 0, 0.0001 = 16/255, 0.9999 = 239/256, 1 = 255/256
                         a *= 223;
@@ -6403,7 +6403,7 @@ void ConvertRGBAtoRGBA64(uint8_t *data, int pitch, FRAME *frame, uint8_t *buffer
                 b = *(rgb_ptr++) << 4;
 
                 // This help preserve the encoding of alpha channel extremes 0 and 1. Alpha encoding curve
-                if (a > 0 && a < (255 << 4))
+                if (a > 0 && a < 4095)
                 {
                     // step function 0 = 0, 0.0001 = 16/255, 0.9999 = 239/256, 1 = 255/256
                     a *= 223;
@@ -6434,7 +6434,7 @@ void ConvertRGBAtoRGBA64(uint8_t *data, int pitch, FRAME *frame, uint8_t *buffer
                 a = *(rgb_ptr++) << 4;
 
                 // This help preserve the encoding of alpha channel extremes 0 and 1. Alpha encoding curve
-                if (a > 0 && a < (255 << 4))
+                if (a > 0 && a < 4095)
                 {
                     // step function 0 = 0, 0.0001 = 16/255, 0.9999 = 239/256, 1 = 255/256
                     a *= 223;
@@ -6603,7 +6603,7 @@ CODEC_ERROR ConvertBGRA64ToFrame_4444_16s(uint8_t *data, int pitch, FRAME *frame
                 //*(a_ptr++) = a >> shift;
                 a >>= shift;
                 // This help preserve the encoding of alpha channel extremes 0 and 1.  Alpha encoding curve
-                if (a > 0 && a < (255 << 4))
+                if (a > 0 && a < 4095)
                 {
                     // step function 0 = 0, 0.0001 = 16/255, 0.9999 = 239/256, 1 = 255/256
                     a *= 223;
