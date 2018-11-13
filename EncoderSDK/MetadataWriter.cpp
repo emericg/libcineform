@@ -256,7 +256,7 @@ uint32_t ValidateLookGenCRCEnc(char *path)
                         hexstring[7] = buf[pos + 1];
 
                         //printf("%s",hexstring);
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__GNUC__)
                         sscanf_s(hexstring, "%08x", (int *)&val);
 #else
                         sscanf(hexstring, "%08x", (int *)&val);
