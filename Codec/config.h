@@ -38,7 +38,7 @@
 
 // Enable use of assembly language for code optimization
 #ifndef _ASMOPT
-#ifdef __LP64__
+#if defined(__LP64__) || defined(__GNUC__)
 #define _ASMOPT 0
 #else
 #ifndef _WIN64
