@@ -554,7 +554,7 @@ void Quantize16s(PIXEL *image, int width, int height, int pitch, int divisor)
 
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i *input_ptr = (__m128i *)rowptr;
         __m128i quant_epi16 = _mm_set1_epi16(multiplier);
         __m128i zero_si128 = _mm_setzero_si128();
@@ -627,7 +627,7 @@ void Quantize8s(PIXEL8S *image, int width, int height, int pitch, int divisor)
 
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i *group_ptr = (__m128i *)rowptr;
         __m128i quant_epi16 = _mm_set1_epi16(multiplier);
         __m128i zero_si128 = _mm_setzero_si128();

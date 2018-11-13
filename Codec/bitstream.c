@@ -1,23 +1,19 @@
-/*! @file
-
-*  @brief
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
+/*!
+ * @file bitstream.c
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "stdafx.h"
 #include "config.h"
@@ -590,9 +586,9 @@ void SkipBits(BITSTREAM *stream, int nBits)
     return;
 }
 
-uint32_t  PeekBits(BITSTREAM *stream, int nBits)
+uint32_t PeekBits(BITSTREAM *stream, int nBits)
 {
-#if (1 && ASMOPT)
+#if (ASMOPT)
 
     // Check that the offsets to the bitstream fields have not been changed
     //assert(offsetof(BITSTREAM, nBitsFree) == 4);
@@ -885,7 +881,7 @@ void PutBits(BITSTREAM *stream, uint32_t  wBits, int nBits)
 
 #else
 
-#if (1 && ASMOPT)
+#if (ASMOPT)
 
 // Write bits to a bitstream (optimized with doubleword shift instructions)
 void PutBits(BITSTREAM *stream, uint32_t  wBits, int nBits)
@@ -949,7 +945,7 @@ void PutBits(BITSTREAM *stream, uint32_t  wBits, int nBits)
         //sfence								// Serialize memory accesses
     }
 
-#if (1 && DEBUG)
+#if (DEBUG)
     stream->cntBits += nBits;
 #endif
 }
@@ -988,7 +984,7 @@ void PutBits(BITSTREAM *stream, uint32_t wBits, int nBits)
     {
         wBuffer = wBits & BITMASK(nBits);
         nBitsFree -= nBits;
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
         TracePutBits(nBits);
 #endif
     }
@@ -997,7 +993,7 @@ void PutBits(BITSTREAM *stream, uint32_t wBits, int nBits)
         wBuffer <<= nBits;
         wBuffer |= (wBits & BITMASK(nBits));
         nBitsFree -= nBits;
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
         TracePutBits(nBits);
 #endif
     }
@@ -1013,7 +1009,7 @@ void PutBits(BITSTREAM *stream, uint32_t wBits, int nBits)
         // Insert as many bits as will fit into the buffer
         wBuffer |= (wBits >> nBits) & BITMASK(nBitsFree);
 
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
         TracePutBits(nBitsFree);
 #endif
         // Insert all of the bytes in the buffer into the bitstream

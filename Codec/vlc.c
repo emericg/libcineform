@@ -1,23 +1,21 @@
-/*! @file vlc.c
+/*!
+ * @file vlc.c
+ * @brief Variable Length Coding tools
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-*  @brief Variable Length Coding tools
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
 #include "config.h"
 #include "timing.h"
 
@@ -26,7 +24,6 @@
 #endif
 #define TIMING (1 && _TIMING)
 #define XMMOPT (1 && _XMMOPT)
-
 
 #include "vlc.h"
 #include "codec.h"
@@ -259,7 +256,7 @@ void PutVlcByte(BITSTREAM *stream, int value, VALBOOK *codebook)
     }
 #endif
 
-#if (1 && TIMING)
+#if (TIMING)
     putvlcbyte_count++;
 #endif
 }
@@ -287,7 +284,7 @@ int32_t GetVlc(BITSTREAM *stream, VLCBOOK *codebook)
             size = code->size;
         }
 
-#if (1 && DEBUG)
+#if (DEBUG)
         // Check that the codeword does not contain extra bits
         if (size < BITSTREAM_LONG_SIZE)
         {
@@ -403,7 +400,7 @@ void PutZeroRun(BITSTREAM *stream, int count, RLCBOOK *codebook)
     // Should have output enough runs to cover the run of zeros
     assert(count == 0);
 
-#if (1 && TIMING)
+#if (TIMING)
     putzerorun_count++;
 #endif
 }
@@ -438,7 +435,7 @@ void PutFastRun(BITSTREAM *stream, int count, RLCBOOK *codebook)
     // Should have output enough runs to cover the run of zeros
     //assert(count == 0);
 
-#if (1 && TIMING)
+#if (TIMING)
     putzerorun_count++;
 #endif
 }

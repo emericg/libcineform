@@ -756,7 +756,7 @@ void QuantizeRow16s(PIXEL16S *rowptr, int length, int divisor)
     short multiplier;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m64 *group_ptr = (__m64 *)rowptr;
     __m64 zero_si64 = _mm_setzero_si64();
     __m64 round_pi16 = _mm_set1_pi16(1);
@@ -786,7 +786,7 @@ void QuantizeRow16s(PIXEL16S *rowptr, int length, int divisor)
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_pi16 = _mm_set1_pi16(multiplier);
 
@@ -858,7 +858,7 @@ void QuantizeRow16s(PIXEL16S *rowptr, int length, int divisor)
     short multiplier;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m128i *group_ptr = (__m128i *)rowptr;
     __m128i zero_si128 = _mm_setzero_si128();
     __m128i quant_epi16;
@@ -878,7 +878,7 @@ void QuantizeRow16s(PIXEL16S *rowptr, int length, int divisor)
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_epi16 = _mm_set1_epi16(multiplier);
 
@@ -957,7 +957,7 @@ void QuantizeRow8s(PIXEL8S *rowptr, int length, int divisor)
     short multiplier;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m64 *group_ptr = (__m64 *)rowptr;
     __m64 zero_si64 = _mm_setzero_si64();
     __m64 round_pi16 = _mm_set1_pi16(1);
@@ -986,7 +986,7 @@ void QuantizeRow8s(PIXEL8S *rowptr, int length, int divisor)
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_pi16 = _mm_set1_pi16(multiplier);
 
@@ -1072,7 +1072,7 @@ void QuantizeRow8s(PIXEL8S *rowptr, int length, int divisor)
     short multiplier;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m128i *group_ptr = (__m128i *)rowptr;
     __m128i zero_si128 = _mm_setzero_si128();
     //__m128i round_epi16 = _mm_set1_epi16(1);
@@ -1095,7 +1095,7 @@ void QuantizeRow8s(PIXEL8S *rowptr, int length, int divisor)
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_epi16 = _mm_set1_epi16(multiplier);
 
@@ -1191,7 +1191,7 @@ void QuantizeRow16sTo16s(PIXEL *input, PIXEL *output, int length, int divisor)
     int column;
 
     // MMX version
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m64 *input_ptr = (__m64 *)input;
     __m64 *output_ptr = (__m64 *)output;
     __m64 zero_si64 = _mm_setzero_si64();
@@ -1241,7 +1241,7 @@ void QuantizeRow16sTo16s(PIXEL *input, PIXEL *output, int length, int divisor)
     // Start at the left end of the row
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_pi16 = _mm_set1_pi16(multiplier);
 
@@ -1330,7 +1330,7 @@ void QuantizeRow16sTo16s(PIXEL *input, PIXEL *output, int length, int divisor)
     uint32_t multiplier;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input_ptr = (__m128i *)input;
     __m128i *output_ptr = (__m128i *)output;
@@ -1375,7 +1375,7 @@ void QuantizeRow16sTo16s(PIXEL *input, PIXEL *output, int length, int divisor)
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_epi16 = _mm_set1_epi16(multiplier);
 
@@ -1473,7 +1473,7 @@ void QuantizeRow16sTo16s(PIXEL *input, PIXEL *output, int length, int divisor)
     }
 #endif
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input_ptr = (__m128i *)input;
     __m128i *output_ptr = (__m128i *)output;
@@ -1509,7 +1509,7 @@ void QuantizeRow16sTo16s(PIXEL *input, PIXEL *output, int length, int divisor)
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_epi16 = _mm_set1_epi16(multiplier);
 
@@ -1662,7 +1662,7 @@ void QuantizeRow16sTo16s(PIXEL *input, PIXEL *output, int length, int divisor)
     }
 #endif
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input_ptr = (__m128i *)input;
     __m128i *output_ptr = (__m128i *)output;
@@ -1698,7 +1698,7 @@ void QuantizeRow16sTo16s(PIXEL *input, PIXEL *output, int length, int divisor)
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_epi16 = _mm_set1_epi16(multiplier);
 
@@ -1853,7 +1853,7 @@ void QuantizeRow16sToCoded(ENCODER *encoder, BITSTREAM *stream, PIXEL *input, in
 
     if (divisor > 1)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m64 *input_ptr = (__m64 *)input;
         __m64 *output_ptr = (__m64 *)output;
         __m64 zero_si64 = _mm_setzero_si64();
@@ -1877,7 +1877,7 @@ void QuantizeRow16sToCoded(ENCODER *encoder, BITSTREAM *stream, PIXEL *input, in
         // Start at the left end of the row
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         quant_pi16 = _mm_set1_pi16(multiplier);
 
@@ -1979,7 +1979,7 @@ void QuantizeRow16sTo8s(PIXEL16S *input, PIXEL8S *output, int length, int diviso
     short multiplier;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m64 *input_ptr = (__m64 *)input;
     __m64 *output_ptr = (__m64 *)output;
     __m64 zero_si64 = _mm_setzero_si64();
@@ -2031,7 +2031,7 @@ void QuantizeRow16sTo8s(PIXEL16S *input, PIXEL8S *output, int length, int diviso
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_pi16 = _mm_set1_pi16(multiplier);
 
@@ -2150,7 +2150,7 @@ void QuantizeRow16sTo8s(PIXEL16S *input, PIXEL8S *output, int length, int diviso
     unsigned short multiplier;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m128i *input_ptr = (__m128i *)input;
     __m128i *output_ptr = (__m128i *)output;
     __m128i zero_si128 = _mm_setzero_si128();
@@ -2197,7 +2197,7 @@ void QuantizeRow16sTo8s(PIXEL16S *input, PIXEL8S *output, int length, int diviso
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     quant_epi16 = _mm_set1_epi16(multiplier);
 
@@ -2342,7 +2342,7 @@ void DequantizeBandRow(PIXEL8S *input, int width, int quantization, PIXEL *outpu
     const int midpoint = 0;
 #endif
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     const int column_step = 8;
     const int post_column = width - (width % column_step);
@@ -2494,7 +2494,7 @@ void DequantizeBandRow(PIXEL8S *input, int width, int quantization, PIXEL *outpu
     // Address of the cache line for the current block
     //const char *block_address = (char *)ALIGN(input, prefetch_size);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     const int column_step = 16;
     const int post_column = width - (width % column_step);
@@ -2521,7 +2521,7 @@ void DequantizeBandRow(PIXEL8S *input, int width, int quantization, PIXEL *outpu
     // Prefetch rows that may be used in the near future
     //_mm_prefetch(block_address + prefetch_offset, _MM_HINT_T2);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Preload the first sixteen input coefficients
     input1_epi8 = _mm_load_si128(input_ptr++);
@@ -2541,7 +2541,7 @@ void DequantizeBandRow(PIXEL8S *input, int width, int quantization, PIXEL *outpu
     for (; column < post_column; column += column_step)
     {
 
-#if (1 && PREFETCH)
+#if (PREFETCH)
         // Prefetch input data that may be used in the near future
         //if (ISALIGNED(input_ptr, prefetch_size))
         {
@@ -2659,7 +2659,7 @@ void DequantizeBandRow16s(PIXEL *input, int width, int quantization, PIXEL *outp
     // Address of the cache line for the current block
     //const char *block_address = (char *)ALIGN(input, prefetch_size);
     /*  Faulty???? ----------------------------------------------------------------------------------------------------------------
-    #if (1 && XMMOPT)
+    #if (XMMOPT)
 
     	const int column_step = 16;
     	const int post_column = width - (width % column_step);
@@ -2688,7 +2688,7 @@ void DequantizeBandRow16s(PIXEL *input, int width, int quantization, PIXEL *outp
     	// Prefetch rows that may be used in the near future
     	//_mm_prefetch(block_address + prefetch_offset, _MM_HINT_T2);
 
-    #if (1 && XMMOPT)
+    #if (XMMOPT)
 
     	// Preload the first sixteen input coefficients
     	input1_epi8 = _mm_load_si128(input_ptr++);
@@ -2708,7 +2708,7 @@ void DequantizeBandRow16s(PIXEL *input, int width, int quantization, PIXEL *outp
     	for (; column < post_column; column += column_step)
     	{
 
-    	#if (1 && PREFETCH)
+    	#if (PREFETCH)
     		// Prefetch input data that may be used in the near future
     		//if (ISALIGNED(input_ptr, prefetch_size))
     		{

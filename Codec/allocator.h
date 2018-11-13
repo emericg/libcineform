@@ -1,23 +1,20 @@
-/*! @file allocator.h
-
-*  @brief Memory tools
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
+/*!
+ * @file allocator.h
+ * @brief Memory tools
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #pragma once
 
@@ -25,19 +22,16 @@
 #include <memory.h>
 #include <assert.h>
 #include "config.h"
-#include <emmintrin.h>				// Include support for SSE2 intrinsics
+#include <emmintrin.h> // Include support for SSE2 intrinsics
 
 // The codec SDK and the codec library use the same memory allocator
 #include "../Common/CFHDAllocator.h"
-
-#define INLINE inline
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static INLINE void *Alloc(ALLOCATOR *allocator, size_t size)
+static inline void *Alloc(ALLOCATOR *allocator, size_t size)
 {
 #if _ALLOCATOR
     //assert(allocator != NULL);
@@ -53,7 +47,7 @@ static INLINE void *Alloc(ALLOCATOR *allocator, size_t size)
     return MEMORY_ALLOC(size);
 }
 
-static INLINE void Free(ALLOCATOR *allocator, void *block)
+static inline void Free(ALLOCATOR *allocator, void *block)
 {
 #if _ALLOCATOR
     //assert(allocator != NULL);
@@ -89,7 +83,7 @@ static int m_allocationSize = 0;
 #endif
 
 
-static INLINE void *AllocAligned(ALLOCATOR *allocator, size_t size, size_t alignment)
+static inline void *AllocAligned(ALLOCATOR *allocator, size_t size, size_t alignment)
 {
     void *block = NULL;
 
@@ -120,7 +114,7 @@ static INLINE void *AllocAligned(ALLOCATOR *allocator, size_t size, size_t align
     return block;
 }
 
-static INLINE void FreeAligned(ALLOCATOR *allocator, void *block)
+static inline void FreeAligned(ALLOCATOR *allocator, void *block)
 {
 #if _ALLOCATOR
     //assert(allocator != NULL);
@@ -181,9 +175,7 @@ static INLINE void FreeAligned(ALLOCATOR *allocator, void *block)
 
         assert(found);
     }
-
 #endif
-
 }
 
 #ifdef __cplusplus

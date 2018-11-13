@@ -294,7 +294,7 @@ void DecodeEntropy(DECODER *decoder, int work_index, int thread_index, FSM *fsm,
 THREAD_PROC(EntropyWorkerThreadProc, lpParam)
 {
     DECODER *decoder = (DECODER *)lpParam;
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     THREAD_ERROR error = THREAD_ERROR_OKAY;
@@ -369,7 +369,7 @@ THREAD_PROC(EntropyWorkerThreadProc, lpParam)
 THREAD_PROC(ParallelThreadProc, lpParam)
 {
     DECODER *decoder = (DECODER *)lpParam;
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     THREAD_ERROR error = THREAD_ERROR_OKAY;

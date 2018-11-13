@@ -2266,7 +2266,7 @@ void TransformInverseTemporal(IMAGE *temporal, IMAGE *frame0, IMAGE *frame1)
     {
         int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         __m128i *low_ptr = (__m128i *)lowpass;
         __m128i *high_ptr = (__m128i *)highpass;

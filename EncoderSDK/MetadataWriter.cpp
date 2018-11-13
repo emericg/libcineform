@@ -1,22 +1,19 @@
-/*! @file MetadataWriter.cpp
-
-*  @brief
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*/
+/*!
+ * @file MetadataWriter.cpp
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "StdAfx.h"
 
@@ -40,13 +37,13 @@
 #include "SampleEncoder.h"
 
 
-/* Table of CRCs of all 8-bit messages. */
+//! Table of CRCs of all 8-bit messages.
 static unsigned long look_crc_table[256];
 
-/* Flag: has the table been computed? Initially false. */
+//! Flag: has the table been computed? Initially false.
 static int look_crc_table_computed = 0;
 
-/* Make the table for a fast CRC. */
+//! Make the table for a fast CRC.
 void look_make_crc_table(void)
 {
     unsigned long c;
@@ -93,8 +90,7 @@ unsigned long look_calc_crc(unsigned char *buf, int len)
     return look_update_crc(0xffffffffL, buf, len) ^ 0xffffffffL;
 }
 
-
-#define OUTPUT	0
+#define OUTPUT 0
 #define BUFSIZE	1024
 
 uint32_t ValidateLookGenCRCEnc(char *path)
@@ -148,7 +144,6 @@ uint32_t ValidateLookGenCRCEnc(char *path)
                         pos += 5;
                         LUTfound = true;
                         break;
-
                     }
                     pos++;
                 } while (pos < len - 5);
@@ -196,7 +191,6 @@ uint32_t ValidateLookGenCRCEnc(char *path)
 
                         SIZEfound = true;
                         break;
-
                     }
                     pos++;
                 } while (pos < len - 10);
@@ -209,12 +203,10 @@ uint32_t ValidateLookGenCRCEnc(char *path)
                     {
                         int j = 0;
                         pos += 6;
-                        while (	!( (buf[pos + j] >= '0' && buf[pos + j] <= '9') ||
-                                   (buf[pos + j] >= 'a' && buf[pos + j] <= 'f') ||
-                                   (buf[pos + j] >= 'A' && buf[pos + j] <= 'F') ))
+                        while (!( (buf[pos + j] >= '0' && buf[pos + j] <= '9') ||
+                                  (buf[pos + j] >= 'a' && buf[pos + j] <= 'f') ||
+                                  (buf[pos + j] >= 'A' && buf[pos + j] <= 'F') ))
                             pos++;
-
-                        //printf("%s\n",&buf[pos+j]);
 
                         DATAfound = true;
                         break;
@@ -228,9 +220,9 @@ uint32_t ValidateLookGenCRCEnc(char *path)
                 char hexstring[12] = "00000000";
                 do
                 {
-                    while (	!(  (buf[pos] >= '0' && buf[pos] <= '9') ||
-                                (buf[pos] >= 'a' && buf[pos] <= 'f') ||
-                                (buf[pos] >= 'A' && buf[pos] <= 'F') ))
+                    while (!( (buf[pos] >= '0' && buf[pos] <= '9') ||
+                               (buf[pos] >= 'a' && buf[pos] <= 'f') ||
+                               (buf[pos] >= 'A' && buf[pos] <= 'F') ))
                     {
                         if (buf[pos] == '"' || buf[pos] == '<')
                         {
@@ -255,8 +247,7 @@ uint32_t ValidateLookGenCRCEnc(char *path)
                         hexstring[6] = buf[pos + 0];
                         hexstring[7] = buf[pos + 1];
 
-                        //printf("%s",hexstring);
-#if defined(_WIN32) && !defined(__GNUC__)
+#ifdef _MSVC_VER
                         sscanf_s(hexstring, "%08x", (int *)&val);
 #else
                         sscanf(hexstring, "%08x", (int *)&val);
@@ -286,7 +277,6 @@ uint32_t ValidateLookGenCRCEnc(char *path)
                 } while (pos < len - 16 && !finished);
             }
 
-            //	printf("len = %d\n", len);
         } while (len > 0 && !finished);
 
         fclose(fp);
@@ -300,6 +290,7 @@ uint32_t ValidateLookGenCRCEnc(char *path)
         free(LUT);
         free(iLUT);
     }
+
     return crc;
 }
 
@@ -319,8 +310,8 @@ CFHD_Error CSampleEncodeMetadata::AddGUID()
 }
 
 CFHD_Error CSampleEncodeMetadata::AddLookFile(METADATA_TYPE ctype,
-        METADATA_SIZE size,
-        uint32_t *data)
+                                              METADATA_SIZE size,
+                                              uint32_t *data)
 {
     //TODO: Replace uses of unsigned int with size_t
     assert(size <= METADATA_SIZE_MAX);
@@ -381,6 +372,7 @@ CFHD_Error CSampleEncodeMetadata::AddTimeStamp(const char *date, const char *tim
     {
         return CFHD_ERROR_OKAY;
     }
+
     return CFHD_ERROR_UNEXPECTED;
 }
 
@@ -413,17 +405,14 @@ CFHD_Error CSampleEncodeMetadata::AddFrameNumber(uint32_t framenum, bool local_m
     return CFHD_ERROR_OKAY;
 }
 
-
-
-
 /*!
-	@brief Free a metadata buffer (local or global)
-
-	The low level API in the codec library takes pointers to the buffer
-	pointer and size.  This routine intentionally allows the low level API
-	to clear the local values passed as arguments.  The caller should set
-	the buffer pointer to null and the buffer size to zero.
-*/
+ * @brief Free a metadata buffer (local or global)
+ *
+ * The low level API in the codec library takes pointers to the buffer
+ * pointer and size.  This routine intentionally allows the low level API
+ * to clear the local values passed as arguments.  The caller should set
+ * the buffer pointer to null and the buffer size to zero.
+ */
 void CSampleEncodeMetadata::ReleaseMetadata(METADATA *metadata)
 {
     FreeMetadata(metadata);

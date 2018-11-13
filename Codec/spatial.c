@@ -172,7 +172,7 @@ void FilterHorizontalRow16s(PIXEL *input, PIXEL *lowpass, PIXEL *highpass, int w
     // Intialize the mask used for downsampling the convolution results
     mask_epi16 = _mm_set1_epi32(0x0000FFFF);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Process two sets of four input pixels to get one set of four output pixels
     for (; column < post_column; column += column_step)
     {
@@ -492,7 +492,7 @@ void FilterHorizontalRow16s(PIXEL *input, PIXEL *lowpass, PIXEL *highpass, int w
     assert(ISALIGNED16(highpass_ptr));
 
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Process two sets of four input pixels to get one set of four output pixels
     for (; column < post_column; column += column_step)
     {
@@ -828,7 +828,7 @@ void FilterHorizontalRow16s(PIXEL *input, PIXEL *lowpass, PIXEL *highpass, int w
     assert(ISALIGNED16(highpass_ptr));
 
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Process two sets of four input pixels to get one set of four output pixels
     for (; column < post_column; column += column_step)
     {
@@ -3590,7 +3590,7 @@ void FilterHorizontalRow10bit16s(PIXEL *input, PIXEL *lowpass, PIXEL *highpass, 
     // Intialize the mask used for downsampling the convolution results
     mask_epi16 = _mm_set1_epi32(0x0000FFFF);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Process two sets of four input pixels to get one set of four output pixels
     for (; column < post_column; column += column_step)
     {
@@ -5276,7 +5276,7 @@ void FilterHorizontalRowScaled16sDifferenceFiltered(PIXEL *input, PIXEL *lowpass
     assert(ISALIGNED16(highpass_ptr));
 
 
-#if (1 && XMMOPT) // SSE2
+#if (XMMOPT) // SSE2
     // Process two sets of four input pixels to get one set of four output pixels
     for (; column < post_column; column += column_step)
     {
@@ -7736,7 +7736,7 @@ void FilterVertical(PIXEL *input, int input_pitch,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 4;
         int post_column = roi.width - (roi.width % column_step);
         int quad_pitch = (input_pitch * sizeof(PIXEL)) / sizeof(__m64);
@@ -7746,7 +7746,7 @@ void FilterVertical(PIXEL *input, int input_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process a group of four pixels at a time
         for (; column < post_column; column += column_step)
@@ -7856,7 +7856,7 @@ void FilterVertical(PIXEL *input, int input_pitch,
     // Should have left the loop at the last row
     assert(row == last_row);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the row pointer if using SIMD instructions
     rowptr += 2 * input_pitch;
 #endif
@@ -7907,7 +7907,7 @@ void FilterLowpassVertical(PIXEL *input, int input_pitch, PIXEL *output, int out
 
     for (row = 0; row < roi.height; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m64 *quad1_ptr = (__m64 *)rowptr;
         __m64 *quad2_ptr = (__m64 *)&rowptr[input_pitch];
         __m64 *outptr = (__m64 *)outrow;
@@ -7964,7 +7964,7 @@ void FilterLowpassVerticalQuant(PIXEL *input, int input_pitch, PIXEL8S *output, 
     {
         int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         __m64 *quad1_ptr = (__m64 *)rowptr;
         __m64 *quad2_ptr = (__m64 *)&rowptr[input_pitch];
@@ -8090,7 +8090,7 @@ void FilterHighpassVertical(PIXEL *input, int input_pitch, PIXEL *output, int ou
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 4;
         int post_column = roi.width - (roi.width % column_step);
         int quad_pitch = (input_pitch * sizeof(PIXEL)) / sizeof(__m64);
@@ -8099,7 +8099,7 @@ void FilterHighpassVertical(PIXEL *input, int input_pitch, PIXEL *output, int ou
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process a group of four pixels at a time
         for (; column < post_column; column += column_step)
@@ -8191,7 +8191,7 @@ void FilterHighpassVertical(PIXEL *input, int input_pitch, PIXEL *output, int ou
     // Should have left the loop at the last row
     assert(row == last_row);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the row pointer if using SIMD instructions
     rowptr += 2 * input_pitch;
 #endif
@@ -8268,7 +8268,7 @@ void FilterHighpassVertical(PIXEL *input, int input_pitch, PIXEL *output, int ou
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         const int column_step = 8;
         const int post_column = roi.width - (roi.width % column_step);
         int group_pitch = (input_pitch * sizeof(PIXEL)) / sizeof(__m128i);
@@ -8280,7 +8280,7 @@ void FilterHighpassVertical(PIXEL *input, int input_pitch, PIXEL *output, int ou
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         // Process a group of eight pixels at a time
         for (; column < post_column; column += column_step)
         {
@@ -8507,7 +8507,7 @@ void FilterHighpassVerticalQuant(PIXEL *input, int input_pitch, PIXEL8S *output,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 8;
         int post_column = roi.width - (roi.width % column_step);
         int quad_pitch = (input_pitch * sizeof(PIXEL)) / sizeof(__m64);
@@ -8516,7 +8516,7 @@ void FilterHighpassVerticalQuant(PIXEL *input, int input_pitch, PIXEL8S *output,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         // Process a group of four pixels at a time
         for (; column < post_column; column += column_step)
         {
@@ -8633,7 +8633,7 @@ void FilterHighpassVerticalQuant(PIXEL *input, int input_pitch, PIXEL8S *output,
     // Should have left the loop at the last row
     assert(row == last_row);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the row pointer if using SIMD instructions
     rowptr += 2 * input_pitch;
 #endif
@@ -8894,7 +8894,7 @@ void InvertVertical16s(PIXEL *lowpass, int lowpass_pitch,
     // Process the middle rows using the ordinary reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         int column_step = 4;
         int post_column = roi.width - (roi.width % column_step);
@@ -8906,7 +8906,7 @@ void InvertVertical16s(PIXEL *lowpass, int lowpass_pitch,
 
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -9587,7 +9587,7 @@ void FilterSpatialQuant16s(PIXEL *input_image, int input_pitch,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m64 *lowlow_ptr;
         __m64 *highlow_ptr = (__m64 *)highlow_buffer;
         __m64 *lowhigh_ptr = (__m64 *)lowhigh_buffer;
@@ -9599,7 +9599,7 @@ void FilterSpatialQuant16s(PIXEL *input_image, int input_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         if (lowlow_quantization > 1)
         {
@@ -10189,7 +10189,7 @@ void FilterSpatialQuant16s(PIXEL *input_image, int input_pitch,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i *lowlow_ptr;
         __m128i *highlow_ptr = (__m128i *)highlow_buffer;
         __m128i *lowhigh_ptr = (__m128i *)lowhigh_buffer;
@@ -10201,7 +10201,7 @@ void FilterSpatialQuant16s(PIXEL *input_image, int input_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         if (lowlow_quantization > 1)
         {
@@ -10812,7 +10812,7 @@ void FilterSpatialQuantDifferenceLL16s(PIXEL *input_image, int input_pitch,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m64 *lowlow_ptr;
         __m64 *highlow_ptr = (__m64 *)highlow_buffer;
         __m64 *lowhigh_ptr = (__m64 *)lowhigh_buffer;
@@ -10824,7 +10824,7 @@ void FilterSpatialQuantDifferenceLL16s(PIXEL *input_image, int input_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         if (lowlow_quantization > 1)
         {
@@ -11391,7 +11391,7 @@ void FilterSpatialQuantDifferenceLL16s(PIXEL *input_image, int input_pitch,
     {
         int lastsumvalue = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i *lowlow_ptr;
         __m128i *highlow_ptr = (__m128i *)highlow_buffer;
         __m128i *lowhigh_ptr = (__m128i *)lowhigh_buffer;
@@ -11403,7 +11403,7 @@ void FilterSpatialQuantDifferenceLL16s(PIXEL *input_image, int input_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         lowlow_ptr = (__m128i *)lowlow_row_ptr;
 
         // Process a group of eight pixels at a time
@@ -12040,7 +12040,7 @@ void FilterSpatialPrescaleQuant16s(PIXEL *input_image, int input_pitch,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
 #if _QUANTIZE_SPATIAL_LOWPASS
         __m64 *lowlow_ptr = (__m64 *)lowlow_buffer;
 #else
@@ -12056,7 +12056,7 @@ void FilterSpatialPrescaleQuant16s(PIXEL *input_image, int input_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process a group of four pixels at a time
         for (; column < post_column; column += column_step)
@@ -12602,7 +12602,7 @@ void FilterSpatialPrescaleQuant16s(PIXEL *input_image, int input_pitch,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
 #if _QUANTIZE_SPATIAL_LOWPASS
         __m128i *lowlow_ptr = (__m128i *)lowlow_buffer;
 #else
@@ -12629,7 +12629,7 @@ void FilterSpatialPrescaleQuant16s(PIXEL *input_image, int input_pitch,
         assert(ISALIGNED16(highlow_ptr));
         assert(ISALIGNED16(highhigh_ptr));
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process a group of four pixels at a time
         for (; column < post_column; column += column_step)
@@ -13193,7 +13193,7 @@ void FilterSpatialV210Quant16s(PIXEL *input_image, int input_pitch,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
 #if _QUANTIZE_SPATIAL_LOWPASS
         __m128i *lowlow_ptr = (__m128i *)lowlow_buffer;
 #else
@@ -13220,7 +13220,7 @@ void FilterSpatialV210Quant16s(PIXEL *input_image, int input_pitch,
         assert(ISALIGNED16(highlow_ptr));
         assert(ISALIGNED16(highhigh_ptr));
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process a group of four pixels at a time
         for (; column < post_column; column += column_step)
@@ -13805,7 +13805,7 @@ void FilterSpatialQuant16sToCoded(ENCODER *encoder,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
 #if _QUANTIZE_SPATIAL_LOWPASS
         __m64 *lowlow_ptr = (__m64 *)lowlow_buffer;
 #else
@@ -13821,7 +13821,7 @@ void FilterSpatialQuant16sToCoded(ENCODER *encoder,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process a group of four pixels at a time
         for (; column < post_column; column += column_step)
@@ -14426,7 +14426,7 @@ void FilterSpatialYUVQuant16s(uint8_t *input_data, int input_pitch,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
 #if _QUANTIZE_SPATIAL_LOWPASS
         __m64 *lowlow_ptr = (__m64 *)lowlow_buffer;
 #else
@@ -14442,7 +14442,7 @@ void FilterSpatialYUVQuant16s(uint8_t *input_data, int input_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process a group of four pixels at a time
         for (; column < post_column; column += column_step)
@@ -15007,7 +15007,7 @@ void FilterSpatialYUVQuant16s(uint8_t *input_data, int input_pitch,
 
     for (; row < last_row; row += 2)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i *lowlow_ptr = (__m128i *)lowlow_row_ptr;
         __m128i *highlow_ptr = (__m128i *)highlow_buffer;
         __m128i *lowhigh_ptr = (__m128i *)lowhigh_buffer;
@@ -15109,7 +15109,7 @@ void FilterSpatialYUVQuant16s(uint8_t *input_data, int input_pitch,
         dummy1 += dummy2;
 #endif
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process a group of eight pixels at a time
         for (; column < post_column; column += column_step)
@@ -15592,7 +15592,7 @@ void InvertSpatialMiddleRow16s(PIXEL *lowlow_band, int lowlow_pitch,
     int buffer_pitch;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     const int column_step = 8;
     int post_column = width - (width % column_step);
 
@@ -15647,7 +15647,7 @@ void InvertSpatialMiddleRow16s(PIXEL *lowlow_band, int lowlow_pitch,
     // Start at the first column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     even_lowpass_ptr = (__m128i *)even_lowpass;
     even_highpass_ptr = (__m128i *)even_highpass;
@@ -17090,7 +17090,7 @@ void InvertRGB444MiddleRow16sToB64A(PIXEL *lowlow_band, int lowlow_pitch,
     int buffer_pitch;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     const int column_step = 4;
     int post_column = width - (width % column_step);
 
@@ -17146,7 +17146,7 @@ void InvertRGB444MiddleRow16sToB64A(PIXEL *lowlow_band, int lowlow_pitch,
     // Start at the first column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     even_lowpass_ptr = (__m64 *)even_lowpass;
     even_highpass_ptr = (__m64 *)even_highpass;
@@ -18566,7 +18566,7 @@ void InvertHorizontalRow16s8sTo16sBuffered(PIXEL *lowpass,  			// Row of horizon
     // Place the odd result in the odd column
     output[1] = SATURATE(odd);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Preload the first four lowpass coefficients
     low1_pi16 = *((__m64 *)&lowpass[column]);
@@ -18933,7 +18933,7 @@ void InvertHorizontalRow16s8sTo16sBuffered(PIXEL *lowpass,  			// Row of horizon
     	}
     */
 
-#if (1 && _FASTLOOP && XMMOPT)
+#if (_FASTLOOP && XMMOPT)
 
     // Preload the first eight lowpass coefficients
     low1_epi16 = _mm_load_si128((__m128i *)&lowpass[column]);
@@ -19365,7 +19365,7 @@ void InvertHorizontalRow16s(PIXEL *lowpass,  			// Row of horizontal lowpass coe
     //even = 100;		//***DEBUG***
     //odd = 100;		//***DEBUG***
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Preload the first eight lowpass coefficients
     low1_epi16 = _mm_load_si128((__m128i *)&lowpass[column]);
@@ -19690,7 +19690,7 @@ void BypassHorizontalRow16s(PIXEL *lowpass,  			// Row of horizontal lowpass coe
     column = 0;
 
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     if (ISALIGNED16(lowpass) && ISALIGNED16(colptr))
     {
@@ -19839,7 +19839,7 @@ void InvertHorizontalRow8sBuffered(PIXEL8S *lowpass_data,			// Row of horizontal
     // Place the odd result in the odd column
     output[1] = SATURATE(odd);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Preload the first four lowpass coefficients
     low1_pi16 = *((__m64 *)&lowline[column]);
@@ -20182,7 +20182,7 @@ void InvertHorizontalRow8sBuffered(PIXEL8S *lowpass_data,			// Row of horizontal
     //remainder[1] = SATURATE(odd);
 #endif
 
-#if (1 && _FASTLOOP && XMMOPT)
+#if (_FASTLOOP && XMMOPT)
 
     // Preload the first four lowpass coefficients
     low1_epi16 = _mm_load_si128((__m128i *)&lowline[column]);
@@ -20474,7 +20474,7 @@ void InvertHorizontalRowDuplicated16s(PIXEL *lowpass,				// Row of horizontal lo
     // Start processing at the beginning of the row
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Preload the first eight lowpass coefficients
     low1_epi16 = _mm_load_si128((__m128i *)&lowpass[column]);
@@ -21230,7 +21230,7 @@ void InvertSpatialQuant16s(PIXEL *lowlow_band, int lowlow_pitch,
     // Process the middle rows using the interior reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 8;
         int post_column = width - (width % column_step);
         __m128i *even_lowpass_ptr  = (__m128i *)even_lowpass;
@@ -21252,7 +21252,7 @@ void InvertSpatialQuant16s(PIXEL *lowlow_band, int lowlow_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -21466,7 +21466,7 @@ void InvertSpatialQuant16s(PIXEL *lowlow_band, int lowlow_pitch,
         }
     }
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -21772,7 +21772,7 @@ void InvertSpatialQuantDescale16s(PIXEL *lowlow_band, int lowlow_pitch,
     // Process the middle rows using the interior reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 8;
         int post_column = width - (width % column_step);
         __m128i *even_lowpass_ptr  = (__m128i *)even_lowpass;
@@ -21794,7 +21794,7 @@ void InvertSpatialQuantDescale16s(PIXEL *lowlow_band, int lowlow_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -22205,7 +22205,7 @@ void InvertSpatialQuantDescale16s(PIXEL *lowlow_band, int lowlow_pitch,
     }
 
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -22517,7 +22517,7 @@ void InvertSpatialPrescaledQuant16s(PIXEL *lowlow_band, int lowlow_pitch,
     // Process the middle rows using the interior reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 4;
         int post_column = width - (width % column_step);
         __m64 *even_lowpass_ptr = (__m64 *)even_lowpass;
@@ -22539,7 +22539,7 @@ void InvertSpatialPrescaledQuant16s(PIXEL *lowlow_band, int lowlow_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -22768,7 +22768,7 @@ void InvertSpatialPrescaledQuant16s(PIXEL *lowlow_band, int lowlow_pitch,
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -23203,7 +23203,7 @@ void InvertSpatialQuant1x16s(PIXEL *lowlow_band, int lowlow_pitch,
         }
     }
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -23533,7 +23533,7 @@ void InvertSpatialPrescaledQuant8s(PIXEL8S *lowlow_band, int lowlow_pitch,
     // Process the middle rows using the interior reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 4;
         int post_column = width - (width % column_step);
         __m64 *even_lowpass_ptr = (__m64 *)even_lowpass;
@@ -23550,7 +23550,7 @@ void InvertSpatialPrescaledQuant8s(PIXEL8S *lowlow_band, int lowlow_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -23785,7 +23785,7 @@ void InvertSpatialPrescaledQuant8s(PIXEL8S *lowlow_band, int lowlow_pitch,
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -24097,7 +24097,7 @@ void InvertSpatialPrescaledQuant8s(PIXEL8S *lowlow_band, int lowlow_pitch,
     // Process the middle rows using the interior reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 8;
         int post_column = width - (width % column_step);
         __m128i *even_lowpass_ptr = (__m128i *)even_lowpass;
@@ -24114,7 +24114,7 @@ void InvertSpatialPrescaledQuant8s(PIXEL8S *lowlow_band, int lowlow_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -24351,7 +24351,7 @@ void InvertSpatialPrescaledQuant8s(PIXEL8S *lowlow_band, int lowlow_pitch,
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -24679,7 +24679,7 @@ void InvertSpatial8sTo16s(PIXEL8S *lowlow_band, int lowlow_pitch,
     // Process the middle rows using the interior reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 4;
         int post_column = roi.width - (roi.width % column_step);
         __m64 *even_lowpass_ptr = (__m64 *)even_lowpass;
@@ -24696,7 +24696,7 @@ void InvertSpatial8sTo16s(PIXEL8S *lowlow_band, int lowlow_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -24926,7 +24926,7 @@ void InvertSpatial8sTo16s(PIXEL8S *lowlow_band, int lowlow_pitch,
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -25227,7 +25227,7 @@ void InvertSpatial8sTo16s(PIXEL8S *lowlow_band, int lowlow_pitch,
     // Process the middle rows using the interior reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 8;
         int post_column = roi.width - (roi.width % column_step);
         __m128i *even_lowpass_ptr = (__m128i *)even_lowpass;
@@ -25244,7 +25244,7 @@ void InvertSpatial8sTo16s(PIXEL8S *lowlow_band, int lowlow_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -25476,7 +25476,7 @@ void InvertSpatial8sTo16s(PIXEL8S *lowlow_band, int lowlow_pitch,
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -25808,7 +25808,7 @@ void InvertSpatial16sTo16s(PIXEL16S *lowlow_band, int lowlow_pitch,
     // Process the middle rows using the interior reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 4;
         int post_column = roi.width - (roi.width % column_step);
         __m64 *even_lowpass_ptr = (__m64 *)even_lowpass;
@@ -25830,7 +25830,7 @@ void InvertSpatial16sTo16s(PIXEL16S *lowlow_band, int lowlow_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -26068,7 +26068,7 @@ void InvertSpatial16sTo16s(PIXEL16S *lowlow_band, int lowlow_pitch,
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -26384,7 +26384,7 @@ void InvertSpatial16sTo16s(PIXEL16S *lowlow_band, int lowlow_pitch,
     // Process the middle rows using the interior reconstruction filters
     for (; row < last_row; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 8;
         int post_column = roi.width - (roi.width % column_step);
         __m128i *even_lowpass_ptr = (__m128i *)even_lowpass;
@@ -26406,7 +26406,7 @@ void InvertSpatial16sTo16s(PIXEL16S *lowlow_band, int lowlow_pitch,
         // Start at the first column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process groups of four coefficients along the row
         for (; column < post_column; column += column_step)
@@ -26646,7 +26646,7 @@ void InvertSpatial16sTo16s(PIXEL16S *lowlow_band, int lowlow_pitch,
 
     //_mm_empty();	// Clear the mmx register state
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     // Need to advance the lowpass pointer if using SIMD instructions
     lowlow += lowlow_pitch;
     lowhigh += lowhigh_pitch;
@@ -27360,7 +27360,7 @@ void InvertHorizontalStripRGB16sToPackedYUV8u(PIXEL *lowpass_band[],	// Horizont
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i gg_low1_epi16;		// Lowpass coefficients
         __m128i gg_low2_epi16;
         __m128i bg_low1_epi16;
@@ -27544,7 +27544,7 @@ void InvertHorizontalStripRGB16sToPackedYUV8u(PIXEL *lowpass_band[],	// Horizont
         // Save the value for use in the fast loop
         rg_odd_value = odd;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         gg_low1_epi16 = _mm_load_si128((__m128i *)&gg_lowpass_ptr[0]);
@@ -28750,7 +28750,7 @@ InvertHorizontalStripYUV16sToPackedRGB32(HorizontalFilterParams)			// Target pix
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i y_low1_epi16;		// Lowpass coefficients
         __m128i y_low2_epi16;
         __m128i u_low1_epi16;
@@ -28931,7 +28931,7 @@ InvertHorizontalStripYUV16sToPackedRGB32(HorizontalFilterParams)			// Target pix
         // Save the value for use in the fast loop
         v_odd_value = odd;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         y_low1_epi16 = _mm_load_si128((__m128i *)&y_lowpass_ptr[0]);
@@ -30681,7 +30681,7 @@ InvertSpatialMiddleRow16sToOutput(DECODER *decoder, int thread_index, PIXEL *low
         // Start at the first column
         int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         const int column_step = 8;
         int post_column = width - (width % column_step);

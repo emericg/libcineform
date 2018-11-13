@@ -430,7 +430,7 @@ void ConvertRGB32to10bitYUVFrame(uint8_t *rgb, int pitch, FRAME *frame,  uint8_t
         {
             int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
             int column_step = 16;
             int post_column = roi.width - (roi.width % column_step);
 
@@ -5668,7 +5668,7 @@ void ConvertRGBA64ToFrame16s(uint8_t *data, int pitch, FRAME *frame, uint8_t *bu
         // Start at the leftmost column
 
         //TODO: Add optimized code
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
 #endif
 
@@ -5905,7 +5905,7 @@ void ConvertRGB48ToFrame16s(uint8_t *data, int pitch, FRAME *frame, uint8_t *buf
         // Start at the leftmost column
 
         //TODO: Add optimized code
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
 #endif
 
@@ -6124,7 +6124,7 @@ void ConvertRGBtoRGB48(uint8_t *data, int pitch, FRAME *frame, uint8_t *buffer, 
         int column = 0;
 
         //TODO: Add optimized code
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
 #endif
 
@@ -6242,7 +6242,7 @@ void ConvertRGBAtoRGB48(uint8_t *data, int pitch, FRAME *frame, uint8_t *buffer,
         int row = rowp < display_height ? rowp : display_height - 1;
 
         //TODO: Add optimized code
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
 #endif
 
@@ -6374,7 +6374,7 @@ void ConvertRGBAtoRGBA64(uint8_t *data, int pitch, FRAME *frame, uint8_t *buffer
         int column = 0;
 
         //TODO: Add optimized code
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
 #endif
 
@@ -6569,7 +6569,7 @@ CODEC_ERROR ConvertBGRA64ToFrame_4444_16s(uint8_t *data, int pitch, FRAME *frame
         int column = 0;
 
         //TODO: Process each row by calling an optimized subroutine
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
 #endif
 
@@ -6881,7 +6881,7 @@ void ConvertAnyDeep444to422(uint8_t *data, int pitch, FRAME *frame, uint8_t *buf
         int column = 0;
 
         //TODO: Add optimized code
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
 #endif
 
@@ -7986,7 +7986,7 @@ void ConvertYUVAFloatToFrame16s(uint8_t *data, int pitch, FRAME *frame, uint8_t 
         int column = 0;
 
         //TODO: Add optimized code
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
 #endif
 
@@ -8190,7 +8190,7 @@ void ConvertYUVAFloatToFrame_RGB444_16s(uint8_t *data, int pitch, FRAME *frame, 
         // Start at the leftmost column
         int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         //TODO: Add optimized code
 #endif
         // Pointer into the YUVA input row
@@ -8388,7 +8388,7 @@ void ConvertYUVAFloatToFrame_RGBA4444_16s(uint8_t *data, int pitch, FRAME *frame
         // Start at the leftmost column
         int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         //TODO: Add optimized code
 #endif
         // Pointer into the YUVA input row

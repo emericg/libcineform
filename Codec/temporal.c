@@ -115,7 +115,7 @@ void FilterTemporal(PIXEL *field1, int pitch1, PIXEL *field2, int pitch2,
 
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the input values (which may be overwritten)
         input1_pi16 = *(input1_ptr++);
@@ -225,7 +225,7 @@ void FilterTemporal(PIXEL *field1, int pitch1, PIXEL *field2, int pitch2,
 
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Check that the pointers to the groups of pixels are properly aligned
         assert(ISALIGNED16(input1_ptr));
@@ -354,7 +354,7 @@ void FilterTemporal16s(PIXEL *field1, int pitch1, PIXEL *field2, int pitch2,
 
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process column elements in parallel until end of row processing is required
         for (; column < post_column; column += column_step)
@@ -525,7 +525,7 @@ void FilterTemporal16s(PIXEL *field1, int pitch1, PIXEL *field2, int pitch2,
 
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process column elements in parallel until end of row processing is required
         for (; column < post_column; column += column_step)
@@ -681,7 +681,7 @@ void FilterTemporalRow8uTo16s(PIXEL8U *row1, PIXEL8U *row2, int length,
     int post_column = length - (length % column_step);
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m64 *input1_ptr = (__m64 *)row1;
     __m64 *input2_ptr = (__m64 *)row2;
@@ -703,7 +703,7 @@ void FilterTemporalRow8uTo16s(PIXEL8U *row1, PIXEL8U *row2, int length,
 
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     //assert(ISALIGNED16(input1_ptr));
@@ -817,7 +817,7 @@ void FilterTemporalRow8uTo16s(PIXEL8U *row1, PIXEL8U *row2, int length,
     int post_column = length - (length % column_step);
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input1_ptr = (__m128i *)row1;
     __m128i *input2_ptr = (__m128i *)row2;
@@ -839,7 +839,7 @@ void FilterTemporalRow8uTo16s(PIXEL8U *row1, PIXEL8U *row2, int length,
 
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     assert(ISALIGNED16(input1_ptr));
@@ -941,7 +941,7 @@ void FilterTemporalRow8uTo16s(PIXEL8U *row1, PIXEL8U *row2, int length,
     int post_column = length - (length % column_step);
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input1_ptr = (__m128i *)row1;
     __m128i *input2_ptr = (__m128i *)row2;
@@ -964,7 +964,7 @@ void FilterTemporalRow8uTo16s(PIXEL8U *row1, PIXEL8U *row2, int length,
 
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     assert(ISALIGNED16(input1_ptr));
@@ -1024,7 +1024,7 @@ void FilterTemporalRow8uTo16s(PIXEL8U *row1, PIXEL8U *row2, int length,
     // Start at the first column of the second row of pixels
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Reset the lowpass pointer to the begininning of the buffer
     lowpass_ptr = (__m128i *)lowpass;
@@ -1116,7 +1116,7 @@ void FilterTemporalRow16s(PIXEL *row1, PIXEL *row2, int length,
     int post_column = length - (length % column_step);
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input1_ptr = (__m128i *)row1;
     __m128i *input2_ptr = (__m128i *)row2;
@@ -1140,7 +1140,7 @@ void FilterTemporalRow16s(PIXEL *row1, PIXEL *row2, int length,
 
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     assert(ISALIGNED16(input1_ptr));
@@ -1216,7 +1216,7 @@ void FilterTemporalRowYUVTo16s(BYTE *row1, BYTE *row2, int frame_width,
     int post_column = length - (length % column_step);
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input1_ptr = (__m128i *)row1;
     __m128i *input2_ptr = (__m128i *)row2;
@@ -1239,7 +1239,7 @@ void FilterTemporalRowYUVTo16s(BYTE *row1, BYTE *row2, int frame_width,
 
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     assert(ISALIGNED16(input1_ptr));
@@ -1455,7 +1455,7 @@ void FilterTemporalRowYUYVChannelTo16s(BYTE *row1, BYTE *row2, int frame_width,
     int length = frame_width * 2;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     int column_step = 16;
     int post_column = length - (length % column_step);
 
@@ -1479,7 +1479,7 @@ void FilterTemporalRowYUYVChannelTo16s(BYTE *row1, BYTE *row2, int frame_width,
 
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     //assert(ISALIGNED16(input1_ptr));
@@ -1805,7 +1805,7 @@ void FilterTemporalRowYUYVChannelTo16s(uint8_t *row1, uint8_t *row2, int frame_w
     int column;
     int shift = precision - 8;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input1_ptr = (__m128i *)row1;
     __m128i *input2_ptr = (__m128i *)row2;
@@ -1834,7 +1834,7 @@ void FilterTemporalRowYUYVChannelTo16s(uint8_t *row1, uint8_t *row2, int frame_w
     // Start processing at the first (leftmost) column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     assert(ISALIGNED16(input1_ptr));
@@ -2340,7 +2340,7 @@ void FilterTemporalRowUYVYChannelTo16s(uint8_t *row1, uint8_t *row2, int frame_w
     int post_column = length - (length % column_step);
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m64 *input1_ptr = (__m64 *)row1;
     __m64 *input2_ptr = (__m64 *)row2;
@@ -2362,7 +2362,7 @@ void FilterTemporalRowUYVYChannelTo16s(uint8_t *row1, uint8_t *row2, int frame_w
 
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     //assert(ISALIGNED16(input1_ptr));
@@ -2689,7 +2689,7 @@ void FilterTemporalRowUYVYChannelTo16s(uint8_t *row1, uint8_t *row2, int frame_w
     int column;
     int shift = precision - 8;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input1_ptr = (__m128i *)row1;
     __m128i *input2_ptr = (__m128i *)row2;
@@ -2719,7 +2719,7 @@ void FilterTemporalRowUYVYChannelTo16s(uint8_t *row1, uint8_t *row2, int frame_w
     // Start processing at the first (leftmost) column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     assert(ISALIGNED16(input1_ptr));
@@ -3358,7 +3358,7 @@ void FilterInterlaced(PIXEL *frame, int frame_pitch,
     for (row = 0; row < roi.height; row += 2)
     {
 
-#if (1 && MMXOPT)
+#if (MMXOPT)
 
         __m64 *evenptr = (__m64 *)frame;
         __m64 *oddptr = (__m64 *)(frame + frame_pitch);
@@ -3555,7 +3555,7 @@ void InvertInterlaced16s(PIXEL *lowpass, int lowpass_pitch,
     // Process each pair of lowpass and highpass rows
     for (row = 0; row < roi.height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m64 *lowptr = (__m64 *)lowpass;
         __m64 *highptr = (__m64 *)highpass;
         __m64 *evenptr = (__m64 *)even;
@@ -3566,7 +3566,7 @@ void InvertInterlaced16s(PIXEL *lowpass, int lowpass_pitch,
         // Start at the beginning of the row
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         // MMX optimization
         for (; column < post_column; column += column_step)
         {
@@ -3644,7 +3644,7 @@ void InvertInterlaced16s(PIXEL *lowpass, int lowpass_pitch,
     // Process each pair of lowpass and highpass rows
     for (row = 0; row < roi.height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         // SSE2 optimization
         __m128i *lowptr = (__m128i *)lowpass;
         __m128i *highptr = (__m128i *)highpass;
@@ -3656,7 +3656,7 @@ void InvertInterlaced16s(PIXEL *lowpass, int lowpass_pitch,
         // Start at the beginning of the row
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         // SSE2 optimization
         for (; column < post_column; column += column_step)
         {
@@ -3750,7 +3750,7 @@ void InvertInterlaced16sTo8u(PIXEL16S *lowpass, int lowpass_pitch,
     // Process each pair of lowpass and highpass rows
     for (row = 0; row < roi.height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 8;
         int post_column = roi.width - (roi.width % column_step);
         int preload_column = post_column - column_step;
@@ -3775,7 +3775,7 @@ void InvertInterlaced16sTo8u(PIXEL16S *lowpass, int lowpass_pitch,
         // Start at the beginning of the row
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload four lowpass and four highpass coefficients
         low1_pi16 = *(low_ptr++);
@@ -3893,7 +3893,7 @@ void InvertInterlaced16sTo8u(PIXEL16S *lowpass, int lowpass_pitch,
     // Process each pair of lowpass and highpass rows
     for (row = 0; row < roi.height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int column_step = 16;
         int post_column = roi.width - (roi.width % column_step);
         int preload_column = post_column - column_step;
@@ -3916,7 +3916,7 @@ void InvertInterlaced16sTo8u(PIXEL16S *lowpass, int lowpass_pitch,
         // Start at the beginning of the row
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload four lowpass and four highpass coefficients
         low1_epi16 = _mm_load_si128(low_ptr++);
@@ -4038,7 +4038,7 @@ void InvertInterlaced16sToYUV(PIXEL16S *y_lowpass, int y_lowpass_pitch,
     // Process each pair of lowpass and highpass rows
     for (row = 0; row < roi.height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         int chroma_width = roi.width / 2;
         int column_step = 16;
         int post_column = chroma_width - (chroma_width % column_step);
@@ -4064,7 +4064,7 @@ void InvertInterlaced16sToYUV(PIXEL16S *y_lowpass, int y_lowpass_pitch,
         // Start at the beginning of the row
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         for (; column < post_column; column += column_step)
         {
             __m128i low1_epi16;
@@ -4362,7 +4362,7 @@ void InvertInterlacedRow16sToYUV(PIXEL *lowpass[], PIXEL *highpass[], int num_ch
     uint8_t *odd_field = even_field + pitch;
     int row, column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     int chroma_width = output_width / 2;
     int chroma_step = 8;
     int post_column = 2 * (chroma_width - (chroma_width % chroma_step));
@@ -4404,7 +4404,7 @@ void InvertInterlacedRow16sToYUV(PIXEL *lowpass[], PIXEL *highpass[], int num_ch
     // Start at the beginning of the row
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     for (; column < post_column; column += column_step)
     {
@@ -4851,7 +4851,7 @@ void InvertInterlacedRow16sToYUV(PIXEL *lowpass[], PIXEL *highpass[], int num_ch
     uint8_t *odd_field = output + pitch;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     int chroma_width = output_width / 2;
     int chroma_step = 8;
     int post_column = 2 * (chroma_width - (chroma_width % chroma_step));
@@ -5854,7 +5854,7 @@ void InvertInterlacedRow16s10bitToYUV(PIXEL *lowpass[], PIXEL *highpass[], int n
     uint8_t *odd_field = even_field + pitch;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     int chroma_width = output_width / 2;
     int chroma_step = 8;
     int post_column = 2 * (chroma_width - (chroma_width % chroma_step));
@@ -5916,7 +5916,7 @@ void InvertInterlacedRow16s10bitToYUV(PIXEL *lowpass[], PIXEL *highpass[], int n
     // Start at the beginning of the row
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Shorter loop that processes 16 output pixels per iteration
     assert(column_step == 16);
@@ -6392,7 +6392,7 @@ void InvertInterlacedRow16s10bitToUYVY(PIXEL *lowpass[], PIXEL *highpass[], int 
     uint8_t *odd_field = even_field + pitch;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     int chroma_width = output_width / 2;
     int chroma_step = 8;
     int post_column = 2 * (chroma_width - (chroma_width % chroma_step));
@@ -6454,7 +6454,7 @@ void InvertInterlacedRow16s10bitToUYVY(PIXEL *lowpass[], PIXEL *highpass[], int 
     // Start at the beginning of the row
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Shorter loop that processes 16 output pixels per iteration
     assert(column_step == 16);
@@ -6984,7 +6984,7 @@ void InvertInterlacedRow16sToRow16u(PIXEL *lowpass, PIXEL *highpass,
     // Compute the shift required to scale the results to sixteen bits
     int scale = (precision == CODEC_PRECISION_8BIT) ? 8 : 6;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     int column_step = 8;
     int post_column = output_width - (output_width % column_step);
 
@@ -7005,7 +7005,7 @@ void InvertInterlacedRow16sToRow16u(PIXEL *lowpass, PIXEL *highpass,
     // Start at the beginning of the row
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the pointers to the groups of pixels are properly aligned
     assert(ISALIGNED16(lowpass_ptr));
@@ -7187,7 +7187,7 @@ void InvertInterlacedRow16s(PIXEL *lowpass[], PIXEL *highpass[], int num_channel
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     int chroma_width = output_width / 2;
     int chroma_step = 8;
     int post_column = 2 * (chroma_width - (chroma_width % chroma_step));
@@ -7229,7 +7229,7 @@ void InvertInterlacedRow16s(PIXEL *lowpass[], PIXEL *highpass[], int num_channel
     // Start at the beginning of the row
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     for (; column < post_column; column += column_step)
     {
@@ -7630,7 +7630,7 @@ void InvertInterlacedRow16s(PIXEL *lowpass[], PIXEL *highpass[], int num_channel
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     int chroma_width = output_width / 2;
     int chroma_step = 8;
     int post_column = 2 * (chroma_width - (chroma_width % chroma_step));
@@ -7671,7 +7671,7 @@ void InvertInterlacedRow16s(PIXEL *lowpass[], PIXEL *highpass[], int num_channel
     // Start at the beginning of the row
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Shorter loop that processes 16 output pixels per iteration
     assert(column_step == 16);
@@ -8222,7 +8222,7 @@ void InvertInterlacedRow16sToV210(PIXEL *lowpass[], PIXEL *highpass[], int num_c
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     int chroma_width = output_width / 2;
     int chroma_step = 8;
     int post_column = 2 * (chroma_width - (chroma_width % chroma_step));
@@ -8265,7 +8265,7 @@ void InvertInterlacedRow16sToV210(PIXEL *lowpass[], PIXEL *highpass[], int num_c
     // Start at the beginning of the row
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Shorter loop that processes 16 output pixels per iteration
     assert(column_step == 16);
@@ -9153,7 +9153,7 @@ void InvertTemporalQuant16s(PIXEL *lowpass, int lowpass_quantization, int lowpas
     // Process a pair of rows from each field
     for (row = 0; row < roi.height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m64 *lowpass_ptr = (__m64 *)lowpass;
         __m64 *highpass_ptr;
         __m64 *even_ptr = (__m64 *)field1;
@@ -9183,7 +9183,7 @@ void InvertTemporalQuant16s(PIXEL *lowpass, int lowpass_quantization, int lowpas
         // Start at the left column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first four lowpass and highpass coefficients
         low1_pi16 = *(lowpass_ptr++);
@@ -9339,7 +9339,7 @@ void InvertTemporalQuant16s(PIXEL *lowpass, int lowpass_quantization, int lowpas
     // Process a pair of rows from each field
     for (row = 0; row < roi.height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i *lowpass_ptr = (__m128i *)lowpass;
         __m128i *highpass_ptr;
         __m128i *even_ptr = (__m128i *)field1;
@@ -9376,7 +9376,7 @@ void InvertTemporalQuant16s(PIXEL *lowpass, int lowpass_quantization, int lowpas
         // Start at the left column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Check that the input and output addresses are properly aligned
         assert(ISALIGNED16(lowpass_ptr));
@@ -9421,7 +9421,7 @@ void InvertTemporalQuant16s(PIXEL *lowpass, int lowpass_quantization, int lowpas
             //assert(ISALIGNED16(lowpass_ptr));
             //assert(ISALIGNED16(highpass_ptr));
 
-#if (1 && PREFETCH)
+#if (PREFETCH)
             // Prefetch input data that may be used in the near future
             _mm_prefetch((const char *)lowpass_ptr + prefetch_offset, _MM_HINT_T2);
             _mm_prefetch((const char *)highpass_ptr + prefetch_offset, _MM_HINT_T2);
@@ -9670,7 +9670,7 @@ void InvertTemporalQuant16s8sTo16s(PIXEL *lowpass, int lowpass_quantization, int
 
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first four lowpass and highpass coefficients
         low1_pi16 = *(lowpass_ptr++);
@@ -9802,7 +9802,7 @@ void InvertTemporalQuant16s8sTo16s(PIXEL *lowpass, int lowpass_quantization, int
 
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process column elements in parallel until end of row processing is required
         for (; column < post_column; column += column_step)
@@ -9976,7 +9976,7 @@ void InvertTemporalRow16s(PIXEL *lowpass, PIXEL *highpass,
 
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process column elements in parallel until end of row processing is required
     for (; column < post_column; column += column_step)
@@ -10078,7 +10078,7 @@ void InvertTemporalQuarterRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *even, P
     // Process a pair of rows from each field
     for (row = 0; row < roi.height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m64 *lowpass_ptr = (__m64 *)lowpass;
         __m64 *highpass_ptr;
         __m64 *even_ptr = (__m64 *)field1;
@@ -10092,7 +10092,7 @@ void InvertTemporalQuarterRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *even, P
         // Start at the left column
         column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first four lowpass and highpass coefficients
         low1_pi16 = *(lowpass_ptr++);
@@ -10189,7 +10189,7 @@ void InvertTemporalQuarterRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *even, P
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m128i *low_ptr = (__m128i *)lowpass;
     __m128i *high_ptr = (__m128i *)highpass;
     __m128i *even_ptr = (__m128i *)even;
@@ -10211,7 +10211,7 @@ void InvertTemporalQuarterRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *even, P
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the input and output addresses are properly aligned
     assert(ISALIGNED16(low_ptr));
@@ -10439,7 +10439,7 @@ void InvertTemporalQuarterEvenRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *out
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m64 *low_ptr = (__m64 *)lowpass;
     __m64 *high_ptr = (__m64 *)highpass;
     __m64 *even_ptr = (__m64 *)output;
@@ -10463,7 +10463,7 @@ void InvertTemporalQuarterEvenRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *out
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the input and output addresses are properly aligned
     //assert(ISALIGNED16(low_ptr));
@@ -10649,7 +10649,7 @@ void InvertTemporalQuarterEvenRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *out
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m128i *low_ptr = (__m128i *)lowpass;
     __m128i *high_ptr = (__m128i *)highpass;
     __m128i *even_ptr = (__m128i *)output;
@@ -10673,7 +10673,7 @@ void InvertTemporalQuarterEvenRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *out
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the input and output addresses are properly aligned
     assert(ISALIGNED16(low_ptr));
@@ -10868,7 +10868,7 @@ void InvertTemporalQuarterOddRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *outp
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m64 *low_ptr = (__m64 *)lowpass;
     __m64 *high_ptr = (__m64 *)highpass;
     __m64 *odd_ptr = (__m64 *)output;
@@ -10892,7 +10892,7 @@ void InvertTemporalQuarterOddRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *outp
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the input and output addresses are properly aligned
     //assert(ISALIGNED16(low_ptr));
@@ -11078,7 +11078,7 @@ void InvertTemporalQuarterOddRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *outp
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m128i *low_ptr = (__m128i *)lowpass;
     __m128i *high_ptr = (__m128i *)highpass;
     __m128i *odd_ptr = (__m128i *)output;
@@ -11102,7 +11102,7 @@ void InvertTemporalQuarterOddRow16s(PIXEL *lowpass, PIXEL *highpass, PIXEL *outp
     // Start at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Check that the input and output addresses are properly aligned
     assert(ISALIGNED16(low_ptr));
@@ -11288,7 +11288,7 @@ void CopyQuarterRowToBuffer(PIXEL **input,
     int column;
 
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process sixteen values of luma and chroma per loop iteration
     const int column_step = 16;
@@ -11309,7 +11309,7 @@ void CopyQuarterRowToBuffer(PIXEL **input,
     // Start procesing at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     for (; column < post_column; column += column_step)
     {

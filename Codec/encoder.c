@@ -1737,7 +1737,7 @@ void EncodeRelease(ENCODER *encoder, TRANSFORM *transform[], int num_transforms,
     }
 #endif
 
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
     // Close the trace file
     CloseTraceFile();
 #endif
@@ -1975,7 +1975,7 @@ bool EncodeSample(ENCODER *encoder, uint8_t *data, int width, int height, int pi
     }
 #endif
 
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
     TraceEncodeFrame(encoder->frame_number, encoder->gop_length, width, height);
 #endif
 
@@ -5070,7 +5070,7 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
     }
 #endif
 
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
     TraceEncodeBand(width, height);
 #endif
 
@@ -5144,7 +5144,7 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
                                 wBuffer <<= nBits;
                                 wBuffer |= (wBits & BITMASK(nBits));
                                 nBitsFree -= nBits;
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
                                 TracePutBits(nBits);
 #endif
                             }
@@ -5159,7 +5159,7 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
 #endif
                                 // Insert as many bits as will fit into the buffer
                                 wBuffer |= (wBits >> nBits) & BITMASK(nBitsFree);
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
                                 TracePutBits(nBitsFree);
 #endif
                                 // Insert all of the bytes in the buffer into the bitstream
@@ -5233,7 +5233,7 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
                             wBuffer <<= nBits;
                             wBuffer |= (wBits & BITMASK(nBits));
                             nBitsFree -= nBits;
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
                             TracePutBits(nBits);
 #endif
                         }
@@ -5248,7 +5248,7 @@ void EncodeQuantLongRuns(ENCODER *encoder, BITSTREAM *stream, PIXEL *image,
 #endif
                             // Insert as many bits as will fit into the buffer
                             wBuffer |= (wBits >> nBits) & BITMASK(nBitsFree);
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
                             TracePutBits(nBitsFree);
 #endif
                             // Insert all of the bytes in the buffer into the bitstream
@@ -5682,7 +5682,7 @@ int SetCodingFlags(ENCODER *encoder, int subband, int *active_codebook_ret, int 
     int difference_coding = 0;
     int peaks_coding = 0;
 
-#if (1 && CODEC_NUM_CODESETS >= 2)
+#if (CODEC_NUM_CODESETS >= 2)
     if (encoder->progressive)
     {
         if (encoder->gop_length == 2 && (subband >= 7 && subband <= 10)) // use the deeper table for temporal difference.
@@ -7276,7 +7276,7 @@ void EncodeQuantizedGroup(ENCODER *encoder, TRANSFORM *transform[], int num_tran
             //int k;
             int channel_size_in_byte;
 
-#if (1 && TRACE_PUTBITS)
+#if (TRACE_PUTBITS)
             TraceEncodeChannel(channel);
 #endif
             // Align start of channel on a bitword boundary
@@ -8778,7 +8778,7 @@ bool EncodeSampleThreaded(ENCODER *encoder, uint8_t *data, int width, int height
         }
 #endif
 
-#if (1 && _THREADED_ENCODER)
+#if (_THREADED_ENCODER)
 
         if (format == COLOR_FORMAT_YUYV)
         {
@@ -8860,7 +8860,7 @@ bool EncodeSampleThreaded(ENCODER *encoder, uint8_t *data, int width, int height
         }
 #endif
 
-#if (1 && _THREADED_ENCODER)
+#if (_THREADED_ENCODER)
 
         if (format == COLOR_FORMAT_YUYV)
         {

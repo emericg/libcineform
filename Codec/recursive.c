@@ -320,7 +320,7 @@ void FilterVerticalMiddleStrip(PIXEL *input[6], int width, PIXEL *lowpass, PIXEL
     PIXEL *highpass_ptr = highpass;
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m128i *lowpass_group_ptr = (__m128i *)lowpass_ptr;
     __m128i *highpass_group_ptr = (__m128i *)highpass_ptr;
 
@@ -331,7 +331,7 @@ void FilterVerticalMiddleStrip(PIXEL *input[6], int width, PIXEL *lowpass, PIXEL
     // Begin processing at the left hand column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process a group of eight pixels at a time
     for (; column < post_column; column += column_step)
@@ -462,7 +462,7 @@ void FilterVerticalMiddleStripQuantBoth(PIXEL *input[6], int width,
     }
 #endif
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
     __m128i *lowpass_group_ptr = (__m128i *)lowpass_ptr;
     __m128i *highpass_group_ptr = (__m128i *)highpass_ptr;
 
@@ -473,7 +473,7 @@ void FilterVerticalMiddleStripQuantBoth(PIXEL *input[6], int width,
     // Begin processing at the left hand column
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process a group of eight pixels at a time
     for (; column < post_column; column += column_step)
@@ -1605,7 +1605,7 @@ void TransformForwardProgressiveIntraFrameRecursive(ENCODER *encoder, IMAGE *ima
     transform->logfile = encoder->logfile;
 #endif
 
-#if (1 && DEBUG)
+#if (DEBUG)
     if (transform->logfile)
     {
         fprintf(transform->logfile, "Calling recursive transform for channel: %d\n", channel);
@@ -1688,7 +1688,7 @@ void TransformForwardProgressiveIntraFrameRecursiveYUV(ENCODER *encoder, BYTE *f
             TRANSFORM *transform = transform_array[channel];
             int channel_width = transform->width;
 
-#if (1 && DEBUG)
+#if (DEBUG)
             if (transform->logfile)
             {
                 fprintf(transform->logfile,
@@ -1774,7 +1774,7 @@ void TransformForwardInterlacedIntraFrameRecursiveYUV(ENCODER *encoder, BYTE *fr
             TRANSFORM *transform = transform_array[channel];
             int channel_width = transform->width;
 
-#if (1 && DEBUG)
+#if (DEBUG)
             if (transform->logfile)
             {
                 fprintf(transform->logfile,

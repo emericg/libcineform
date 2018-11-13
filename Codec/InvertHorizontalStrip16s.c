@@ -183,7 +183,7 @@ void InvertHorizontalStrip16s(PIXEL *lowpass_band,	// Horizontal lowpass coeffic
         // Place the odd result in the odd column
         output[1] = SATURATE(odd);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first four lowpass coefficients
         low1_pi16 = *((__m64 *)&lowpass[column]);
@@ -1443,7 +1443,7 @@ void InvertHorizontalStripDescale16s(PIXEL *lowpass_band, int lowpass_pitch,
         // Place the odd result in the odd column
         output[1] = SATURATE(odd);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first four lowpass coefficients
         low1_pi16 = *((__m64 *)&lowpass[column]);
@@ -2725,7 +2725,7 @@ void InvertHorizontalStripPrescaled16s(PIXEL *lowpass_band,		// Horizontal lowpa
         // Place the odd result in the odd column
         output[1] = SATURATE(odd);
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first four lowpass coefficients
         low1_pi16 = *((__m64 *)&lowpass[column]);
@@ -3486,7 +3486,7 @@ void InvertHorizontalStrip16sToYUYV(PIXEL *lowpass_band[],	// Horizontal lowpass
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i y_low1_epi16;		// Lowpass coefficients
         __m128i y_low2_epi16;
         __m128i u_low1_epi16;
@@ -3663,7 +3663,7 @@ void InvertHorizontalStrip16sToYUYV(PIXEL *lowpass_band[],	// Horizontal lowpass
         // Save the value for use in the fast loop
         v_odd_value = odd;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         y_low1_epi16 = _mm_load_si128((__m128i *)&y_lowpass_ptr[0]);
@@ -4738,7 +4738,7 @@ void InvertHorizontalStrip16sToUYVY(PIXEL *lowpass_band[],	// Horizontal lowpass
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i y_low1_epi16;		// Lowpass coefficients
         __m128i y_low2_epi16;
         __m128i u_low1_epi16;
@@ -4915,7 +4915,7 @@ void InvertHorizontalStrip16sToUYVY(PIXEL *lowpass_band[],	// Horizontal lowpass
         // Save the value for use in the fast loop
         v_odd_value = odd;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         y_low1_epi16 = _mm_load_si128((__m128i *)&y_lowpass_ptr[0]);
@@ -6496,7 +6496,7 @@ void InvertHorizontalStrip16sToBayerYUV(HorizontalFilterParams)
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i gg_low1_epi16;		// Lowpass coefficients
         __m128i gg_low2_epi16;
         __m128i bg_low1_epi16;
@@ -6681,7 +6681,7 @@ void InvertHorizontalStrip16sToBayerYUV(HorizontalFilterParams)
         // Save the value for use in the fast loop
         rg_odd_value = odd;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         gg_low1_epi16 = _mm_load_si128((__m128i *)&gg_lowpass_ptr[0]);
@@ -8178,7 +8178,7 @@ void InvertHorizontalStrip16sRGB2YUV(HorizontalFilterParams)
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i gg_low1_epi16;		// Lowpass coefficients
         __m128i gg_low2_epi16;
         __m128i bg_low1_epi16;
@@ -8362,7 +8362,7 @@ void InvertHorizontalStrip16sRGB2YUV(HorizontalFilterParams)
         // Save the value for use in the fast loop
         rg_odd_value = odd;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         gg_low1_epi16 = _mm_load_si128((__m128i *)&gg_lowpass_ptr[0]);
@@ -9792,7 +9792,7 @@ void InvertHorizontalStrip16sRGBA2YUVA(HorizontalFilterParams)
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i g_low1_epi16;		// Lowpass coefficients
         __m128i g_low2_epi16;
         __m128i b_low1_epi16;
@@ -10029,7 +10029,7 @@ void InvertHorizontalStrip16sRGBA2YUVA(HorizontalFilterParams)
 
 
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         g_low1_epi16 = _mm_load_si128((__m128i *)&g_lowpass_ptr[0]);
@@ -11599,7 +11599,7 @@ void InvertHorizontalStrip16sRGB2YR16(HorizontalFilterParams)
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i gg_low1_epi16;		// Lowpass coefficients
         __m128i gg_low2_epi16;
         __m128i bg_low1_epi16;
@@ -11759,7 +11759,7 @@ void InvertHorizontalStrip16sRGB2YR16(HorizontalFilterParams)
         // Save the value for use in the fast loop
         rg_odd_value = odd;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         gg_low1_epi16 = _mm_load_si128((__m128i *)&gg_lowpass_ptr[0]);
@@ -13029,7 +13029,7 @@ void InvertHorizontalStrip16sRGB2B64A(HorizontalFilterParams)
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i g_low1_epi16;		// Lowpass coefficients
         __m128i g_low2_epi16;
         __m128i b_low1_epi16;
@@ -13232,7 +13232,7 @@ void InvertHorizontalStrip16sRGB2B64A(HorizontalFilterParams)
             a_odd_value = odd;
         }
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         g_low1_epi16 = _mm_load_si128((__m128i *)&g_lowpass_ptr[0]);
@@ -14540,7 +14540,7 @@ void InvertHorizontalStrip16sRGB2RG30(HorizontalFilterParams)
     // Process each row of the strip
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         __m128i gg_low1_epi16;		// Lowpass coefficients
         __m128i gg_low2_epi16;
         __m128i bg_low1_epi16;
@@ -14693,7 +14693,7 @@ void InvertHorizontalStrip16sRGB2RG30(HorizontalFilterParams)
         // Save the value for use in the fast loop
         rg_odd_value = odd;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Preload the first eight lowpass luma coefficients
         gg_low1_epi16 = _mm_load_si128((__m128i *)&gg_lowpass_ptr[0]);

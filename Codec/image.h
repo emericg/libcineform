@@ -96,7 +96,7 @@ typedef unsigned short PIXEL16U;
 #define PIXEL16U_MIN 0
 #define PIXEL16U_MAX USHRT_MAX
 
-static INLINE int Clamp16s(int x)
+static inline int Clamp16s(int x)
 {
     if (x < SHRT_MIN) x = SHRT_MIN;
     else if (x > SHRT_MAX) x = SHRT_MAX;

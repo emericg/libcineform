@@ -1,23 +1,19 @@
-/*! @file convert.c
-
-*  @brief
-*
-*  @version 1.0.0
-*
-*  (C) Copyright 2017 GoPro Inc (http://gopro.com/).
-*
-*  Licensed under either:
-*  - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
-*  - MIT license, http://opensource.org/licenses/MIT
-*  at your option.
-*
-*  Unless required by applicable law or agreed to in writing, software
-*  distributed under the License is distributed on an "AS IS" BASIS,
-*  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*  See the License for the specific language governing permissions and
-*  limitations under the License.
-*
-*/
+/*!
+ * @file convert.c
+ *
+ * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
+ *
+ * Licensed under either:
+ * - Apache License, Version 2.0, http://www.apache.org/licenses/LICENSE-2.0
+ * - MIT license, http://opensource.org/licenses/MIT
+ * at your option.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "config.h"
 #include "timing.h"
@@ -61,12 +57,12 @@ int Timecode2frames(char *tc, int rate)
     if (rate == 0)  rate = 24;
     if (rate == 23) rate = 24;
     if (rate == 29) rate = 30;
-    if (rate == 50) rate = 50, mult = 2;
-    if (rate == 59) rate = 60, mult = 2;
+    if (rate == 50) { rate = 50; mult = 2; }
+    if (rate == 59) { rate = 60; mult = 2; }
 
     if (tc)
     {
-#if defined(_WIN32) && !defined(__GNUC__)
+#ifdef _MSVC_VER
         ret = sscanf_s(tc, "%02d:%02d:%02d:%02d", &hr, &mn, &sc, &fr);
 #else
         ret = sscanf(tc, "%02d:%02d:%02d:%02d", &hr, &mn, &sc, &fr);
@@ -506,7 +502,7 @@ void ConvertYUYVRowToUYVY(uint8_t *input, uint8_t *output, int length, int forma
     // Start processing at the first column
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process four bytes each of luma and chroma per loop iteration
     //const int column_step = sizeof(__m64);
@@ -552,7 +548,7 @@ void ConvertYUYVRowToV210(uint8_t *input, uint8_t *output, int length, int forma
     // Start processing at the first column
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process four bytes each of luma and chroma per loop iteration
     //const int column_step = sizeof(__m64);
@@ -929,7 +925,7 @@ void ConvertV210RowToPackedYUV(uint8_t *input, uint8_t *output, int length, uint
     uint8_t *output_ptr = output;
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     const int column_step = 24;
     int post_column = length - (length % column_step);
@@ -1572,7 +1568,7 @@ void ConvertYUV16sRowToV210(PIXEL *input, uint8_t *output, int frame_width)
     // Start processing at the leftmost column
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process twelve values of luma and chroma per loop iteration
     const int column_step = 2 * v210_column_step;
@@ -1703,7 +1699,7 @@ void ConvertYUV16uRowToYUV(PIXEL16U *y_input, PIXEL16U *u_input, PIXEL16U *v_inp
     // Start processing at the leftmost column
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process sixteen values of luma and chroma per loop iteration
     const int column_step = 16;
@@ -1812,7 +1808,7 @@ void ConvertYUV16uRowToV210(PIXEL16U *y_input, PIXEL16U *u_input, PIXEL16U *v_in
     // Start processing at the leftmost column
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process twelve values of luma and chroma per loop iteration
     const int column_step = 6;
@@ -2123,7 +2119,7 @@ void ConvertV210RowToPlanar16s(uint8_t *input, int length, PIXEL *y_output, PIXE
     __m128i *u_output_ptr = (__m128i *)v_output;
     __m128i *v_output_ptr = (__m128i *)u_output;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     int column_step = 48;
     int post_column = length - (length % column_step);
@@ -2822,7 +2818,7 @@ void UnpackRowYUV16s(uint8_t *input, PIXEL *output, int width, int channel,
     if (format == COLOR_FORMAT_YUYV)
     {
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
         {
             __m128i *input_ptr = (__m128i *)input;
             __m128i *output_ptr = (__m128i *)output;
@@ -3715,7 +3711,7 @@ void UnpackYUVRow16s(uint8_t *input, int width, PIXEL *output[3])
     PIXEL *u_output = output[1];
     PIXEL *v_output = output[2];
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     __m128i *input_ptr = (__m128i *)input;
     //__m128i *input_ptr = (__m128i *)test_input;
@@ -3741,7 +3737,7 @@ void UnpackYUVRow16s(uint8_t *input, int width, PIXEL *output[3])
 
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     //__m128i input1_epi16;
     //__m128i input2_epi16;
@@ -4102,7 +4098,7 @@ void ConvertPlanarRGB16uToPackedB64A(PIXEL *planar_output[], int planar_pitch[],
     {
         int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         int column_step = 8;
         int post_column = width - (width % column_step);
@@ -4215,7 +4211,7 @@ void ConvertPlanarRGB16uToPackedRGB32(PIXEL *planar_output[], int planar_pitch[]
     {
         int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         int column_step = 8, pos = 0;
         int post_column = width - (width % column_step);
@@ -4534,7 +4530,7 @@ void ConvertPlanarRGB16uToPackedRGB24(PIXEL *planar_output[], int planar_pitch[]
         int column = 0;
 
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         int column_step = 8, pos = 0;
         int post_column = width - (width % column_step);
@@ -5129,7 +5125,7 @@ void ConvertPlanarRGB16uToPackedRGB30(PIXEL *planar_output[], int planar_pitch[]
 
         //TODO: Need to finish the optimized code
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         int column_step = 8;
         int post_column = width - (width % column_step);
@@ -7286,7 +7282,7 @@ void ConvertYUVStripPlanar16uToPacked(PIXEL16U *planar_output[], int planar_pitc
     {
         int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         int column_step = 8;
         int post_column = width - (width % column_step);
@@ -8136,7 +8132,7 @@ void ConvertYUVRow16uToBGRA64(uint8_t *planar_output[], int planar_pitch[], ROI 
         {
             int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
             __m128i *output_ptr = (__m128i *)output_row_ptr;
             __m128i limiterRGB = _mm_set1_epi16(0x7fff - 0x3fff);
@@ -9051,7 +9047,7 @@ void ConvertYUVRow16uToYUV444(uint8_t *planar_output[], int planar_pitch[], ROI 
         {
             int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
             __m128i *yptr = (__m128i *)y_row_ptr;
             __m128i *uptr = (__m128i *)u_row_ptr;
@@ -9354,7 +9350,7 @@ void ConvertPlanarYUVToV210(PIXEL *planar_output[], int planar_pitch[], ROI roi,
         int v;
         uint32_t yuv;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // Process twelve bytes each of luma and chroma per loop iteration
         //const int column_step = 12;
@@ -10266,7 +10262,7 @@ void ConvertUnpacked16sRowToPacked8u(PIXEL **channel_row_ptr, int num_channels,
     // Start processing at the leftmost column
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process eight values of luma and chroma per loop iteration
     const int column_step = 8;
@@ -10399,7 +10395,7 @@ void ConvertUnpacked16sRowToPacked8u(PIXEL **channel_row_ptr, int num_channels,
     // Start processing at the leftmost column
     int column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process sixteen values of luma and chroma per loop iteration
     const int column_step = 16;
@@ -11112,7 +11108,7 @@ void ConvertUnpacked16sRowToYU64(PIXEL **input, int num_channels, uint8_t *outpu
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process sixteen values of luma and chroma per loop iteration
     const int column_step = 16;
@@ -11156,7 +11152,7 @@ void ConvertUnpacked16sRowToYU64(PIXEL **input, int num_channels, uint8_t *outpu
     }
     //else YU64
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     for (; column < post_column; column += column_step)
     {
@@ -11291,7 +11287,7 @@ void ConvertUnpacked16sRowToB64A(PIXEL **input_plane, int num_channels,
 
     //alpha_Companded likely doesn't set as the is not does to go through Convert4444LinesToOutput
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process eight ARGB tuples per loop iteration
     const int column_step = 8;
@@ -11322,7 +11318,7 @@ void ConvertUnpacked16sRowToB64A(PIXEL **input_plane, int num_channels,
     // Start processing at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     for (; column < post_column; column += column_step)
     {
@@ -11813,7 +11809,7 @@ void ConvertUnpacked16sRowToRGB30(PIXEL **input_plane, int num_channels,
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process eight ARGB tuples per loop iteration
     const int column_step = 8;
@@ -11840,7 +11836,7 @@ void ConvertUnpacked16sRowToRGB30(PIXEL **input_plane, int num_channels,
     // Start processing at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     for (; column < post_column; column += column_step)
     {
@@ -12137,7 +12133,7 @@ void ConvertUnpacked16sRowToRGBA64(PIXEL **input_plane, int num_channels,
 
     int column;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     // Process eight ARGB tuples per loop iteration
     const int column_step = 8;
@@ -12169,7 +12165,7 @@ void ConvertUnpacked16sRowToRGBA64(PIXEL **input_plane, int num_channels,
     // Start processing at the left column
     column = 0;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
     for (; column < post_column; column += column_step)
     {
@@ -12602,7 +12598,7 @@ void ConvertRGB2YUV(PIXEL *rlineptr, PIXEL *glineptr, PIXEL *blineptr,
 
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         // The fast loop merges values from different phases to allow aligned stores
         __m128i *outptr;
 
@@ -12660,7 +12656,7 @@ void ConvertRGB2YUV(PIXEL *rlineptr, PIXEL *glineptr, PIXEL *blineptr,
         outputline += output_pitch * row;
         outptr = (__m128i *)outputline;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // The reconstruction filters use pixels starting at the first column
         for (; column < post_column; column += column_step)
@@ -13105,7 +13101,7 @@ void ConvertRGB2UYVY(PIXEL *rlineptr, PIXEL *glineptr, PIXEL *blineptr,
 
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         // The fast loop merges values from different phases to allow aligned stores
         __m128i *outptr;
 
@@ -13164,7 +13160,7 @@ void ConvertRGB2UYVY(PIXEL *rlineptr, PIXEL *glineptr, PIXEL *blineptr,
         outputline += output_pitch * row;
         outptr = (__m128i *)outputline;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // The reconstruction filters use pixels starting at the first column
         for (; column < post_column; column += column_step)
@@ -13515,7 +13511,7 @@ void ConvertRGBA48toRGB32(PIXEL *rlineptr, PIXEL *glineptr, PIXEL *blineptr, PIX
 
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         // The fast loop merges values from different phases to allow aligned stores
         __m128i *outptr;
 
@@ -13577,7 +13573,7 @@ void ConvertRGBA48toRGB32(PIXEL *rlineptr, PIXEL *glineptr, PIXEL *blineptr, PIX
 
         outbyteptr = (unsigned char *)outputline;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // The reconstruction filters use pixels starting at the first column
         for (; column < post_column; column += column_step)
@@ -13784,7 +13780,7 @@ void ConvertRGB48toRGB24(PIXEL *rlineptr, PIXEL *glineptr, PIXEL *blineptr,
 
     for (row = 0; row < height; row++)
     {
-#if (1 && XMMOPT)
+#if (XMMOPT)
         // The fast loop merges values from different phases to allow aligned stores
         __m128i *outptr;
 
@@ -13853,7 +13849,7 @@ void ConvertRGB48toRGB24(PIXEL *rlineptr, PIXEL *glineptr, PIXEL *blineptr,
 
         outbyteptr = (unsigned char *)outputline;
 
-#if (1 && XMMOPT)
+#if (XMMOPT)
 
         // The reconstruction filters use pixels starting at the first column
         for (; column < post_column; column += column_step)

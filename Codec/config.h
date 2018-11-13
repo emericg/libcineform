@@ -1,6 +1,5 @@
 /*!
  * @file config.h
- * @brief
  *
  * (C) Copyright 2017 GoPro Inc (http://gopro.com/).
  *

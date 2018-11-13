@@ -523,7 +523,7 @@ void InitDecoder(DECODER *decoder, FILE *logfile, CODESET *cs)
 // Free data allocated within the decoder
 void ClearDecoder(DECODER *decoder)
 {
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -8539,7 +8539,7 @@ void ConvertLocalToOutput(DECODER *decoder, uint8_t *output, int pitch, int outp
 bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch, ColorParam *colorparams, CFHDDATA *cfhddata)
 {
     //CODEC_ERROR error = CODEC_ERROR_OKAY;
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     //CODEC_STATE *codec = &decoder->codec;
@@ -9593,7 +9593,7 @@ bool DecodeSample(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch
 bool DecodeSampleGroup(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch, ColorParam *colorparams)
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     CODEC_STATE *codec = &decoder->codec;
@@ -9828,7 +9828,7 @@ decoding_complete:
         decoder->gop_length = 2;
         decoder->frame_count += 2;
 
-#if (1 && DEBUG)
+#if (DEBUG)
         if (logfile)
         {
             fprintf(logfile,
@@ -9873,7 +9873,7 @@ decoding_complete:
 bool DecodeSampleFrame(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch, ColorParam *colorparams)
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -9920,7 +9920,7 @@ bool DecodeSampleFrame(DECODER *decoder, BITSTREAM *input, uint8_t *output, int 
 
     STOP(tk_decoding);
 
-#if (1 && DEBUG)
+#if (DEBUG)
     if (logfile)
     {
         fprintf(logfile,
@@ -9980,7 +9980,7 @@ bool DecodeSampleFrame(DECODER *decoder, BITSTREAM *input, uint8_t *output, int 
 bool DecodeSampleIntraFrame(DECODER *decoder, BITSTREAM *input, uint8_t *output, int pitch, ColorParam *colorparams)
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     CODEC_STATE *codec = &decoder->codec;
@@ -10245,7 +10245,7 @@ decoding_completeI:
 // Decode a sample channel header
 bool DecodeSampleChannelHeader(DECODER *decoder, BITSTREAM *input)
 {
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     CODEC_ERROR error = CODEC_ERROR_OKAY;
@@ -10295,7 +10295,7 @@ bool DecodeSampleChannelHeader(DECODER *decoder, BITSTREAM *input)
 // Decode the coefficients in a subband
 bool DecodeSampleSubband(DECODER *decoder, BITSTREAM *input, int subband)
 {
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     CODEC_STATE *codec = &decoder->codec;
@@ -10579,7 +10579,7 @@ bool DecodeSampleSubband(DECODER *decoder, BITSTREAM *input, int subband)
 bool DecodeSampleLowPassBand(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet)
 {
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     CODEC_STATE *codec = &decoder->codec;
@@ -10961,7 +10961,7 @@ bool DecodeSampleHighPassBand(DECODER *decoder, BITSTREAM *stream, IMAGE *wavele
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -11105,7 +11105,7 @@ bool DecodeSampleEmptyBand(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet, 
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -11261,7 +11261,7 @@ bool DecodeBand16sLossless(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet,
 {
     //CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     int result = true;
@@ -11638,7 +11638,7 @@ void ComputeOutputDimensions(DECODER *decoder, int frame,
                              int *decoded_width_out, int *decoded_height_out)
 {
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     CODEC_STATE *codec = &decoder->codec;
@@ -11752,7 +11752,7 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
 {
     FRAME_INFO local_info;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     FRAME_INFO *info = &local_info;
@@ -11809,7 +11809,7 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
     // The decoder can decode a video sample without returning a frame
     if (output == NULL || pitch == 0) return;
 
-#if (1 && DEBUG_ROW16U)
+#if (DEBUG_ROW16U)
     // Force decoding to 16-bit pixels for debugging
     info->format = DECODED_FORMAT_YR16;
 #endif
@@ -13359,7 +13359,7 @@ void ReconstructSampleFrameToBuffer(DECODER *decoder, int frame, uint8_t *output
                                                 GD = BG + bayer_pitch / 4;
 
                                                 // Pack the rows of Bayer components into the BYR3 pattern
-#if (1 && XMMOPT)
+#if (XMMOPT)
                                                 {
 
                                                     __m128i *G_128 = (__m128i *)G;
@@ -14904,7 +14904,7 @@ void ReconstructQuarterFrame(DECODER *decoder, int num_channels,
                              int frame_index, uint8_t *output, int output_pitch,
                              FRAME_INFO *info, const SCRATCH *scratch, int precision)
 {
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     TRANSFORM **transform_array = decoder->transform;
@@ -15208,7 +15208,7 @@ void ReconstructQuarterFrame(DECODER *decoder, int num_channels,
                     break;
 
                 default:
-#if (1 && DEBUG)
+#if (DEBUG)
                     if (logfile)
                     {
                         fprintf(logfile, "ReconstructQuarterFrame bad color format: %d\n", format);
@@ -15505,7 +15505,7 @@ void DecodeForceMetadataRefresh(DECODER *decoder)
 void SetDecoderFlags(DECODER *decoder, uint32_t flags)
 {
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -16977,7 +16977,7 @@ bool DecodeFastRunsFSM16s(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet,
 {
     //CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     int result = true;
@@ -17195,7 +17195,7 @@ bool SkipFastRunsFSM(DECODER *decoder, BITSTREAM *stream, IMAGE *wavelet,
 {
     //CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     int result;
@@ -17858,7 +17858,7 @@ void TransformInverseFrameToRow16u(DECODER *decoder, TRANSFORM *transform[], int
     int channel;
     int row;
 
-#if (1 && DEBUG_ROW16U)
+#if (DEBUG_ROW16U)
     PIXEL16U *output_buffer;
 #endif
 
@@ -17884,7 +17884,7 @@ void TransformInverseFrameToRow16u(DECODER *decoder, TRANSFORM *transform[], int
     temporal_lowpass = (PIXEL *)&buffer[0];
     temporal_highpass = (PIXEL *)&buffer[temporal_row_size];
 
-#if (1 && DEBUG_ROW16U)
+#if (DEBUG_ROW16U)
     output_buffer = (PIXEL16U *)&buffer[2 * temporal_row_size];
 #endif
 
@@ -17935,7 +17935,7 @@ void TransformInverseFrameToRow16u(DECODER *decoder, TRANSFORM *transform[], int
     // Process one row at a time from each channel
     for (row = 0; row < half_height; row++)
     {
-#if (1 && DEBUG_ROW16U)
+#if (DEBUG_ROW16U)
         PIXEL16U *output_row_ptr = output_buffer;
         PIXEL16U *planar_output[TRANSFORM_MAX_CHANNELS];
         int planar_pitch[TRANSFORM_MAX_CHANNELS];
@@ -17982,7 +17982,7 @@ void TransformInverseFrameToRow16u(DECODER *decoder, TRANSFORM *transform[], int
             horizontal_highlow[channel] += pitch;
             horizontal_highhigh[channel] += pitch;
 
-#if (1 && DEBUG_ROW16U)
+#if (DEBUG_ROW16U)
             // Write the rows of 16-bit pixels to a temporary buffer
             planar_output[channel] = output_row_ptr;
             planar_pitch[channel] = output_pitch * sizeof(PIXEL);
@@ -18077,7 +18077,7 @@ void TransformInverseFrameSectionToRow16u(DECODER *decoder, int thread_index, in
 
     int return_value;
 
-#if (1 && DEBUG_ROW16U)
+#if (DEBUG_ROW16U)
     PIXEL16U *output_buffer;
 #endif
 
@@ -18115,7 +18115,7 @@ void TransformInverseFrameSectionToRow16u(DECODER *decoder, int thread_index, in
     temporal_lowpass = (PIXEL *)&buffer[0];
     temporal_highpass = (PIXEL *)&buffer[temporal_row_size];
 
-#if (1 && DEBUG_ROW16U)
+#if (DEBUG_ROW16U)
     output_buffer = (PIXEL16U *)&buffer[2 * temporal_row_size];
 #endif
 
@@ -18311,7 +18311,7 @@ void TransformInverseFrameSectionToRow16u(DECODER *decoder, int thread_index, in
         }
     }
 
-#if (1 && DEBUG)
+#if (DEBUG)
     if (logfile)
     {
         fprintf(logfile, "Finished transform, thread index: %d\n", thread_index);
@@ -19026,7 +19026,7 @@ IMAGE *GetWaveletThreadSafe(DECODER *decoder, TRANSFORM *transform, int index,
     if (decoder != NULL && transform != NULL)
     {
 
-#if (1 && DEBUG)
+#if (DEBUG)
         FILE *logfile = decoder->logfile;
 #endif
 
@@ -19061,7 +19061,7 @@ CODEC_ERROR UpdateCodecState(DECODER *decoder, BITSTREAM *input, CODEC_STATE *co
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -19632,7 +19632,7 @@ CODEC_ERROR UpdateCodecState(DECODER *decoder, BITSTREAM *input, CODEC_STATE *co
             break;
 
 
-#if (1 && DEBUG)
+#if (DEBUG)
 
         case CODEC_TAG_SAMPLE_END:			// Marks the end of the sample (for debugging only)
             assert(0);
@@ -19703,7 +19703,7 @@ void UpdateWaveletBandValidFlags(DECODER *decoder, IMAGE *wavelet, int band)
     if (decoder != NULL && wavelet != NULL)
     {
 
-#if (1 && DEBUG)
+#if (DEBUG)
         FILE *logfile = decoder->logfile;
 #endif
 
@@ -19851,7 +19851,7 @@ bool DecodedBandsValid(IMAGE *wavelet, int index, int transform_type)
 void QueueThreadedTransform(DECODER *decoder, int channel, int index)
 {
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     CODEC_STATE *codec = &decoder->codec;
@@ -19892,7 +19892,7 @@ void QueueThreadedTransform(DECODER *decoder, int channel, int index)
             decoder->transform_queue.free_entry++;
             decoder->transform_queue.num_entries++;
 
-#if (1 && DEBUG)
+#if (DEBUG)
             if (logfile)
             {
                 fprintf(logfile, "Queued transform, channel: %d, index: %d\n", channel, index);
@@ -20205,7 +20205,7 @@ CODEC_ERROR UncompressedSampleFrameBayerToBuffer(DECODER *decoder, FRAME_INFO *i
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     //CODEC_STATE *codec = &decoder->codec;
@@ -20401,7 +20401,7 @@ CODEC_ERROR UncompressedSampleFrameYUVToBuffer(DECODER *decoder, FRAME_INFO *inf
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     //CODEC_STATE *codec = &decoder->codec;
@@ -20781,7 +20781,7 @@ CODEC_ERROR UncompressedSampleFrameRGBToBuffer(DECODER *decoder, FRAME_INFO *inf
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     //CODEC_STATE *codec = &decoder->codec;
@@ -21194,7 +21194,7 @@ CODEC_ERROR ReconstructSampleFrameBayerToBuffer(DECODER *decoder, FRAME_INFO *in
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -21252,7 +21252,7 @@ CODEC_ERROR ReconstructSampleFrameBayerFullToBuffer(DECODER *decoder, FRAME_INFO
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     CODEC_STATE *codec = &decoder->codec;
@@ -21380,7 +21380,7 @@ CODEC_ERROR ReconstructSampleFrameDeBayerFullToBuffer(DECODER *decoder, FRAME_IN
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     CODEC_STATE *codec = &decoder->codec;
@@ -21565,7 +21565,7 @@ CODEC_ERROR ReconstructSampleFrameBayerHalfToBuffer(DECODER *decoder, FRAME_INFO
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     //CODEC_STATE *codec = &decoder->codec;
@@ -21651,7 +21651,7 @@ CODEC_ERROR ReconstructSampleFrameBayerHalfToBuffer(DECODER *decoder, FRAME_INFO
 CODEC_ERROR ReconstructSampleFrameBayerQuarterToBuffer(DECODER *decoder, int frame, uint8_t *output, int pitch)
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     //FRAME_INFO *info = &decoder->frame;
@@ -21678,7 +21678,7 @@ CODEC_ERROR ReconstructSampleFrameYUV422ToBuffer(DECODER *decoder, int frame, ui
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     FRAME_INFO *info = &decoder->frame;
@@ -22215,7 +22215,7 @@ CODEC_ERROR ReconstructSampleFrameYUV422ToBuffer(DECODER *decoder, int frame, ui
 CODEC_ERROR ReconstructSampleFrameRGB444ToBuffer(DECODER *decoder, int frame, uint8_t *output, int pitch)
 {
     CODEC_ERROR error = CODEC_ERROR_OKAY;
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     FRAME_INFO *info = &decoder->frame;
@@ -22635,7 +22635,7 @@ CODEC_ERROR ReconstructSampleFrameRGB444ToBuffer(DECODER *decoder, int frame, ui
                             break;
 
                         default:
-#if (1 && DEBUG)
+#if (DEBUG)
                             if (logfile)
                             {
                                 fprintf(logfile, "Invalid decoded format: %d\n", info->format);
@@ -22799,7 +22799,7 @@ void TransformInverseSpatialThreadedYUV422ToBuffer(DECODER *decoder, int frame_i
         int chroma_offset, int precision)
 {
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -22859,7 +22859,7 @@ void TransformInverseSpatialThreadedYUV422ToBuffer(DECODER *decoder, int frame_i
     // Wait for all of the worker threads to finish
     ThreadPoolWaitAllDone(&decoder->worker_thread.pool);
 
-#if (1 && DEBUG)
+#if (DEBUG)
     if (logfile)
     {
         fprintf(logfile, "All worker threads signalled done\n");
@@ -22875,7 +22875,7 @@ void TransformInverseSpatialUniversalThreadedToRow16u(DECODER *decoder, int fram
         int chroma_offset, int precision)
 {
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -22933,7 +22933,7 @@ void TransformInverseSpatialUniversalThreadedToOutput(
     HorizontalInverseFilterOutputProc horizontal_filter_proc)
 {
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
 
@@ -22987,7 +22987,7 @@ void TransformInverseSpatialSectionToOutput(DECODER *decoder, int thread_index,
         HorizontalInverseFilterOutputProc horizontal_filter_proc)
 {
 
-#if (1 && DEBUG)
+#if (DEBUG)
     FILE *logfile = decoder->logfile;
 #endif
     TRANSFORM **transform = decoder->transform;
